@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"rdququ.top","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"manual","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="一.协程学习的前置知识迭代器迭代器是一种用于简化循环结构的语法糖，它可以让我们通过一种更加简洁、优雅的方式来遍历一个集合或者执行一些需要多次迭代的操作。 在Unity中，迭代器的基本语法是使用yield return语句。yield return语句用于暂停迭代器的执行，并返回一个值或对象。 下面是一个使用迭代器的例子：">
+<meta property="og:type" content="article">
+<meta property="og:title" content="unity协程（corounines）学习理解兼迭代器学习，异步多任务处理">
+<meta property="og:url" content="http://rdququ.top/2023/08/05/unity%E5%8D%8F%E7%A8%8B%EF%BC%88corounines%EF%BC%89%E5%AD%A6%E4%B9%A0%E7%90%86%E8%A7%A3%E5%85%BC%E8%BF%AD%E4%BB%A3%E5%99%A8%E5%AD%A6%E4%B9%A0%EF%BC%8C%E5%BC%82%E6%AD%A5%E5%A4%9A%E4%BB%BB%E5%8A%A1%E5%A4%84%E7%90%86/index.html">
+<meta property="og:site_name" content="蛐蛐的游戏开发世界">
+<meta property="og:description" content="一.协程学习的前置知识迭代器迭代器是一种用于简化循环结构的语法糖，它可以让我们通过一种更加简洁、优雅的方式来遍历一个集合或者执行一些需要多次迭代的操作。 在Unity中，迭代器的基本语法是使用yield return语句。yield return语句用于暂停迭代器的执行，并返回一个值或对象。 下面是一个使用迭代器的例子：">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-08-05T15:04:15.140Z">
+<meta property="article:modified_time" content="2023-08-06T10:52:06.023Z">
+<meta property="article:author" content="蛐蛐">
+<meta property="article:tag" content="Unity">
+<meta property="article:tag" content="C#">
+<meta property="article:tag" content="语法">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://rdququ.top/2023/08/05/unity%E5%8D%8F%E7%A8%8B%EF%BC%88corounines%EF%BC%89%E5%AD%A6%E4%B9%A0%E7%90%86%E8%A7%A3%E5%85%BC%E8%BF%AD%E4%BB%A3%E5%99%A8%E5%AD%A6%E4%B9%A0%EF%BC%8C%E5%BC%82%E6%AD%A5%E5%A4%9A%E4%BB%BB%E5%8A%A1%E5%A4%84%E7%90%86/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>unity协程（corounines）学习理解兼迭代器学习，异步多任务处理 | 蛐蛐的游戏开发世界</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/rss2.xml" title="蛐蛐的游戏开发世界" type="application/rss+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+    <a target="_blank" rel="noopener" href="https://github.com/dlqw" class="github-corner" aria-label="View source on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">蛐蛐的游戏开发世界</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+        <li class="menu-item menu-item-links">
+
+    <a href="/links/" rel="section"><i class="fa fa-link fa-fw"></i>友链</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://rdququ.top/2023/08/05/unity%E5%8D%8F%E7%A8%8B%EF%BC%88corounines%EF%BC%89%E5%AD%A6%E4%B9%A0%E7%90%86%E8%A7%A3%E5%85%BC%E8%BF%AD%E4%BB%A3%E5%99%A8%E5%AD%A6%E4%B9%A0%EF%BC%8C%E5%BC%82%E6%AD%A5%E5%A4%9A%E4%BB%BB%E5%8A%A1%E5%A4%84%E7%90%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="蛐蛐">
+      <meta itemprop="description" content="正在学习unity中">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="蛐蛐的游戏开发世界">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          unity协程（corounines）学习理解兼迭代器学习，异步多任务处理
+        </h1>
+
+        <div class="post-meta">
+        
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-08-05 23:04:15" itemprop="dateCreated datePublished" datetime="2023-08-05T23:04:15+08:00">2023-08-05</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-08-06 18:52:06" itemprop="dateModified" datetime="2023-08-06T18:52:06+08:00">2023-08-06</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%B5%84%E6%96%99%E5%90%91/" itemprop="url" rel="index"><span itemprop="name">资料向</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%B5%84%E6%96%99%E5%90%91/%E8%AF%AD%E6%B3%95/" itemprop="url" rel="index"><span itemprop="name">语法</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%B5%84%E6%96%99%E5%90%91/%E8%AF%AD%E6%B3%95/C/" itemprop="url" rel="index"><span itemprop="name">C#</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3.2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="一-协程学习的前置知识"><a href="#一-协程学习的前置知识" class="headerlink" title="一.协程学习的前置知识"></a>一.协程学习的前置知识</h2><h3 id="迭代器"><a href="#迭代器" class="headerlink" title="迭代器"></a>迭代器</h3><p>迭代器是一种用于简化循环结构的语法糖，它可以让我们通过一种更加简洁、优雅的方式来遍历一个集合或者执行一些需要多次迭代的操作。</p>
+<p>在Unity中，迭代器的基本语法是使用yield return语句。yield return语句用于暂停迭代器的执行，并返回一个值或对象。</p>
+<p>下面是一个使用迭代器的例子：<br> <span id="more"></span></p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">IEnumerator <span class="title">MyIterator</span>()</span> &#123;</span><br><span class="line">    Debug.Log(<span class="string">&quot;Start&quot;</span>);</span><br><span class="line">    <span class="function"><span class="keyword">yield</span> <span class="keyword">return</span> <span class="keyword">new</span> <span class="title">WaitForSeconds</span>(<span class="params"><span class="number">1.0f</span></span>)</span>;</span><br><span class="line">    Debug.Log(<span class="string">&quot;1 second later&quot;</span>);</span><br><span class="line">    <span class="function"><span class="keyword">yield</span> <span class="keyword">return</span> <span class="keyword">new</span> <span class="title">WaitForSeconds</span>(<span class="params"><span class="number">2.0f</span></span>)</span>;</span><br><span class="line">    Debug.Log(<span class="string">&quot;2 seconds later&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="二-协程的入口"><a href="#二-协程的入口" class="headerlink" title="二.协程的入口"></a>二.协程的入口</h2><p>协程必须以IEnumerator开始，并且方法中必须包含关键字yield return，下面我们给出一个协程和普通程序的对比：</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">IEnumerator <span class="title">PrintDebug</span>()</span></span><br><span class="line">&#123;</span><br><span class="line">    Debug.Log(<span class="number">1</span>);</span><br><span class="line">    <span class="keyword">yield</span> <span class="keyword">return</span> <span class="number">0</span>;<span class="comment">//暂时挂起程序</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">PrintDebug</span>()</span></span><br><span class="line">&#123;</span><br><span class="line">    Debug.Log(<span class="number">1</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这时我们想要调用我们的协程就需要用到以下的代码</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">StartCoroutine(PrintNum());</span><br></pre></td></tr></table></figure>
+<h3 id="关键字yield-return"><a href="#关键字yield-return" class="headerlink" title="关键字yield return"></a>关键字yield return</h3><p>yield return的作用是将我们的程序暂时挂起，满足部分条件之后再执行</p>
+<p>下面是一些例子：</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">yield</span> <span class="keyword">return</span> <span class="literal">null</span>;<span class="comment">//下一帧以后执行后续代码</span></span><br><span class="line"><span class="keyword">yield</span> <span class="keyword">return</span> <span class="number">0</span>;<span class="comment">//这里可以不是零，甚至可以是任意数字，效果同上</span></span><br><span class="line"><span class="function"><span class="keyword">yield</span> <span class="keyword">return</span> <span class="title">StartCoroutine</span>(<span class="params">MyCoroutine(<span class="number">1</span></span>))</span>;<span class="comment">//等待协程MyCoroutine(1)完成</span></span><br><span class="line"><span class="function"><span class="keyword">yield</span> <span class="keyword">return</span> <span class="keyword">new</span> <span class="title">WaitForSeconds</span>(<span class="params"><span class="number">1</span></span>)</span>; <span class="comment">// 暂停协程1秒钟,受到DeletaTime影响</span></span><br><span class="line"><span class="function"><span class="keyword">yield</span> <span class="keyword">return</span> <span class="keyword">new</span> <span class="title">WaitForSecondsRealtime</span>(<span class="params"><span class="number">1</span></span>)</span>;<span class="comment">//不受到DeletaTime影响</span></span><br><span class="line"><span class="function"><span class="keyword">yield</span> <span class="keyword">return</span> <span class="keyword">new</span> <span class="title">WaitForFixedUpdate</span>()</span>; <span class="comment">// 等待下一个FixedUpdate消息</span></span><br><span class="line"><span class="function"><span class="keyword">yield</span> <span class="keyword">return</span> <span class="keyword">new</span> <span class="title">WaitForEndOfFrame</span>()</span>; <span class="comment">// 等待下一个渲染帧的结束</span></span><br><span class="line"><span class="function"><span class="keyword">yield</span> <span class="keyword">return</span> <span class="keyword">new</span> <span class="title">WaitUntil</span>(<span class="params">(</span>)</span> =&gt; oneSecond&gt;<span class="number">1</span>);<span class="comment">//等到某判断条件为真时</span></span><br><span class="line"><span class="function"><span class="keyword">yield</span> <span class="keyword">return</span> <span class="keyword">new</span> <span class="title">WaitWhile</span>(<span class="params">(</span>)</span> =&gt; oneSecond&gt;<span class="number">1</span>);<span class="comment">//等到某判断条件为假时</span></span><br><span class="line"></span><br><span class="line">AsyncOperation <span class="keyword">async</span> = SceneManager.LoadSceneAsync(<span class="string">&quot;SceneName&quot;</span>);<span class="comment">//暂停协程，异步场景加载</span></span><br><span class="line"><span class="keyword">yield</span> <span class="keyword">return</span> <span class="keyword">async</span>; <span class="comment">// 等待场景加载完成</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">yield</span> <span class="keyword">break</span>;<span class="comment">//直接终止，类似于return操作</span></span><br></pre></td></tr></table></figure>
+<p>不仅如此，你甚至能使用自定义的yield return，请看代码</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">MyYieldInstruction</span> : <span class="title">CustomYieldInstruction</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="built_in">bool</span> isFinished = <span class="literal">false</span>; <span class="comment">// 是否完成的标志位</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">override</span> <span class="built_in">bool</span> keepWaiting &#123;</span><br><span class="line">        <span class="keyword">get</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> !isFinished; <span class="comment">// 当未完成时，协程继续等待</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Finish</span>()</span> &#123;</span><br><span class="line">        isFinished = <span class="literal">true</span>; <span class="comment">// 设置完成标志位</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>众所周知，自定义yield return类型需要满足以下两个条件：</p>
+<ul>
+<li><p>继承自Unity的CustomYieldInstruction类。</p>
+</li>
+<li><p>实现keepWaiting属性，该属性的返回值控制协程是否继续等待。</p>
+</li>
+</ul>
+<p>在上面的示例中，MyYieldInstruction类继承自CustomYieldInstruction类，并实现了keepWaiting属性和Finish方法。在MyYieldInstruction类中，我们使用isFinished变量表示自定义的操作是否完成。在keepWaiting属性中，当isFinished为false时，协程将继续等待；当isFinished为true时，协程将不再等待，继续执行后面的代码。</p>
+<p>以下的代码会告诉你该如何使用前面我们自定义的yield return</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">IEnumerator <span class="title">MyCoroutine</span>()</span> &#123;</span><br><span class="line">    Debug.Log(<span class="string">&quot;Start&quot;</span>);</span><br><span class="line">    MyYieldInstruction myYield = <span class="keyword">new</span> MyYieldInstruction();</span><br><span class="line">    <span class="keyword">yield</span> <span class="keyword">return</span> myYield;</span><br><span class="line">    Debug.Log(<span class="string">&quot;Finish&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">...</span><br><span class="line"></span><br><span class="line">MyCoroutine coroutine = StartCoroutine(MyCoroutine());</span><br><span class="line">coroutine.Stop(); <span class="comment">// 可以通过Stop方法提前终止协程</span></span><br></pre></td></tr></table></figure>
+<p>值得注意的是，在使用自定义yield return类型时，需要特别注意协程的终止条件，以避免出现不可预期的结果。</p>
+<h3 id="StartCoroutine语句"><a href="#StartCoroutine语句" class="headerlink" title="StartCoroutine语句"></a>StartCoroutine语句</h3><figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">StartCoroutine(方法)；</span><br><span class="line">StartCoroutine(方法名)；</span><br></pre></td></tr></table></figure>
+<p>StartCoroutine的返回值类型是IEnumerator</p>
+<p>注意：StartCoroutine语句只能在MonoBehaviour派生类的方法中使用，因为协程依赖于Unity的消息循环机制。</p>
+<h2 id="三-协程的结束"><a href="#三-协程的结束" class="headerlink" title="三.协程的结束"></a>三.协程的结束</h2><figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">StopCoroutine(方法)；</span><br><span class="line">StopAllCoroutine()；</span><br></pre></td></tr></table></figure>
+<h2 id="四-迭代器与协程的区别"><a href="#四-迭代器与协程的区别" class="headerlink" title="四.迭代器与协程的区别"></a>四.迭代器与协程的区别</h2><p>迭代器（Iterator）和协程（Coroutine）在Unity中都用于异步操作，但它们在实现和使用上有一些区别。</p>
+<ol>
+<li>实现方式不同</li>
+</ol>
+<p>迭代器是一种基于枚举器（Enumerator）实现的语法，通过yield return语句实现协程的暂停和恢复。在编写迭代器时，需要实现IEnumerator和IEnumerable接口，并实现MoveNext、Reset和Current等方法。</p>
+<p>协程是一种基于IEnumerator实现的语法，通过StartCoroutine和yield return语句实现协程的启动和暂停。在编写协程时，需要定义一个返回值为IEnumerator类型的方法，并使用yield return语句来暂停协程的执行。</p>
+<ol>
+<li>使用方式不同</li>
+</ol>
+<p>迭代器通常用于实现可枚举类型的遍历，可以通过foreach语句进行遍历操作。在协程中，迭代器通常用于实现异步操作，例如延迟执行、动画效果等。</p>
+<p>协程通常用于实现异步操作，可以通过StartCoroutine语句启动协程，并使用yield return语句实现协程的暂停和恢复。协程可以通过yield return语句实现延迟执行、分步执行、等待操作完成等功能。</p>
+<ol>
+<li>执行顺序不同</li>
+</ol>
+<p>迭代器的执行顺序是在同一线程中顺序执行，即在迭代器中的每个yield return语句执行完毕后，才会执行下一个yield return语句或方法的其他部分。</p>
+<p>协程的执行顺序是异步的，即在协程执行过程中可以执行其他代码。协程的执行可以被暂停和恢复，可以实现延迟执行、动画效果、等待操作完成等功能。</p>
+<hr>
+<p>本文作于2023-03-19，首发于CSDN<br><a target="_blank" rel="noopener" href="https://blog.csdn.net/jubunihuan/article/details/129652810">https://blog.csdn.net/jubunihuan/article/details/129652810</a></p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>蛐蛐
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://rdququ.top/2023/08/05/unity%E5%8D%8F%E7%A8%8B%EF%BC%88corounines%EF%BC%89%E5%AD%A6%E4%B9%A0%E7%90%86%E8%A7%A3%E5%85%BC%E8%BF%AD%E4%BB%A3%E5%99%A8%E5%AD%A6%E4%B9%A0%EF%BC%8C%E5%BC%82%E6%AD%A5%E5%A4%9A%E4%BB%BB%E5%8A%A1%E5%A4%84%E7%90%86/" title="unity协程（corounines）学习理解兼迭代器学习，异步多任务处理">http://rdququ.top/2023/08/05/unity协程（corounines）学习理解兼迭代器学习，异步多任务处理/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+        
+
+  <div class="followme">
+    <p>欢迎关注我的其它发布渠道</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/atom.xml">
+            <span class="icon">
+              <i class="fa fa-rss"></i>
+            </span>
+
+            <span class="label">RSS</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Unity/" rel="tag"># Unity</a>
+              <a href="/tags/C/" rel="tag"># C#</a>
+              <a href="/tags/%E8%AF%AD%E6%B3%95/" rel="tag"># 语法</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/08/04/hello-world/" rel="prev" title="Hello World">
+      <i class="fa fa-chevron-left"></i> Hello World
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2023/08/06/%E5%8F%AF%E6%81%B6%E7%9A%84%E7%99%BE%E5%BA%A6%E6%8E%A8%E9%80%81bug/" rel="next" title="可恶的百度推送bug">
+      可恶的百度推送bug <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80-%E5%8D%8F%E7%A8%8B%E5%AD%A6%E4%B9%A0%E7%9A%84%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86"><span class="nav-number">1.</span> <span class="nav-text">一.协程学习的前置知识</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%AD%E4%BB%A3%E5%99%A8"><span class="nav-number">1.1.</span> <span class="nav-text">迭代器</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C-%E5%8D%8F%E7%A8%8B%E7%9A%84%E5%85%A5%E5%8F%A3"><span class="nav-number">2.</span> <span class="nav-text">二.协程的入口</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B3%E9%94%AE%E5%AD%97yield-return"><span class="nav-number">2.1.</span> <span class="nav-text">关键字yield return</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#StartCoroutine%E8%AF%AD%E5%8F%A5"><span class="nav-number">2.2.</span> <span class="nav-text">StartCoroutine语句</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89-%E5%8D%8F%E7%A8%8B%E7%9A%84%E7%BB%93%E6%9D%9F"><span class="nav-number">3.</span> <span class="nav-text">三.协程的结束</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B-%E8%BF%AD%E4%BB%A3%E5%99%A8%E4%B8%8E%E5%8D%8F%E7%A8%8B%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">4.</span> <span class="nav-text">四.迭代器与协程的区别</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="蛐蛐"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">蛐蛐</p>
+  <div class="site-description" itemprop="description">正在学习unity中</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">5</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2023-08 – 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">蛐蛐</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">6k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">6 分钟</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共2.3k字</span>
+</div>
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+    <span id="busuanzi_container_site_pv">总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+    <span class="post-meta-divider">|</span>
+    <span id="busuanzi_container_site_uv">总访客数<span id="busuanzi_value_site_uv"></span>人</span>
+    <span class="post-meta-divider">|</span>
+<!-- 不蒜子计数初始值纠正 -->
+<script>
+$(document).ready(function() {
+
+    var int = setInterval(fixCount, 50);  // 50ms周期检测函数
+    var countOffset = 20000;  // 初始化首次数据
+
+    function fixCount() {            
+       if (document.getElementById("busuanzi_container_site_pv").style.display != "none")
+        {
+            $("#busuanzi_value_site_pv").html(parseInt($("#busuanzi_value_site_pv").html()) + countOffset); 
+            clearInterval(int);
+        }                  
+        if ($("#busuanzi_container_site_pv").css("display") != "none")
+        {
+            $("#busuanzi_value_site_uv").html(parseInt($("#busuanzi_value_site_uv").html()) + countOffset); // 加上初始数据 
+            clearInterval(int); // 停止检测
+        }  
+    }
+       	
+});
+</script> 
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '2b72d9fa7fcc851ff3a5',
+      clientSecret: '62e1dcf26b05a0e5bbb7318a5be41964412c7bc7',
+      repo        : 'BlogComments',
+      owner       : 'dlqw',
+      admin       : ['dlqw'],
+      id          : 'd903349b152917d2eab66ef9c3999023',
+        language: 'zh-CN',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+</body>
+</html>
