@@ -4,6 +4,41 @@
   
     
     <entry>
+      <title>导入Qframework框架</title>
+      <link href="/2023/08/11/%E5%AF%BC%E5%85%A5Qframework%E6%A1%86%E6%9E%B6/"/>
+      <url>/2023/08/11/%E5%AF%BC%E5%85%A5Qframework%E6%A1%86%E6%9E%B6/</url>
+      
+        <content type="html"><![CDATA[<p>QFramework是凉鞋大大开发的一款开箱即用的 Unity 开发框架，其内置了 Res Kit、UI Kit、Audio 以及常用的工具库<br> <span id="more"></span><br>Qframework 官方地址如下 <a href="https://qframework.cn/qf">https://qframework.cn/qf</a><br>Qframework 官方教程如下 <a href="https://www.gamepixedu.com/my/course/50">https://www.gamepixedu.com/my/course/50</a>  </p><h2 id="Unity如何导入Qframework"><a href="#Unity如何导入Qframework" class="headerlink" title="Unity如何导入Qframework"></a>Unity如何导入Qframework</h2><p>主体包地址： <a href="https://qframework.cn/qf/package/detail/17e600f8-c6fa-4fdf-a77e-843e28627e2f">https://qframework.cn/qf/package/detail/17e600f8-c6fa-4fdf-a77e-843e28627e2f</a><br>下载获取Unitypackage,导入项目中即可<br>这个包里面是由三部分组成的 QFramework.cs,Toolkits 和教程示例文件<br>如果只关心 QFramework 的架构实现，那么不需要导入 Toolkits 内的内容<br>在Unity中按下 CTRL+E 可以快捷唤出 QFramework 设置 </p><hr><p>首发于2023-08-11 </p><p>地址 ：<a href="https://rdququ.top/">https://rdququ.top/</a></p>]]></content>
+      
+      
+      <categories>
+          
+          <category> 资料向 </category>
+          
+          <category> Unity </category>
+          
+          <category> 框架 </category>
+          
+          <category> QFramework </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Unity </tag>
+            
+            <tag> 环境配置 </tag>
+            
+            <tag> QFramework </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>服了你了‘hexo-asset-image’</title>
       <link href="/2023/08/07/%E6%9C%8D%E4%BA%86%E4%BD%A0%E4%BA%86%E2%80%98hexo-asset-image%E2%80%99/"/>
       <url>/2023/08/07/%E6%9C%8D%E4%BA%86%E4%BD%A0%E4%BA%86%E2%80%98hexo-asset-image%E2%80%99/</url>

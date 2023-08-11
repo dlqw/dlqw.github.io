@@ -9,8 +9,41 @@
     <atom:link href="http://rdququ.top/rss2.xml" rel="self" type="application/rss+xml"/>
     
     <description>正在学习unity中</description>
-    <pubDate>Mon, 07 Aug 2023 09:43:28 GMT</pubDate>
+    <pubDate>Fri, 11 Aug 2023 04:36:16 GMT</pubDate>
     <generator>http://hexo.io/</generator>
+    
+    <item>
+      <title>导入Qframework框架</title>
+      <link>http://rdququ.top/2023/08/11/%E5%AF%BC%E5%85%A5Qframework%E6%A1%86%E6%9E%B6/</link>
+      <guid>http://rdququ.top/2023/08/11/%E5%AF%BC%E5%85%A5Qframework%E6%A1%86%E6%9E%B6/</guid>
+      <pubDate>Fri, 11 Aug 2023 04:16:08 GMT</pubDate>
+      
+      <description>&lt;p&gt;QFramework是凉鞋大大开发的一款开箱即用的 Unity 开发框架，其内置了 Res Kit、UI Kit、Audio 以及常用的工具库&lt;br&gt;</description>
+      
+      
+      
+      <content:encoded><![CDATA[<p>QFramework是凉鞋大大开发的一款开箱即用的 Unity 开发框架，其内置了 Res Kit、UI Kit、Audio 以及常用的工具库<br> <span id="more"></span><br>Qframework 官方地址如下 <a href="https://qframework.cn/qf">https://qframework.cn/qf</a><br>Qframework 官方教程如下 <a href="https://www.gamepixedu.com/my/course/50">https://www.gamepixedu.com/my/course/50</a>  </p><h2 id="Unity如何导入Qframework"><a href="#Unity如何导入Qframework" class="headerlink" title="Unity如何导入Qframework"></a>Unity如何导入Qframework</h2><p>主体包地址： <a href="https://qframework.cn/qf/package/detail/17e600f8-c6fa-4fdf-a77e-843e28627e2f">https://qframework.cn/qf/package/detail/17e600f8-c6fa-4fdf-a77e-843e28627e2f</a><br>下载获取Unitypackage,导入项目中即可<br>这个包里面是由三部分组成的 QFramework.cs,Toolkits 和教程示例文件<br>如果只关心 QFramework 的架构实现，那么不需要导入 Toolkits 内的内容<br>在Unity中按下 CTRL+E 可以快捷唤出 QFramework 设置 </p><hr><p>首发于2023-08-11 </p><p>地址 ：<a href="https://rdququ.top/">https://rdququ.top/</a></p>]]></content:encoded>
+      
+      
+      <category domain="http://rdququ.top/categories/%E8%B5%84%E6%96%99%E5%90%91/">资料向</category>
+      
+      <category domain="http://rdququ.top/categories/%E8%B5%84%E6%96%99%E5%90%91/Unity/">Unity</category>
+      
+      <category domain="http://rdququ.top/categories/%E8%B5%84%E6%96%99%E5%90%91/Unity/%E6%A1%86%E6%9E%B6/">框架</category>
+      
+      <category domain="http://rdququ.top/categories/%E8%B5%84%E6%96%99%E5%90%91/Unity/%E6%A1%86%E6%9E%B6/QFramework/">QFramework</category>
+      
+      
+      <category domain="http://rdququ.top/tags/Unity/">Unity</category>
+      
+      <category domain="http://rdququ.top/tags/%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/">环境配置</category>
+      
+      <category domain="http://rdququ.top/tags/QFramework/">QFramework</category>
+      
+      
+      <comments>http://rdququ.top/2023/08/11/%E5%AF%BC%E5%85%A5Qframework%E6%A1%86%E6%9E%B6/#disqus_thread</comments>
+      
+    </item>
     
     <item>
       <title>服了你了‘hexo-asset-image’</title>
