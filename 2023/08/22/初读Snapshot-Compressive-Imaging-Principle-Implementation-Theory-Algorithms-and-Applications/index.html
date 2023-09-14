@@ -27,15 +27,15 @@
 <meta property="og:site_name" content="蛐蛐的游戏开发世界">
 <meta property="og:description" content="快照压缩成像：原理、实现、理论、算法和应用 使用二维传感器捕获快照测量中的高维数据 什么是 Snapshot Compressive Imaging (快照压缩成像)？二维检测和高维(以3D为例)检测是什么？ 单目 3D 检测和 2D 检测具有相同的输入数据模态和不同的预测目标。2D 检测任务一般要求在给定一张输入图像后，检测出物体的类别和 2D 框；单目 3D 检测则设定在给定同样的一张二维图像">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://rdququ.top/%E5%88%9D%E8%AF%BBSnapshot-Compressive-Imaging-Principle-Implementation-Theory-Algorithms-and-Applications%5Cp1.jpg">
-<meta property="og:image" content="http://rdququ.top/%E5%88%9D%E8%AF%BBSnapshot-Compressive-Imaging-Principle-Implementation-Theory-Algorithms-and-Applications%5CData-Cube.png">
-<meta property="og:image" content="http://rdququ.top/%E5%88%9D%E8%AF%BBSnapshot-Compressive-Imaging-Principle-Implementation-Theory-Algorithms-and-Applications%5C%E5%A4%9A%E7%BB%B4%E6%A8%A1%E5%9E%8B.png">
-<meta property="og:image" content="http://rdququ.top/%E5%88%9D%E8%AF%BBSnapshot-Compressive-Imaging-Principle-Implementation-Theory-Algorithms-and-Applications%5Cmask.png">
+<meta property="og:image" content="http://rdququ.top/2023/08/22/%E5%88%9D%E8%AF%BBSnapshot-Compressive-Imaging-Principle-Implementation-Theory-Algorithms-and-Applications/p1.jpg">
+<meta property="og:image" content="http://rdququ.top/2023/08/22/%E5%88%9D%E8%AF%BBSnapshot-Compressive-Imaging-Principle-Implementation-Theory-Algorithms-and-Applications/Data-Cube.png">
+<meta property="og:image" content="http://rdququ.top/2023/08/22/%E5%88%9D%E8%AF%BBSnapshot-Compressive-Imaging-Principle-Implementation-Theory-Algorithms-and-Applications/%E5%A4%9A%E7%BB%B4%E6%A8%A1%E5%9E%8B.png">
+<meta property="og:image" content="http://rdququ.top/2023/08/22/%E5%88%9D%E8%AF%BBSnapshot-Compressive-Imaging-Principle-Implementation-Theory-Algorithms-and-Applications/mask.png">
 <meta property="article:published_time" content="2023-08-22T13:26:12.000Z">
-<meta property="article:modified_time" content="2023-08-26T09:15:24.805Z">
+<meta property="article:modified_time" content="2023-09-14T16:09:40.260Z">
 <meta property="article:author" content="蛐蛐">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://rdququ.top/%E5%88%9D%E8%AF%BBSnapshot-Compressive-Imaging-Principle-Implementation-Theory-Algorithms-and-Applications%5Cp1.jpg">
+<meta name="twitter:image" content="http://rdququ.top/2023/08/22/%E5%88%9D%E8%AF%BBSnapshot-Compressive-Imaging-Principle-Implementation-Theory-Algorithms-and-Applications/p1.jpg">
 
 <link rel="canonical" href="http://rdququ.top/2023/08/22/%E5%88%9D%E8%AF%BBSnapshot-Compressive-Imaging-Principle-Implementation-Theory-Algorithms-and-Applications/">
 
@@ -240,7 +240,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-08-26 17:15:24" itemprop="dateModified" datetime="2023-08-26T17:15:24+08:00">2023-08-26</time>
+                <time title="修改时间：2023-09-15 00:09:40" itemprop="dateModified" datetime="2023-09-15T00:09:40+08:00">2023-09-15</time>
               </span>
 
           
@@ -277,13 +277,13 @@
       
         <p>快照压缩成像：原理、实现、理论、算法和应用</p>
 <p>使用二维传感器捕获快照测量中的高维数据</p>
-<h2 id="什么是-Snapshot-Compressive-Imaging-快照压缩成像-？"><a href="#什么是-Snapshot-Compressive-Imaging-快照压缩成像-？" class="headerlink" title="什么是 Snapshot Compressive Imaging (快照压缩成像)？"></a>什么是 Snapshot Compressive Imaging (快照压缩成像)？</h2><h3 id="二维检测和高维-以3D为例-检测是什么？"><a href="#二维检测和高维-以3D为例-检测是什么？" class="headerlink" title="二维检测和高维(以3D为例)检测是什么？"></a>二维检测和高维(以3D为例)检测是什么？</h3><p><img src="/%E5%88%9D%E8%AF%BBSnapshot-Compressive-Imaging-Principle-Implementation-Theory-Algorithms-and-Applications%5Cp1.jpg" alt="图一"></p>
+<h2 id="什么是-Snapshot-Compressive-Imaging-快照压缩成像-？"><a href="#什么是-Snapshot-Compressive-Imaging-快照压缩成像-？" class="headerlink" title="什么是 Snapshot Compressive Imaging (快照压缩成像)？"></a>什么是 Snapshot Compressive Imaging (快照压缩成像)？</h2><h3 id="二维检测和高维-以3D为例-检测是什么？"><a href="#二维检测和高维-以3D为例-检测是什么？" class="headerlink" title="二维检测和高维(以3D为例)检测是什么？"></a>二维检测和高维(以3D为例)检测是什么？</h3><p><img src="/2023/08/22/%E5%88%9D%E8%AF%BBSnapshot-Compressive-Imaging-Principle-Implementation-Theory-Algorithms-and-Applications/p1.jpg" alt="图一"></p>
 <p>单目 3D 检测和 2D 检测具有相同的输入数据模态和不同的预测目标。2D 检测任务一般要求在给定一张输入图像后，检测出物体的类别和 2D 框；单目 3D 检测则设定在给定同样的一张二维图像下，检测出物体的类别和 3D 框，其中 3D 框通常拥有至少 7 个自由度：三维位置，三维框大小以及转向角</p>
 <span id="more"></span>
 <h3 id="驱动任务"><a href="#驱动任务" class="headerlink" title="驱动任务"></a>驱动任务</h3><p>Snapshot compressive imaging (SCI) uses a two-dimensional (2D) detector to capture HD (≥ 3D) data in a snapshot measurement.<br>Via novel optical designs, the 2D detector samples the HD data in<br>a compressive manner; following this, algorithms are employed to reconstruct the desired HD data-cube</p>
 <p>快照压缩成像（SCI）使用二维（2D）探测器在快照测量中捕获高维（≥3D）数据。通过新颖的光学设计，2D探测器以压缩方式采样高维数据；随后，使用算法重建所需的高维数据立方体</p>
 <h3 id="什么是-Data-Cube-数据立方体-？"><a href="#什么是-Data-Cube-数据立方体-？" class="headerlink" title="什么是 Data-Cube (数据立方体)？"></a>什么是 Data-Cube (数据立方体)？</h3><p>数据立方体是一种多维数据模型, 并且只有三维。</p>
-<p><img src="/%E5%88%9D%E8%AF%BBSnapshot-Compressive-Imaging-Principle-Implementation-Theory-Algorithms-and-Applications%5CData-Cube.png" alt="数据立方体"></p>
+<p><img src="/2023/08/22/%E5%88%9D%E8%AF%BBSnapshot-Compressive-Imaging-Principle-Implementation-Theory-Algorithms-and-Applications/Data-Cube.png" alt="数据立方体"></p>
 <h4 id="什么是多维数据模型？"><a href="#什么是多维数据模型？" class="headerlink" title="什么是多维数据模型？"></a>什么是多维数据模型？</h4><p>多维模型的相关概念：</p>
 <ul>
 <li>多维数据模型：为了满足用户从多角度多层次进行数据查询和分析的需要而建立起来的基于事实和维的数据库模型，其基本的应用是为了实现OLAP（Online Analytical Processing）</li>
@@ -297,7 +297,7 @@
 <li>维表：对于维度的描述，每个维度对应一个或多个维表，一个维度对应一个表的是星型模式，对应多个表的是雪花模式</li>
 <li>OLAP：Online Analytical Processing，联机分析处理，是一种多维、分析式的查询处理技术，它是一种基于维度的数据分析方法，它的基本特征是：面向主题、集成性、时序性、非易失性、动态性、客户&#x2F;服务器结构、开放式的数据库连接、多维数据分析、灵活的报表生成、图形化的用户界面</li>
 </ul>
-<p><img src="/%E5%88%9D%E8%AF%BBSnapshot-Compressive-Imaging-Principle-Implementation-Theory-Algorithms-and-Applications%5C%E5%A4%9A%E7%BB%B4%E6%A8%A1%E5%9E%8B.png" alt="多维数据模型"></p>
+<p><img src="/2023/08/22/%E5%88%9D%E8%AF%BBSnapshot-Compressive-Imaging-Principle-Implementation-Theory-Algorithms-and-Applications/%E5%A4%9A%E7%BB%B4%E6%A8%A1%E5%9E%8B.png" alt="多维数据模型"></p>
 <h3 id="什么是-CS-Compressive-Sensing-『压缩感知』"><a href="#什么是-CS-Compressive-Sensing-『压缩感知』" class="headerlink" title="什么是 CS (Compressive Sensing) 『压缩感知』?"></a>什么是 CS (Compressive Sensing) 『压缩感知』?</h3><p>压缩感知本质上一个线性逆问题 (linear inverse problem)，目的是从少量的线性测量 (linear measurements) 中还原高维的信号。</p>
 <h4 id="什么是线性反问题-linear-inverse-problem-？"><a href="#什么是线性反问题-linear-inverse-problem-？" class="headerlink" title="什么是线性反问题 (linear inverse problem)？"></a>什么是线性反问题 (linear inverse problem)？</h4><p>在数学上,一对问题称为是互逆的，如果一个问题的表述或处理需要另一个问题解的信息；若把其中的一个问题称为正问题，另一个就称为反问题。</p>
 <p>在物理问题上,反问题是指从一些带噪声的观测中试图还原出真实信息的行为,很好理解,这和上面的一点其实是一样的.</p>
@@ -312,7 +312,7 @@
 <h3 id="什么是-mask-掩膜"><a href="#什么是-mask-掩膜" class="headerlink" title="什么是 mask (掩膜)?"></a>什么是 mask (掩膜)?</h3><p>mask（掩码、掩膜）是深度学习中的常见操作。简单而言，其相当于在原始张量上盖上一层掩膜，从而屏蔽或选择一些特定元素, 其中掩膜的元素值为 0 或 1，0 表示屏蔽，1 表示选择。  </p>
 <p>按照上述定义，非线性激活函数Relu（根据输出的正负区间进行简单粗暴的二分）、dropout机制（根据概率进行二分）都可以理解为泛化的mask操作。</p>
 <p>正如其名 mask 在宏观上的表现就是<code>遮罩</code></p>
-<p><img src="/%E5%88%9D%E8%AF%BBSnapshot-Compressive-Imaging-Principle-Implementation-Theory-Algorithms-and-Applications%5Cmask.png" alt="使用mask提取ROI区域"></p>
+<p><img src="/2023/08/22/%E5%88%9D%E8%AF%BBSnapshot-Compressive-Imaging-Principle-Implementation-Theory-Algorithms-and-Applications/mask.png" alt="使用mask提取ROI区域"></p>
 <h3 id="什么是-CASSI-Coded-Aperture-Snapshot-Spectral-Imaging-『编码孔径快照光谱成像』"><a href="#什么是-CASSI-Coded-Aperture-Snapshot-Spectral-Imaging-『编码孔径快照光谱成像』" class="headerlink" title="什么是 CASSI (Coded Aperture Snapshot Spectral Imaging) 『编码孔径快照光谱成像』"></a>什么是 CASSI (Coded Aperture Snapshot Spectral Imaging) 『编码孔径快照光谱成像』</h3><p>CASSI (coded aperture snapshot spectral imaging)是一种具有代表性的高光谱图像捕获SCI系统。</p>
 <h3 id="Main-Difference-between-SCI-and-Single-Pixel-Imaging"><a href="#Main-Difference-between-SCI-and-Single-Pixel-Imaging" class="headerlink" title="Main Difference between SCI and Single-Pixel Imaging"></a>Main Difference between SCI and Single-Pixel Imaging</h3><p>二者主要的区别存在于 forward model 上.  </p>
 <p>单像素相机的 sensing matrix (Φ) 是 dense matrix, 而 SCI 的 sensing matrix 是 sparse matrix.</p>
