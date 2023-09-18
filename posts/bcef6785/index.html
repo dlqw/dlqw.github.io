@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"rdququ.top","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"manual","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="快照压缩成像：原理、实现、理论、算法和应用 使用二维传感器捕获快照测量中的高维数据 什么是 Snapshot Compressive Imaging (快照压缩成像)？二维检测和高维(以3D为例)检测是什么？ 单目 3D 检测和 2D 检测具有相同的输入数据模态和不同的预测目标。2D 检测任务一般要求在给定一张输入图像后，检测出物体的类别和 2D 框；单目 3D 检测则设定在给定同样的一张二维图像">
+<meta property="og:type" content="article">
+<meta property="og:title" content="初读Snapshot Compressive Imaging: Principle, Implementation, Theory, Algorithms and Applications">
+<meta property="og:url" content="http://rdququ.top/posts/bcef6785/index.html">
+<meta property="og:site_name" content="蛐蛐的软件开发世界">
+<meta property="og:description" content="快照压缩成像：原理、实现、理论、算法和应用 使用二维传感器捕获快照测量中的高维数据 什么是 Snapshot Compressive Imaging (快照压缩成像)？二维检测和高维(以3D为例)检测是什么？ 单目 3D 检测和 2D 检测具有相同的输入数据模态和不同的预测目标。2D 检测任务一般要求在给定一张输入图像后，检测出物体的类别和 2D 框；单目 3D 检测则设定在给定同样的一张二维图像">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://rdququ.top/posts/bcef6785/p1.jpg">
+<meta property="og:image" content="http://rdququ.top/posts/bcef6785/Data-Cube.png">
+<meta property="og:image" content="http://rdququ.top/posts/bcef6785/%E5%A4%9A%E7%BB%B4%E6%A8%A1%E5%9E%8B.png">
+<meta property="og:image" content="http://rdququ.top/posts/bcef6785/mask.png">
+<meta property="article:published_time" content="2023-08-22T13:26:12.000Z">
+<meta property="article:modified_time" content="2023-09-14T16:09:40.260Z">
+<meta property="article:author" content="蛐蛐">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://rdququ.top/posts/bcef6785/p1.jpg">
+
+<link rel="canonical" href="http://rdququ.top/posts/bcef6785/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>初读Snapshot Compressive Imaging: Principle, Implementation, Theory, Algorithms and Applications | 蛐蛐的软件开发世界</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/rss2.xml" title="蛐蛐的软件开发世界" type="application/rss+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+    <a target="_blank" rel="noopener" href="https://github.com/dlqw" class="github-corner" aria-label="View source on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">蛐蛐的软件开发世界</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+        <li class="menu-item menu-item-links">
+
+    <a href="/links/" rel="section"><i class="fa fa-link fa-fw"></i>友链</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://rdququ.top/posts/bcef6785/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="蛐蛐">
+      <meta itemprop="description" content="正在学习unity中">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="蛐蛐的软件开发世界">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          初读Snapshot Compressive Imaging: Principle, Implementation, Theory, Algorithms and Applications
+        </h1>
+
+        <div class="post-meta">
+        
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-08-22 21:26:12" itemprop="dateCreated datePublished" datetime="2023-08-22T21:26:12+08:00">2023-08-22</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-09-15 00:09:40" itemprop="dateModified" datetime="2023-09-15T00:09:40+08:00">2023-09-15</time>
+              </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3.8k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>快照压缩成像：原理、实现、理论、算法和应用</p>
+<p>使用二维传感器捕获快照测量中的高维数据</p>
+<h2 id="什么是-Snapshot-Compressive-Imaging-快照压缩成像-？"><a href="#什么是-Snapshot-Compressive-Imaging-快照压缩成像-？" class="headerlink" title="什么是 Snapshot Compressive Imaging (快照压缩成像)？"></a>什么是 Snapshot Compressive Imaging (快照压缩成像)？</h2><h3 id="二维检测和高维-以3D为例-检测是什么？"><a href="#二维检测和高维-以3D为例-检测是什么？" class="headerlink" title="二维检测和高维(以3D为例)检测是什么？"></a>二维检测和高维(以3D为例)检测是什么？</h3><p><img src="p1.jpg" alt="图一"></p>
+<p>单目 3D 检测和 2D 检测具有相同的输入数据模态和不同的预测目标。2D 检测任务一般要求在给定一张输入图像后，检测出物体的类别和 2D 框；单目 3D 检测则设定在给定同样的一张二维图像下，检测出物体的类别和 3D 框，其中 3D 框通常拥有至少 7 个自由度：三维位置，三维框大小以及转向角</p>
+<span id="more"></span>
+<h3 id="驱动任务"><a href="#驱动任务" class="headerlink" title="驱动任务"></a>驱动任务</h3><p>Snapshot compressive imaging (SCI) uses a two-dimensional (2D) detector to capture HD (≥ 3D) data in a snapshot measurement.<br>Via novel optical designs, the 2D detector samples the HD data in<br>a compressive manner; following this, algorithms are employed to reconstruct the desired HD data-cube</p>
+<p>快照压缩成像（SCI）使用二维（2D）探测器在快照测量中捕获高维（≥3D）数据。通过新颖的光学设计，2D探测器以压缩方式采样高维数据；随后，使用算法重建所需的高维数据立方体</p>
+<h3 id="什么是-Data-Cube-数据立方体-？"><a href="#什么是-Data-Cube-数据立方体-？" class="headerlink" title="什么是 Data-Cube (数据立方体)？"></a>什么是 Data-Cube (数据立方体)？</h3><p>数据立方体是一种多维数据模型, 并且只有三维。</p>
+<p><img src="Data-Cube.png" alt="数据立方体"></p>
+<h4 id="什么是多维数据模型？"><a href="#什么是多维数据模型？" class="headerlink" title="什么是多维数据模型？"></a>什么是多维数据模型？</h4><p>多维模型的相关概念：</p>
+<ul>
+<li>多维数据模型：为了满足用户从多角度多层次进行数据查询和分析的需要而建立起来的基于事实和维的数据库模型，其基本的应用是为了实现OLAP（Online Analytical Processing）</li>
+<li>立方体：它是由维度构建出来的多维空间，包含了所要分析的基础数据，所有的聚合数据操作都在它上面进行</li>
+<li>维度：观察数据的一种角度，比如在上图中address、item、time都可以被看作一个维度，直观上来看维度是一个立方体的轴，比如三个维度可以构成一个立方体的空间</li>
+<li>维度成员：构成维度的基本单位，比如对于time维，包含Q1、Q2、Q3、Q4四个维度成员</li>
+<li>层次：维度的层次结构，它存在两种：自然层次和用户自定义层次。比如对于时间维，可以分为年、月、日三个层次，也可以分为年、季度、月三个层次。一个维可以有多个层次，它是单位数据聚集的一种路径</li>
+<li>级别：级别组成层次，比如年、月、日分别是时间维的三个级别</li>
+<li>度量：一个数值函数，可以对数据立方体空间中的每个点求值；度量值自然就是度量的结果</li>
+<li>事实表：存放度量值得表，同时存放了维表得外键，所有分析所用得数据最终都来自事实表</li>
+<li>维表：对于维度的描述，每个维度对应一个或多个维表，一个维度对应一个表的是星型模式，对应多个表的是雪花模式</li>
+<li>OLAP：Online Analytical Processing，联机分析处理，是一种多维、分析式的查询处理技术，它是一种基于维度的数据分析方法，它的基本特征是：面向主题、集成性、时序性、非易失性、动态性、客户/服务器结构、开放式的数据库连接、多维数据分析、灵活的报表生成、图形化的用户界面</li>
+</ul>
+<p><img src="多维模型.png" alt="多维数据模型"></p>
+<h3 id="什么是-CS-Compressive-Sensing-『压缩感知』"><a href="#什么是-CS-Compressive-Sensing-『压缩感知』" class="headerlink" title="什么是 CS (Compressive Sensing) 『压缩感知』?"></a>什么是 CS (Compressive Sensing) 『压缩感知』?</h3><p>压缩感知本质上一个线性逆问题 (linear inverse problem)，目的是从少量的线性测量 (linear measurements) 中还原高维的信号。</p>
+<h4 id="什么是线性反问题-linear-inverse-problem-？"><a href="#什么是线性反问题-linear-inverse-problem-？" class="headerlink" title="什么是线性反问题 (linear inverse problem)？"></a>什么是线性反问题 (linear inverse problem)？</h4><p>在数学上,一对问题称为是互逆的，如果一个问题的表述或处理需要另一个问题解的信息；若把其中的一个问题称为正问题，另一个就称为反问题。</p>
+<p>在物理问题上,反问题是指从一些带噪声的观测中试图还原出真实信息的行为,很好理解,这和上面的一点其实是一样的.</p>
+<p>而对反问题而言,Well-posed和ill-posed的情况都是存在的,<a target="_blank" rel="noopener" href="https://de.wikipedia.org/wiki/Inverses_Problem#:~:text=Inverses%20Problem%20Ein%20mathematisches%20Problem%20wird%20ein%20inverses,oft%20sehr%20schwierig%20oder%20manchmal%20gar%20nicht%20l%C3%B6sbar.">(Man unterscheidet <code>gut gestellte</code> und <code>schlecht gestellte</code> inverse Probleme. )</a></p>
+<p>故而,想要理解求解 inverse problem 之难, 我们最好对适定问题（Well-posed problem）有一定的了解.</p>
+<p>什么是适定问题（Well-posed problem）呢?<br>满足<code>解存在</code>、<code>唯一</code>且<code>连续依赖于定解条件</code>三个条件的问题,我们称之为 Well-posed problem ,反之,只要有一个条件不满足,则称之为不适定问题（ill-posed problems）</p>
+<p>在图像识别领域且不仅在此领域,inverse problem 通常是 ill-posed problem.</p>
+<p>到这里,什么是线性反问题 (linear inverse problem) 就很好理解了,就是从一些带噪声的观测中试图还原出真实信息的行为,且这个问题是一个线性问题.</p>
+<h3 id="什么是-sparse-MRI-稀疏磁共振成像-？"><a href="#什么是-sparse-MRI-稀疏磁共振成像-？" class="headerlink" title="什么是 sparse MRI (稀疏磁共振成像)？"></a>什么是 sparse MRI (稀疏磁共振成像)？</h3><p>MRI (Magnetic Resonance Imaging) 磁共振成像是一种医学成像技术，它利用磁共振现象对人体进行成像，是一种无创的检查方法。MRI 通过对人体进行扫描，利用计算机对扫描结果进行处理，得到人体的图像。MRI 检查不仅可以对人体进行断层成像，还可以对人体进行三维成像，从而可以对人体进行全方位的观察。</p>
+<h3 id="2-5D"><a href="#2-5D" class="headerlink" title="2.5D"></a>2.5D</h3><p>2.5D 通常指的是 2.5 维，即 2D + 1D，比如 2D 图像 + 1D 深度图<br>第六页写道  “Note that (x, y, z) denotes 3D tomography and we use (x, y)+z<br>to represent a 2D image plus a depth map, which is also called 2.5D in certain articles in the literature.”<br>(x,y)+z 当然是 2.5D</p>
+<h2 id="SCI-的数学模型"><a href="#SCI-的数学模型" class="headerlink" title="SCI 的数学模型"></a>SCI 的数学模型</h2><p>前文中, 作者举了 video SCI &amp; spectral SCI 两个例子来介绍 SCI 的设计. 而在本节中, 作者为他们构建了一个统一的数学模型, 这个模型也方便嵌套在别的 3D SCI 中.<br>在模型中, 作者使用了 mask matrix, 我们需要再复习一下 mask 的概念.</p>
+<h3 id="什么是-mask-掩膜"><a href="#什么是-mask-掩膜" class="headerlink" title="什么是 mask (掩膜)?"></a>什么是 mask (掩膜)?</h3><p>mask（掩码、掩膜）是深度学习中的常见操作。简单而言，其相当于在原始张量上盖上一层掩膜，从而屏蔽或选择一些特定元素, 其中掩膜的元素值为 0 或 1，0 表示屏蔽，1 表示选择。  </p>
+<p>按照上述定义，非线性激活函数Relu（根据输出的正负区间进行简单粗暴的二分）、dropout机制（根据概率进行二分）都可以理解为泛化的mask操作。</p>
+<p>正如其名 mask 在宏观上的表现就是<code>遮罩</code></p>
+<p><img src="mask.png" alt="使用mask提取ROI区域"></p>
+<h3 id="什么是-CASSI-Coded-Aperture-Snapshot-Spectral-Imaging-『编码孔径快照光谱成像』"><a href="#什么是-CASSI-Coded-Aperture-Snapshot-Spectral-Imaging-『编码孔径快照光谱成像』" class="headerlink" title="什么是 CASSI (Coded Aperture Snapshot Spectral Imaging) 『编码孔径快照光谱成像』"></a>什么是 CASSI (Coded Aperture Snapshot Spectral Imaging) 『编码孔径快照光谱成像』</h3><p>CASSI (coded aperture snapshot spectral imaging)是一种具有代表性的高光谱图像捕获SCI系统。</p>
+<h3 id="Main-Difference-between-SCI-and-Single-Pixel-Imaging"><a href="#Main-Difference-between-SCI-and-Single-Pixel-Imaging" class="headerlink" title="Main Difference between SCI and Single-Pixel Imaging"></a>Main Difference between SCI and Single-Pixel Imaging</h3><p>二者主要的区别存在于 forward model 上.  </p>
+<p>单像素相机的 sensing matrix (Φ) 是 dense matrix, 而 SCI 的 sensing matrix 是 sparse matrix.</p>
+<p>单像素相机中,感知矩阵Φ的每一行对应于在场景（一个2D静态图像）x 上施加的调制器的一个模式。这些模式可以被视为对场景的编码方式，类似于将图像分成不同的部分或区域，并对每个部分应用不同的测量方式。</p>
+<p>而单像素探测器会捕获这些模式下的测量结果，每个测量对应于感知矩阵Φ的一行。换句话说，通过应用感知矩阵的每个模式，探测器会测量场景中的某种特性或信息，然后这些测量结果会被组合成一个向量，通常表示为向量y。这个向量y可以被用来进行图像重建，从而还原出原始的2D静态图像x。</p>
+<p>在SCI的感知矩阵Φ中，它被构建为Nt个对角矩阵的串联。每个对角矩阵对应于一个时间帧（frame），所以Nt代表了时间帧的数量。对角矩阵的概念是，在主对角线上有非零元素，其他位置都是零。每个对角矩阵中的非零元素用来表示该帧中特定位置的测量权重。</p>
+<p>测量的每个元素是通过对应位置 x(a<br>3D or HD cube) 上不同<code>时间帧</code> Nt 中的元素进行加权求和得到的。这个过程涉及到应用mask (掩膜)对不同时间帧的信息进行调制，然后加权求和得到最终的测量结果。这些测量结果最终表示为向量y。</p>
+<p>再者, 单像素相机中的密集矩阵较大, 存储起来消耗的资源也更多(如果是随机的, 我们肯定要去保存他) 当然,我们可以用 structural matrix 的方法来优化, 比如 DCT 或者 Hadamard matrix, 也可以使用一些经过排序或者特定设计的矩阵.</p>
+<p>相比之下，在快照压缩成像中，虽然感知矩阵Φ要比单像素成像中的感知矩阵大，但我们不需要存储整个$Φ$矩阵，只需要存储 mask (Φ 中的 $N^t$ 个对角元素)。由于$Φ$的特殊结构，观察到$ΦΦ^T$是一个对角矩阵。这个性质在文献中被用来加速快照压缩成像的重建算法。这种对角性质可以利用，使得重建算法更高效。</p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ol>
+<li><p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/400191167">“3Dfy” A General 2D Detector: 纯视觉 3D 检测再思考</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/forlogen/article/details/88634117">数据立方体（Data Cube）</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://www.zhihu.com/question/28552876">如何理解压缩感知(compressive sensing)？</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://www.rebellionresearch.com/what-is-sensing-matrix">What is sensing matrix?</a></p>
+</li>
+</ol>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>蛐蛐
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://rdququ.top/posts/bcef6785/" title="初读Snapshot Compressive Imaging: Principle, Implementation, Theory, Algorithms and Applications">http://rdququ.top/posts/bcef6785/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+        
+
+  <div class="followme">
+    <p>欢迎关注我的其它发布渠道</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/atom.xml">
+            <span class="icon">
+              <i class="fa fa-rss"></i>
+            </span>
+
+            <span class="label">RSS</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/posts/5e1ac7cf/" rel="prev" title="Unity集换式卡牌游戏_Dictionry序列化成json">
+      <i class="fa fa-chevron-left"></i> Unity集换式卡牌游戏_Dictionry序列化成json
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/posts/eb414ab7/" rel="next" title="XML介绍和增删改查">
+      XML介绍和增删改查 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-Snapshot-Compressive-Imaging-%E5%BF%AB%E7%85%A7%E5%8E%8B%E7%BC%A9%E6%88%90%E5%83%8F-%EF%BC%9F"><span class="nav-number">1.</span> <span class="nav-text">什么是 Snapshot Compressive Imaging (快照压缩成像)？</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8C%E7%BB%B4%E6%A3%80%E6%B5%8B%E5%92%8C%E9%AB%98%E7%BB%B4-%E4%BB%A53D%E4%B8%BA%E4%BE%8B-%E6%A3%80%E6%B5%8B%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="nav-number">1.1.</span> <span class="nav-text">二维检测和高维(以3D为例)检测是什么？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A9%B1%E5%8A%A8%E4%BB%BB%E5%8A%A1"><span class="nav-number">1.2.</span> <span class="nav-text">驱动任务</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-Data-Cube-%E6%95%B0%E6%8D%AE%E7%AB%8B%E6%96%B9%E4%BD%93-%EF%BC%9F"><span class="nav-number">1.3.</span> <span class="nav-text">什么是 Data-Cube (数据立方体)？</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E5%A4%9A%E7%BB%B4%E6%95%B0%E6%8D%AE%E6%A8%A1%E5%9E%8B%EF%BC%9F"><span class="nav-number">1.3.1.</span> <span class="nav-text">什么是多维数据模型？</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-CS-Compressive-Sensing-%E3%80%8E%E5%8E%8B%E7%BC%A9%E6%84%9F%E7%9F%A5%E3%80%8F"><span class="nav-number">1.4.</span> <span class="nav-text">什么是 CS (Compressive Sensing) 『压缩感知』?</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E7%BA%BF%E6%80%A7%E5%8F%8D%E9%97%AE%E9%A2%98-linear-inverse-problem-%EF%BC%9F"><span class="nav-number">1.4.1.</span> <span class="nav-text">什么是线性反问题 (linear inverse problem)？</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-sparse-MRI-%E7%A8%80%E7%96%8F%E7%A3%81%E5%85%B1%E6%8C%AF%E6%88%90%E5%83%8F-%EF%BC%9F"><span class="nav-number">1.5.</span> <span class="nav-text">什么是 sparse MRI (稀疏磁共振成像)？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-5D"><span class="nav-number">1.6.</span> <span class="nav-text">2.5D</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SCI-%E7%9A%84%E6%95%B0%E5%AD%A6%E6%A8%A1%E5%9E%8B"><span class="nav-number">2.</span> <span class="nav-text">SCI 的数学模型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-mask-%E6%8E%A9%E8%86%9C"><span class="nav-number">2.1.</span> <span class="nav-text">什么是 mask (掩膜)?</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-CASSI-Coded-Aperture-Snapshot-Spectral-Imaging-%E3%80%8E%E7%BC%96%E7%A0%81%E5%AD%94%E5%BE%84%E5%BF%AB%E7%85%A7%E5%85%89%E8%B0%B1%E6%88%90%E5%83%8F%E3%80%8F"><span class="nav-number">2.2.</span> <span class="nav-text">什么是 CASSI (Coded Aperture Snapshot Spectral Imaging) 『编码孔径快照光谱成像』</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Main-Difference-between-SCI-and-Single-Pixel-Imaging"><span class="nav-number">2.3.</span> <span class="nav-text">Main Difference between SCI and Single-Pixel Imaging</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">3.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="蛐蛐"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">蛐蛐</p>
+  <div class="site-description" itemprop="description">正在学习unity中</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">17</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">28</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2023-08 – 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">蛐蛐</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">39k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">36 分钟</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共14.3k字</span>
+</div>
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+    <span id="busuanzi_container_site_pv">总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+    <span class="post-meta-divider">|</span>
+    <span id="busuanzi_container_site_uv">总访客数<span id="busuanzi_value_site_uv"></span>人</span>
+    <span class="post-meta-divider">|</span>
+<!-- 不蒜子计数初始值纠正 -->
+<script>
+$(document).ready(function() {
+
+    var int = setInterval(fixCount, 50);  // 50ms周期检测函数
+    var countOffset = 20000;  // 初始化首次数据
+
+    function fixCount() {            
+       if (document.getElementById("busuanzi_container_site_pv").style.display != "none")
+        {
+            $("#busuanzi_value_site_pv").html(parseInt($("#busuanzi_value_site_pv").html()) + countOffset); 
+            clearInterval(int);
+        }                  
+        if ($("#busuanzi_container_site_pv").css("display") != "none")
+        {
+            $("#busuanzi_value_site_uv").html(parseInt($("#busuanzi_value_site_uv").html()) + countOffset); // 加上初始数据 
+            clearInterval(int); // 停止检测
+        }  
+    }
+       	
+});
+</script> 
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '2b72d9fa7fcc851ff3a5',
+      clientSecret: '62e1dcf26b05a0e5bbb7318a5be41964412c7bc7',
+      repo        : 'BlogComments',
+      owner       : 'dlqw',
+      admin       : ['dlqw'],
+      id          : '6611c536e90dcc7e8c8be910c92e8c7a',
+        language: 'zh-CN',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+</body>
+</html>

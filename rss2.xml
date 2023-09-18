@@ -9,13 +9,13 @@
     <atom:link href="http://rdququ.top/rss2.xml" rel="self" type="application/rss+xml"/>
     
     <description>正在学习unity中</description>
-    <pubDate>Sun, 17 Sep 2023 16:37:39 GMT</pubDate>
+    <pubDate>Mon, 18 Sep 2023 13:45:33 GMT</pubDate>
     <generator>http://hexo.io/</generator>
     
     <item>
       <title>简单的无限地图实现</title>
-      <link>http://rdququ.top/2023/09/17/%E7%AE%80%E5%8D%95%E7%9A%84%E6%97%A0%E9%99%90%E5%9C%B0%E5%9B%BE%E5%AE%9E%E7%8E%B0/</link>
-      <guid>http://rdququ.top/2023/09/17/%E7%AE%80%E5%8D%95%E7%9A%84%E6%97%A0%E9%99%90%E5%9C%B0%E5%9B%BE%E5%AE%9E%E7%8E%B0/</guid>
+      <link>http://rdququ.top/posts/c8583f8a/</link>
+      <guid>http://rdququ.top/posts/c8583f8a/</guid>
       <pubDate>Sun, 17 Sep 2023 15:46:44 GMT</pubDate>
       
       <description>&lt;p&gt;突然想写一个类吸血鬼幸存者的 &lt;code&gt;demo&lt;/code&gt;, 想了一下无限地图挺重要的,于是就设计了一个简单的无限地图实现,感觉性能一般般,过两天找一下类似的代码比对一下性能,这个功能实现还是很简单的,今天记录一下.&lt;/p&gt;</description>
@@ -33,14 +33,14 @@
       <category domain="http://rdququ.top/tags/Unity-C-%E6%97%A0%E9%99%90%E5%9C%B0%E5%9B%BE/">Unity,C#,无限地图</category>
       
       
-      <comments>http://rdququ.top/2023/09/17/%E7%AE%80%E5%8D%95%E7%9A%84%E6%97%A0%E9%99%90%E5%9C%B0%E5%9B%BE%E5%AE%9E%E7%8E%B0/#disqus_thread</comments>
+      <comments>http://rdququ.top/posts/c8583f8a/#disqus_thread</comments>
       
     </item>
     
     <item>
       <title>简单的事件中心</title>
-      <link>http://rdququ.top/2023/09/16/%E7%AE%80%E5%8D%95%E7%9A%84%E4%BA%8B%E4%BB%B6%E4%B8%AD%E5%BF%83/</link>
-      <guid>http://rdququ.top/2023/09/16/%E7%AE%80%E5%8D%95%E7%9A%84%E4%BA%8B%E4%BB%B6%E4%B8%AD%E5%BF%83/</guid>
+      <link>http://rdququ.top/posts/63fcc5fa/</link>
+      <guid>http://rdququ.top/posts/63fcc5fa/</guid>
       <pubDate>Sat, 16 Sep 2023 12:44:41 GMT</pubDate>
       
       <description>&lt;p&gt;下面给出一个简单的事件中心的实现&lt;/p&gt;</description>
@@ -58,14 +58,14 @@
       <category domain="http://rdququ.top/tags/%E4%BA%8B%E4%BB%B6-Unity-C/">事件,Unity,C#</category>
       
       
-      <comments>http://rdququ.top/2023/09/16/%E7%AE%80%E5%8D%95%E7%9A%84%E4%BA%8B%E4%BB%B6%E4%B8%AD%E5%BF%83/#disqus_thread</comments>
+      <comments>http://rdququ.top/posts/63fcc5fa/#disqus_thread</comments>
       
     </item>
     
     <item>
       <title>Unity中空判断与Destroy实现</title>
-      <link>http://rdququ.top/2023/09/16/Unity%E4%B8%AD%E7%A9%BA%E5%88%A4%E6%96%AD%E7%9A%84%E7%BB%86%E4%BC%98%E5%8C%96%E6%96%B9%E6%B3%95/</link>
-      <guid>http://rdququ.top/2023/09/16/Unity%E4%B8%AD%E7%A9%BA%E5%88%A4%E6%96%AD%E7%9A%84%E7%BB%86%E4%BC%98%E5%8C%96%E6%96%B9%E6%B3%95/</guid>
+      <link>http://rdququ.top/posts/da6ffe54/</link>
+      <guid>http://rdququ.top/posts/da6ffe54/</guid>
       <pubDate>Sat, 16 Sep 2023 04:59:37 GMT</pubDate>
       
       <description>&lt;p&gt;以往我在做空判断的时候，都是这样写的：&lt;/p&gt;
@@ -89,14 +89,14 @@
       <category domain="http://rdququ.top/tags/GC-Unity-%E5%86%85%E5%AD%98-C-%E7%A9%BA%E5%BC%95%E7%94%A8%E5%88%A4%E6%96%AD-Destroy/">GC,Unity,内存,C#,空引用判断,Destroy</category>
       
       
-      <comments>http://rdququ.top/2023/09/16/Unity%E4%B8%AD%E7%A9%BA%E5%88%A4%E6%96%AD%E7%9A%84%E7%BB%86%E4%BC%98%E5%8C%96%E6%96%B9%E6%B3%95/#disqus_thread</comments>
+      <comments>http://rdququ.top/posts/da6ffe54/#disqus_thread</comments>
       
     </item>
     
     <item>
       <title>Unity文件读写方法之StreamingAssets</title>
-      <link>http://rdququ.top/2023/08/26/Unity%E6%96%87%E4%BB%B6%E8%AF%BB%E5%86%99%E6%96%B9%E6%B3%95%E4%B9%8BStreamingAssets/</link>
-      <guid>http://rdququ.top/2023/08/26/Unity%E6%96%87%E4%BB%B6%E8%AF%BB%E5%86%99%E6%96%B9%E6%B3%95%E4%B9%8BStreamingAssets/</guid>
+      <link>http://rdququ.top/posts/fc36bd86/</link>
+      <guid>http://rdququ.top/posts/fc36bd86/</guid>
       <pubDate>Sat, 26 Aug 2023 07:27:35 GMT</pubDate>
       
         
@@ -111,14 +111,14 @@
       
       
       
-      <comments>http://rdququ.top/2023/08/26/Unity%E6%96%87%E4%BB%B6%E8%AF%BB%E5%86%99%E6%96%B9%E6%B3%95%E4%B9%8BStreamingAssets/#disqus_thread</comments>
+      <comments>http://rdququ.top/posts/fc36bd86/#disqus_thread</comments>
       
     </item>
     
     <item>
       <title>XML介绍和增删改查</title>
-      <link>http://rdququ.top/2023/08/26/XML%E4%BB%8B%E7%BB%8D%E5%92%8C%E5%A2%9E%E5%88%A0%E6%94%B9%E6%9F%A5/</link>
-      <guid>http://rdququ.top/2023/08/26/XML%E4%BB%8B%E7%BB%8D%E5%92%8C%E5%A2%9E%E5%88%A0%E6%94%B9%E6%9F%A5/</guid>
+      <link>http://rdququ.top/posts/eb414ab7/</link>
+      <guid>http://rdququ.top/posts/eb414ab7/</guid>
       <pubDate>Sat, 26 Aug 2023 04:42:30 GMT</pubDate>
       
       <description>&lt;h2 id=&quot;什么是-XML&quot;&gt;&lt;a href=&quot;#什么是-XML&quot; class=&quot;headerlink&quot; title=&quot;什么是 XML&quot;&gt;&lt;/a&gt;什么是 XML&lt;/h2&gt;&lt;p&gt;XML 指可扩展标记语言（eXtensible Markup Language）。&lt;/p&gt;
@@ -146,14 +146,14 @@
       <category domain="http://rdququ.top/tags/%E6%95%99%E7%A8%8B%EF%BC%8CXML/">教程，XML</category>
       
       
-      <comments>http://rdququ.top/2023/08/26/XML%E4%BB%8B%E7%BB%8D%E5%92%8C%E5%A2%9E%E5%88%A0%E6%94%B9%E6%9F%A5/#disqus_thread</comments>
+      <comments>http://rdququ.top/posts/eb414ab7/#disqus_thread</comments>
       
     </item>
     
     <item>
       <title>初读Snapshot Compressive Imaging: Principle, Implementation, Theory, Algorithms and Applications</title>
-      <link>http://rdququ.top/2023/08/22/%E5%88%9D%E8%AF%BBSnapshot-Compressive-Imaging-Principle-Implementation-Theory-Algorithms-and-Applications/</link>
-      <guid>http://rdququ.top/2023/08/22/%E5%88%9D%E8%AF%BBSnapshot-Compressive-Imaging-Principle-Implementation-Theory-Algorithms-and-Applications/</guid>
+      <link>http://rdququ.top/posts/bcef6785/</link>
+      <guid>http://rdququ.top/posts/bcef6785/</guid>
       <pubDate>Tue, 22 Aug 2023 13:26:12 GMT</pubDate>
       
       <description>&lt;p&gt;快照压缩成像：原理、实现、理论、算法和应用&lt;/p&gt;
@@ -168,14 +168,14 @@
       
       
       
-      <comments>http://rdququ.top/2023/08/22/%E5%88%9D%E8%AF%BBSnapshot-Compressive-Imaging-Principle-Implementation-Theory-Algorithms-and-Applications/#disqus_thread</comments>
+      <comments>http://rdququ.top/posts/bcef6785/#disqus_thread</comments>
       
     </item>
     
     <item>
       <title>Unity集换式卡牌游戏_Dictionry序列化成json</title>
-      <link>http://rdququ.top/2023/08/21/Dictionry%E5%BA%8F%E5%88%97%E5%8C%96%E6%88%90json/</link>
-      <guid>http://rdququ.top/2023/08/21/Dictionry%E5%BA%8F%E5%88%97%E5%8C%96%E6%88%90json/</guid>
+      <link>http://rdququ.top/posts/5e1ac7cf/</link>
+      <guid>http://rdququ.top/posts/5e1ac7cf/</guid>
       <pubDate>Mon, 21 Aug 2023 06:57:15 GMT</pubDate>
       
       <description>&lt;p&gt;在开始讲解这一章节前，我们需要了解，什么是 Json.&lt;/p&gt;
@@ -206,14 +206,14 @@
       <category domain="http://rdququ.top/tags/%E5%BA%8F%E5%88%97%E5%8C%96/">序列化</category>
       
       
-      <comments>http://rdququ.top/2023/08/21/Dictionry%E5%BA%8F%E5%88%97%E5%8C%96%E6%88%90json/#disqus_thread</comments>
+      <comments>http://rdququ.top/posts/5e1ac7cf/#disqus_thread</comments>
       
     </item>
     
     <item>
       <title>Unity集换式卡牌游戏_第4期_配表与读取你的卡牌</title>
-      <link>http://rdququ.top/2023/08/15/%E7%AC%AC4%E6%9C%9F-%E9%85%8D%E8%A1%A8%E4%B8%8E%E8%AF%BB%E5%8F%96%E4%BD%A0%E7%9A%84%E5%8D%A1%E7%89%8C/</link>
-      <guid>http://rdququ.top/2023/08/15/%E7%AC%AC4%E6%9C%9F-%E9%85%8D%E8%A1%A8%E4%B8%8E%E8%AF%BB%E5%8F%96%E4%BD%A0%E7%9A%84%E5%8D%A1%E7%89%8C/</guid>
+      <link>http://rdququ.top/posts/bf64112e/</link>
+      <guid>http://rdququ.top/posts/bf64112e/</guid>
       <pubDate>Tue, 15 Aug 2023 13:03:15 GMT</pubDate>
       
       <description>&lt;p&gt;在上一期中，我们制作了自己的第一张卡牌，并且通过&lt;code&gt;CardDisplay&lt;/code&gt;类中的&lt;code&gt;DisplayCard()&lt;/code&gt;方法展示了我们卡牌的属性。当时为了方便展示，我们直接在&lt;code&gt;CardDisplay&lt;/code&gt;中的&lt;code&gt;Start()&lt;/code&gt;里 new 了一张火球术出来&lt;br&gt;</description>
@@ -239,14 +239,14 @@
       <category domain="http://rdququ.top/tags/%E6%95%99%E7%A8%8B/">教程</category>
       
       
-      <comments>http://rdququ.top/2023/08/15/%E7%AC%AC4%E6%9C%9F-%E9%85%8D%E8%A1%A8%E4%B8%8E%E8%AF%BB%E5%8F%96%E4%BD%A0%E7%9A%84%E5%8D%A1%E7%89%8C/#disqus_thread</comments>
+      <comments>http://rdququ.top/posts/bf64112e/#disqus_thread</comments>
       
     </item>
     
     <item>
       <title>Unity集换式卡牌游戏_制作第一张卡牌</title>
-      <link>http://rdququ.top/2023/08/12/Unity%E9%9B%86%E6%8D%A2%E5%BC%8F%E5%8D%A1%E7%89%8C%E6%B8%B8%E6%88%8F-%E5%88%B6%E4%BD%9C%E7%AC%AC%E4%B8%80%E5%BC%A0%E5%8D%A1%E7%89%8C/</link>
-      <guid>http://rdququ.top/2023/08/12/Unity%E9%9B%86%E6%8D%A2%E5%BC%8F%E5%8D%A1%E7%89%8C%E6%B8%B8%E6%88%8F-%E5%88%B6%E4%BD%9C%E7%AC%AC%E4%B8%80%E5%BC%A0%E5%8D%A1%E7%89%8C/</guid>
+      <link>http://rdququ.top/posts/5c5e7aaf/</link>
+      <guid>http://rdququ.top/posts/5c5e7aaf/</guid>
       <pubDate>Sat, 12 Aug 2023 14:53:45 GMT</pubDate>
       
       <description>&lt;h2 id=&quot;前期准备&quot;&gt;&lt;a href=&quot;#前期准备&quot; class=&quot;headerlink&quot; title=&quot;前期准备&quot;&gt;&lt;/a&gt;前期准备&lt;/h2&gt;&lt;p&gt;我们制作卡牌游戏之前，先得拿到一套可用的素材，这里我们使用的是&lt;a href=&quot;https://assetstore.unity.com/packages/2d/gui/2d-modular-cards-kit-demo-227623&quot;&gt;卡牌游戏素材&lt;/a&gt;。&lt;br&gt;在上方状态栏中，窗口下的资源商店中搜索&lt;code&gt;2D Modular Cards Kit Demo&lt;/code&gt;，点击下载即可。下载完成后，仍然是在窗口下的包管理器中，选择我的资产，下载后导入即可。&lt;br&gt;</description>
@@ -272,14 +272,14 @@
       <category domain="http://rdququ.top/tags/%E6%95%99%E7%A8%8B/">教程</category>
       
       
-      <comments>http://rdququ.top/2023/08/12/Unity%E9%9B%86%E6%8D%A2%E5%BC%8F%E5%8D%A1%E7%89%8C%E6%B8%B8%E6%88%8F-%E5%88%B6%E4%BD%9C%E7%AC%AC%E4%B8%80%E5%BC%A0%E5%8D%A1%E7%89%8C/#disqus_thread</comments>
+      <comments>http://rdququ.top/posts/5c5e7aaf/#disqus_thread</comments>
       
     </item>
     
     <item>
       <title>JasonChatroom学习笔记</title>
-      <link>http://rdququ.top/2023/08/11/JasonChatroom%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</link>
-      <guid>http://rdququ.top/2023/08/11/JasonChatroom%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</guid>
+      <link>http://rdququ.top/posts/a4fbf16a/</link>
+      <guid>http://rdququ.top/posts/a4fbf16a/</guid>
       <pubDate>Fri, 11 Aug 2023 15:06:05 GMT</pubDate>
       
       <description>&lt;p&gt;今天跟着博主 科技7C100 做一个简单的 chatroom.&lt;br&gt;在 Unity 前端页面，设置了 Scroll View 来显示聊天内容，一个 InputField 来输入信息，还有两个按钮用于链接和发送。&lt;br&gt;在设计脚本之前，我们需要了解网络编程的基础知识&lt;br&gt;</description>
@@ -307,7 +307,7 @@
       <category domain="http://rdququ.top/tags/%E8%81%8A%E5%A4%A9%E5%AE%A4/">聊天室</category>
       
       
-      <comments>http://rdququ.top/2023/08/11/JasonChatroom%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/#disqus_thread</comments>
+      <comments>http://rdququ.top/posts/a4fbf16a/#disqus_thread</comments>
       
     </item>
     
