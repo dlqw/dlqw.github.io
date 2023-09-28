@@ -1,6 +1,7 @@
+<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests" />
 // live2d_path 参数建议使用绝对路径
 // const live2d_path = "https://fastly.jsdelivr.net/gh/stevenjoezhang/live2d-widget@latest/";
-const live2d_path = "https://rdququ.top/live2d/";
+const live2d_path = "/live2d/";
 
 // 封装异步加载资源的方法
 function loadExternalResource(url, type) {
