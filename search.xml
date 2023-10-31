@@ -4,6 +4,31 @@
   
     
     <entry>
+      <title>GamePlayProgrammingExpriences_系列课_第一讲_游戏循环，时间和对象</title>
+      <link href="/posts/6d5dfc5f/"/>
+      <url>/posts/6d5dfc5f/</url>
+      
+        <content type="html"><![CDATA[<span id="more"></span>。今天我们要开的这节课，我把它取名叫做 GamePlay Programming Expriences. 今天是第一节. 这是校科协游戏组的大课, 在这套课上, 我不打算专注讲 Unity, UE 或者 CoCos 等游戏引擎的使用, 也不打算精细的教学 C# 或者 C++ 的具体语法, 为什么呢? 原因就在上一句, 游戏引擎太多, 我们授课没有办法面面俱到, 程序语言已经有各个组负责了, 他们会对语法进行详细的教学. 在这套课上, 我想和大家成系统的聊聊游戏编程的算法和游戏设计的心得, 正如其名, 这套课是为了 GamePlay 程序员准备的, 我们不会花很大篇幅描述物理模拟, 图形渲染, 而是作为将他作为 GamePlay 程序员(或许还有技术策划,真是新颖的方向)的入门基础课, 游戏运行的基本逻辑, 良好的输入交互, 游戏功能的实现算法(AI...A*啦,FSM啦,感知,群居..),游戏数学, 2D和3D渲染基础, 物理模拟计算, 摄像机控制, UI设计, 脚本语言(Lua, javaScript...),最后还会聊点网络编程.看起来饼画得很大,乐, 看起来有点多, 我们计划讲两个学期,这是作为游戏组的大课, 我们在课上会尽量使用 Lua 风格的伪代码, 或许还会夹杂了C# 和 Java, 当然考虑到学校课程的设计, 同时也会给出一份 C/C++ 的代码以供参考. 本课程如果遇到示例, 将会使用 Unity 游戏引擎展示,若有不便之处,还请见谅.在每节课结束之后,我们会布置一些小题目作为课后的作业,当然这是选做的.届时我会在QQ群里面发布作业,大家感兴趣去做一下就好. 在布置一周后我会在B站上公布解析视频.如果大家对 Unity 和 C# 特别感兴趣, 或者觉得我大课上讲的太简单,可以来找我听小课,小课基本上会提前一天在群里通知时间和地点,大家可以关注华夜工作室和校科协游戏组群. 我还有一个小课授课前瞻群,群里会投票决定下节小课讲什么, 程序设计能力很强的同学可以向我提交作品入群.当然,大课和小课都会把录播放出来,所以上面的要求也都不是强制的.好,我们开始今天的课程吧## 游戏循环 loop游戏循环是游戏的核心控制流程，它是游戏的主线程，它负责游戏的运行，它是游戏的心脏。在这个循环里，程序不断地去处理玩家的输入，更新游戏世界，然后生成输出（生成到屏幕上的我们会叫作渲染，游戏手柄等的震动也算是生成输出）。这是非常经典而传统的游戏循环，你可以在任何游戏中见到他。想想看你再玩马里奥的时候，当你当你按下方向键，马里奥就会向你想要的方向移动，当你踩到龟壳上面的时候，龟壳会飞出去，或许你的手柄也会震动一下。每次迭代游戏循环称为一帧，大部分游戏的帧率在 30-60 帧之间，也就是说，游戏循环每秒会执行 30-60 次。<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">while game is running:</span><br><span class="line">    process inputs</span><br><span class="line">    update game world</span><br><span class="line">    generate outputs</span><br><span class="line">loop</span><br></pre></td></tr></table></figure><p>当然，循环的每一步都没有他们本身看上去的那么简单，每一步都有许多细节不容忽视。</p><h3 id="process-inputs"><a href="#process-inputs" class="headerlink" title="process inputs"></a>process inputs</h3><p>就像 process inputs，他意味着在循环的开始，你需要检查各种各样的设备的输入，键鼠，手柄，麦克风甚至还有触摸屏，陀螺仪，摄像机，GPS。有些是由你游戏中某些功能或者特色决定的，而另一些则来自玩家方便或者高品质游玩的需求。</p><p>他们的输入的类型也是多样的。如果你接触过 Unity 的 InputSystem, 那么或许你会更好的理解这一点。我们键盘的WASD，又或者手柄的遥感，他们都是Vector2的输入，而键盘，手柄，鼠标乃至触摸屏的点击，都是 Trigger 或者 Boolean 类型的， 这取决与他们是 Down, Up, Click 又或者是长按，双击。再打个比方，陀螺仪的输入可能是 Vector3的。输入系统的设备和输入的类型都是纷繁多样的，任何外部的输入都要在这一阶段被转换成计算机可以理解的数据结构。</p><h3 id="update-game-world"><a href="#update-game-world" class="headerlink" title="update game world"></a>update game world</h3><p>结束玩家的输入后，就来到或许是大家最关心的一部分了，更新游戏世界。是的，谁不想通过代码构筑一个属于自己的美妙世界呢，或许每个程序员写下第一行 Hello World 的时候，都会自豪于即将成为一个小小代码世界的上帝。然而，一个游戏世界的构筑显然不会像 Hello World 那么简单， 他需要构筑世界的<code>实例</code>和<code>法则</code>，这听来有点像炼金术师又或者魔法师，当然，也许游戏程序员在某种程度上就是在没有魔力的世界里施法的人。好了让我们回到构筑世界的具体方法上来，我们通常把构筑世界的实例称为<code>Game Object</code>, 他们是构成游戏世界的最基本的物质元素和法则的载体。这个我们后半节课会详细讲解。而<code>法则</code>也不难理解，那是世界运转的基本原理，或许他的本质是计算，而在宏观上的体现可以是物理模拟，游戏玩法，甚至是游戏的时间与空间。想象一下吧，在一款玩家可以肆意控制重力的世界，那里的法则就是<code>重力会不定期改变</code>，又或者是<code>雨世间</code>中精彩的生态系统，<code>Minecraft</code>里的方块世界和史蒂夫能锤爆钻石的手，游戏的<code>法则</code>是塑造你的游戏世界的基准线，而你将用代码去实现他。</p><p>上面讲了很多，但是简单概括一下就是一句</p><blockquote><p>更新所有已激活且需要更新的对象</p></blockquote><p>其中，<code>更新</code>就是<code>法则</code>, <code>对象</code>就是<code>实例</code></p><h3 id="generate-outputs"><a href="#generate-outputs" class="headerlink" title="generate outputs"></a>generate outputs</h3><p>在很多情境中，生成输出是最耗费计算量的一步。想想看最常见的输出是什么？…<br>2D和3D的渲染，最简单的3D渲染在计算三角形顶点和颜色的时候计算量都是一个天文数字。（这里讲的比较模糊，这节课有空就细讲，没空就下一节课讲）。当然，输出也不知图形渲染，音视频，手柄的力回馈，甚至是网络数据的发送，都是输出的一部分。</p><p>讲了这么多，或许我可以给出一个小游戏（Flappy Bird）的例子，让大家更好的理解游戏循环。请看伪代码</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">while Bird is alive:</span><br><span class="line">    // process inputs</span><br><span class="line">    InputDeviceData j = grap raw data from input device</span><br><span class="line"></span><br><span class="line">    // update game world</span><br><span class="line">    update bird.position based on j</span><br><span class="line">    foreach pipe in pipes</span><br><span class="line">        if pipe is out of screen</span><br><span class="line">            move pipe to the right out of screen</span><br><span class="line">        else</span><br><span class="line">            if bird collides with pipe</span><br><span class="line">                kill bird</span><br><span class="line">            else</span><br><span class="line">                update pipe.position</span><br><span class="line">            end</span><br><span class="line">        end</span><br><span class="line">    loop</span><br><span class="line"></span><br><span class="line">    ...</span><br><span class="line"></span><br><span class="line">    // generate outputs</span><br><span class="line">    draw graphics</span><br><span class="line">    play aduio</span><br><span class="line">loop</span><br></pre></td></tr></table></figure><h3 id="多线程下的游戏循环"><a href="#多线程下的游戏循环" class="headerlink" title="多线程下的游戏循环"></a>多线程下的游戏循环</h3>]]></content>
+      
+      
+      <categories>
+          
+          <category> GamePlay Programming Expriences </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> GamePlay Programming Expriences </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>数据结构与算法_前缀、中缀、后缀表达式</title>
       <link href="/posts/29455a3d/"/>
       <url>/posts/29455a3d/</url>
