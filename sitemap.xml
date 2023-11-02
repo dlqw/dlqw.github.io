@@ -2,7 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>https://rdququ.top/posts/6d5dfc5f/</loc>
+    <loc>https://rdququ.top/links/index.html</loc>
     
     <lastmod>2023-11-02</lastmod>
     
@@ -13,7 +13,16 @@
   <url>
     <loc>https://rdququ.top/posts/0/</loc>
     
-    <lastmod>2023-10-31</lastmod>
+    <lastmod>2023-11-02</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://rdququ.top/posts/6d5dfc5f/</loc>
+    
+    <lastmod>2023-11-02</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -50,15 +59,6 @@
     <loc>https://rdququ.top/posts/cb3ccb51/</loc>
     
     <lastmod>2023-09-27</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://rdququ.top/links/index.html</loc>
-    
-    <lastmod>2023-09-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
