@@ -29,7 +29,7 @@
 <meta property="og:description" content="课前的话">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-10-30T13:49:03.000Z">
-<meta property="article:modified_time" content="2023-11-02T12:40:31.431Z">
+<meta property="article:modified_time" content="2023-11-02T15:10:19.291Z">
 <meta property="article:author" content="蛐蛐">
 <meta property="article:tag" content="GamePlay Programming Exprience">
 <meta name="twitter:card" content="summary">
@@ -245,7 +245,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-11-02 20:40:31" itemprop="dateModified" datetime="2023-11-02T20:40:31+08:00">2023-11-02</time>
+                <time title="修改时间：2023-11-02 23:10:19" itemprop="dateModified" datetime="2023-11-02T23:10:19+08:00">2023-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -270,14 +270,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>8k</span>
+              <span>8.8k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>7 分钟</span>
+              <span>8 分钟</span>
             </span>
 
         </div>
@@ -380,7 +380,11 @@
 <p>当时间缩放为 1 的时候，游戏时间和真实时间是一致的，这是最常见的情况。在游戏 <code>60 Seconds</code> 中，游戏说好给你60s准备应对危机，他就的确只给了你60s，1s不多1s不少。</p>
 <p>当时间缩放为 0 的时候，游戏时间就停止了，几乎所有游戏都会设置一个暂停功能。</p>
 <p>当时间缩放大于 0 而小于 1 的时候，帅气的 <code>子弹时间</code>就出现了。除了玩家，几乎所有对象的时间都被减速了，又或者虽然玩家的时间同样被锁死了流速，但是他却凭借高超的技艺在危机前化险为夷或者大杀四方。在塞尔达传说系列游戏中，这种效果也被称为<code>林克时间</code>。</p>
-<h3 id="增量时间与固定时间"><a href="#增量时间与固定时间" class="headerlink" title="增量时间与固定时间"></a>增量时间与固定时间</h3><p>前面我们说过，游戏的帧率是指以多快的时间向玩家展示一连串帧。帧率的单位是赫兹 Hz, 即每秒的执行次数，当然也可以用每秒帧数 FPS 来表示游戏的帧率。在传统上，电影的帧率是 24FPS，而游戏的帧率则是 30FPS 或者 60FPS。</p>
+<p>时间缩放大于 1 的情况也并不罕见，不仅在回合制游戏中有加速战斗的功能，各类即时游戏也同样有出自不同角度考虑设计的加速功能。比如在 <code>Minecraft</code> 中，玩家可以通过睡觉来跳过夜晚，<code>维多利亚3</code> 中的游戏流速也有多档位的设计。</p>
+<p>最有趣的是时间缩放也可以为负数，理所当然的，这种情况通常表现为游戏世界的时间倒流。大名鼎鼎的 <code>时空幻境 （Braid）</code> 和 <code>波斯王子：时之沙</code> 在这方面的设计可谓神乎其技。</p>
+<h3 id="增量时间与固定时间"><a href="#增量时间与固定时间" class="headerlink" title="增量时间与固定时间"></a>增量时间与固定时间</h3><p>前面我们说过，游戏的帧率是指以多快的时间向玩家展示一连串帧。帧率的单位是赫兹 Hz, 即每秒的执行次数，当然也可以用每秒帧数 FPS 来表示游戏的帧率。在传统上，电影的帧率是 24FPS，而游戏的帧率则是 30FPS 或者 60FPS。这通常和电子游戏流行开来时当地硬件设备（如彩色电视等）的刷新频率息息相关。</p>
+<p>两帧之间的时间被称为 <code>帧时间 frame time</code>，当然，还要一个更加通用的的称呼 <code>增量时间 deltatime</code>, 在数学上写作 $Δt$。<br>早期的游戏不曾注意到增量时间的重要性，其经常依赖处理器的速度。毕竟我们每秒执行游戏循环的次数时固定的，即游戏的帧率。可是请大家试想，曾经在 8MHz 的 CPU 上运行的游戏迁移到由 16MHz 的 CPU 负责计算的游戏机上会发生什么事呢？</p>
+<p>没错！每秒游戏循环的次数翻了倍，从而角色和敌人的移动速度也翻了倍，大家可以想象开了二倍速的马里奥会有多抽象。这还只是帧率翻了倍，要是把该游戏迁移到频率比过去的处理器高上百倍的机器上运行呢？<br>咦？这么严重的问题当初的程序员没有意识到吗？欸，我们在课堂上想一想都能考虑到的问题，实际开发游戏的工程师们会考虑不到吗？<br>如果你们有听过我第一节的导论课，那答案应该就能脱口而出了：当初的游戏是和游戏机绑定的，一台游戏机自带多少游戏就只能玩多少游戏，所以当时开发游戏的工作人员根本不会考虑到这一点，毕竟他们开发的游戏就根本不存在换一台机器运行的可能性。<br>当然，随着后来游戏产业的发展，大家也意识到了这个问题时傻的多么可爱。B站上某UP主在使用模拟器测评上古老游戏的适合也曾经遇到过这个问题，游戏速度被加倍了好几十倍。<br>不过也不是说现在的游戏就没有这个问题了，大家打开 TapTap 搜索 <code>几何决斗</code>，看看他的评论区，就能理解时间增量的正确应用是多么重要。</p>
 <h3 id="全局时间和局部时间"><a href="#全局时间和局部时间" class="headerlink" title="全局时间和局部时间"></a>全局时间和局部时间</h3><h2 id="游戏对象"><a href="#游戏对象" class="headerlink" title="游戏对象"></a>游戏对象</h2><h3 id="游戏对象的类型"><a href="#游戏对象的类型" class="headerlink" title="游戏对象的类型"></a>游戏对象的类型</h3><h3 id="游戏对象的生命周期"><a href="#游戏对象的生命周期" class="headerlink" title="游戏对象的生命周期"></a>游戏对象的生命周期</h3><h3 id="游戏“对象”一定是面向对象吗？"><a href="#游戏“对象”一定是面向对象吗？" class="headerlink" title="游戏“对象”一定是面向对象吗？"></a>游戏“对象”一定是面向对象吗？</h3><h2 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h2><p>1.<a target="_blank" rel="noopener" href="https://developer.unity.cn/projects/5ff9c6b0edbc2a60edd4807c">Unity 2020.2 优化了 Time.deltaTime，以实现更流畅的游戏体验</a><br>2.<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/591218281">Unity多线程渲染概述</a><br>3.<a target="_blank" rel="noopener" href="https://www.cnblogs.com/SunWentao/archive/2008/10/20/1315313.html">使用CPU时间戳进行高精度计时</a><br>4.<a target="_blank" rel="noopener" href="http://taggedwiki.zubiaga.org/new_content/6fda7324cd6ec352ca95609d6ff5615a">Time Stamp Counter</a><br>5.<a target="_blank" rel="noopener" href="http://www.wangkaixuan.tech/?p=901">细说RDTSC的坑</a></p>
 
     </div>
@@ -567,16 +571,16 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">77k</span>
+    <span title="站点总字数">78k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">1:10</span>
+    <span title="站点阅读时长">1:11</span>
 </div>
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共28.2k字</span>
+  <span class="post-count">博客全站共28.9k字</span>
 </div>
 
     <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
