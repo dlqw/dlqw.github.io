@@ -2,7 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>https://rdququ.top/links/index.html</loc>
+    <loc>https://rdququ.top/posts/e5afc9d6/</loc>
     
     <lastmod>2023-11-02</lastmod>
     
@@ -11,7 +11,7 @@
   </url>
   
   <url>
-    <loc>https://rdququ.top/posts/0/</loc>
+    <loc>https://rdququ.top/links/index.html</loc>
     
     <lastmod>2023-11-02</lastmod>
     
@@ -493,6 +493,13 @@
     <priority>0.2</priority>
   </url>
   
+  <url>
+    <loc>https://rdququ.top/tags/GamePlay-Programming-Expriences-Unity-UE5/</loc>
+    <lastmod>2023-11-02</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
 
   
   <url>
@@ -679,6 +686,13 @@
   
   <url>
     <loc>https://rdququ.top/categories/GamePlay-Programming-Expriences/</loc>
+    <lastmod>2023-11-02</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://rdququ.top/categories/SAST/</loc>
     <lastmod>2023-11-02</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
