@@ -29,7 +29,7 @@
 <meta property="og:description" content="GAMES101Notes">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-11-06T13:51:16.000Z">
-<meta property="article:modified_time" content="2023-11-10T17:20:57.463Z">
+<meta property="article:modified_time" content="2023-11-15T14:36:09.883Z">
 <meta property="article:author" content="蛐蛐">
 <meta property="article:tag" content="GAMES101Notes">
 <meta name="twitter:card" content="summary">
@@ -245,7 +245,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-11-11 01:20:57" itemprop="dateModified" datetime="2023-11-11T01:20:57+08:00">2023-11-11</time>
+                <time title="修改时间：2023-11-15 22:36:09" itemprop="dateModified" datetime="2023-11-15T22:36:09+08:00">2023-11-15</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -274,14 +274,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>20</span>
+              <span>4.5k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
+              <span>4 分钟</span>
             </span>
 
         </div>
@@ -295,7 +295,66 @@
       
         <p>GAMES101Notes</p>
 <span id="more"></span>
-<h2 id="Leture-1"><a href="#Leture-1" class="headerlink" title="Leture 1"></a>Leture 1</h2>
+<h2 id="Leture-3-Transform"><a href="#Leture-3-Transform" class="headerlink" title="Leture 3 Transform"></a>Leture 3 Transform</h2><ul>
+<li>Modeling<br>-&gt;transformation, rotation, scaling<br>eg. Camera &amp; IK</li>
+<li>Viewing<br>-&gt; (3D to 2D)projection</li>
+</ul>
+<h3 id="Scale"><a href="#Scale" class="headerlink" title="Scale"></a>Scale</h3><p>$<br>x’ = sx \<br>y’ = sy<br>$</p>
+<p>$<br>\begin{bmatrix}<br>x’ \<br>y’ \<br>\end{bmatrix} =<br>\begin{bmatrix}<br>s &amp; 0 \<br>0 &amp; s \<br>\end{bmatrix}<br>\begin{bmatrix}<br>x \<br>y \<br>\end{bmatrix}<br>$</p>
+<p>$<br>\begin{bmatrix}<br>x’ \<br>y’ \<br>\end{bmatrix} =<br>\begin{bmatrix}<br>s_x &amp; 0 \<br>0 &amp; s_y \<br>\end{bmatrix}<br>\begin{bmatrix}<br>x \<br>y \<br>\end{bmatrix}<br>$</p>
+<h3 id="Reflection-Matrix"><a href="#Reflection-Matrix" class="headerlink" title="Reflection Matrix"></a>Reflection Matrix</h3><p>$<br>x’ = -x \<br>y’ = -y<br>$</p>
+<p>$<br>\begin{bmatrix}<br>x’ \<br>y’ \<br>\end{bmatrix} =<br>\begin{bmatrix}<br>-1 &amp; 0 \<br>0 &amp; -1 \<br>\end{bmatrix}<br>\begin{bmatrix}<br>x \<br>y \<br>\end{bmatrix}<br>$</p>
+<h3 id="Shear-Matrix"><a href="#Shear-Matrix" class="headerlink" title="Shear Matrix"></a>Shear Matrix</h3><p>$<br>x’ = x + ay \<br>y’ = y + bx<br>$</p>
+<p>$<br>\begin{bmatrix}<br>x’ \<br>y’ \<br>\end{bmatrix} =<br>\begin{bmatrix}<br>1 &amp; a \<br>b &amp; 1 \<br>\end{bmatrix}<br>\begin{bmatrix}<br>x \<br>y \<br>\end{bmatrix}<br>$</p>
+<h3 id="Rotate-abount-origin-0-0-CCW-by-default-『绕原点，逆时针』"><a href="#Rotate-abount-origin-0-0-CCW-by-default-『绕原点，逆时针』" class="headerlink" title="Rotate(abount origin$(0,0)$,CCW by default)『绕原点，逆时针』"></a>Rotate(abount origin$(0,0)$,CCW by default)『绕原点，逆时针』</h3><p>$<br>x’ = xcos\theta - ysin\theta \<br>y’ = xsin\theta + ycos\theta<br>$</p>
+<p>$<br>\begin{bmatrix}<br>x’ \<br>y’ \<br>\end{bmatrix} =<br>\begin{bmatrix}<br>cos\theta &amp; -sin\theta \<br>sin\theta &amp; cos\theta \<br>\end{bmatrix}<br>\begin{bmatrix}<br>x \<br>y \<br>\end{bmatrix}<br>$</p>
+<p>$<br>R = \begin{bmatrix}<br>cos\theta &amp; -sin\theta \<br>sin\theta &amp; cos\theta \<br>\end{bmatrix}<br>$</p>
+<h3 id="Linear-Transform-Matrices-of-the-same-dimension-『相同』"><a href="#Linear-Transform-Matrices-of-the-same-dimension-『相同』" class="headerlink" title="Linear Transform = Matrices(of the same dimension)『相同』"></a>Linear Transform = Matrices(of the same dimension)『相同』</h3><p>$<br>x’ = ax + by \<br>y’ = cx + dy<br>$</p>
+<p>$<br>\begin{bmatrix}<br>x’ \<br>y’ \<br>\end{bmatrix} =<br>\begin{bmatrix}<br>a &amp; b \<br>c &amp; d \<br>\end{bmatrix}<br>\begin{bmatrix}<br>x \<br>y \<br>\end{bmatrix}<br>$</p>
+<p>$<br>x’ = Mx<br>$</p>
+<h3 id="Translation"><a href="#Translation" class="headerlink" title="Translation"></a>Translation</h3><p>$<br>x’ = x + t_x \<br>y’ = y + t_y<br>$</p>
+<p>$<br>\begin{bmatrix}<br>x’ \<br>y’ \<br>\end{bmatrix} =<br>\begin{bmatrix}<br>1 &amp; 0 \<br>0 &amp; 1 \<br>\end{bmatrix}<br>\begin{bmatrix}<br>x \<br>y \<br>\end{bmatrix} +<br>\begin{bmatrix}<br>t_x \<br>t_y \<br>\end{bmatrix}<br>$</p>
+<p>$<br>\begin{bmatrix}<br>x’ \<br>y’ \<br>\end{bmatrix} =<br>\begin{bmatrix}<br>a &amp; b \<br>c &amp; d \<br>\end{bmatrix}<br>\begin{bmatrix}<br>x \<br>y \<br>\end{bmatrix} +<br>\begin{bmatrix}<br>t_x \<br>t_y \<br>\end{bmatrix}<br>$</p>
+<p>显然，平移不是线性变换</p>
+<p>但是我们想要有一个大统一的概念可以描述这些变换</p>
+<h3 id="Homogeneous-Coordinates『齐次坐标』"><a href="#Homogeneous-Coordinates『齐次坐标』" class="headerlink" title="Homogeneous Coordinates『齐次坐标』"></a>Homogeneous Coordinates『齐次坐标』</h3><p>Add a third coordinate $w$ to $(x,y)$</p>
+<ul>
+<li>2D point: $= (x,y,1)^T$</li>
+<li>2D vector: $= (x,y,0)^T$</li>
+</ul>
+<p>Maxtrix representation of translation</p>
+<p>$<br>\begin{bmatrix}<br>x’ \<br>y’ \<br>w’ \<br>\end{bmatrix} =<br>\begin{bmatrix}<br>1 &amp; 0 &amp; t_x \<br>0 &amp; 1 &amp; t_y \<br>0 &amp; 0 &amp; 1 \<br>\end{bmatrix} ·<br>\begin{bmatrix}<br>x \<br>y \<br>1 \<br>\end{bmatrix} =<br>\begin{bmatrix}<br>x + t_x \<br>y + t_y \<br>1 \<br>\end{bmatrix}<br>$</p>
+<p>$w$的意义是什么呢？</p>
+<p>In homogeneous coordinates,<br>$<br>\begin{bmatrix}<br>x \<br>y \<br>w \<br>\end{bmatrix}$ is the 2D point $\begin{bmatrix}<br>\frac{x}{w} \<br>\frac{y}{w} \<br>1<br>\end{bmatrix}, w \neq 0<br>$</p>
+<h3 id="2D-transformations"><a href="#2D-transformations" class="headerlink" title="2D transformations"></a>2D transformations</h3><h4 id="scale"><a href="#scale" class="headerlink" title="scale"></a>scale</h4><p>$<br>S(s_x,s_y) = \begin{bmatrix}<br>s_x &amp; 0 &amp; 0 \<br>0 &amp; s_y &amp; 0 \<br>0 &amp; 0 &amp; 1 \<br>\end{bmatrix}<br>$</p>
+<h4 id="rotate"><a href="#rotate" class="headerlink" title="rotate"></a>rotate</h4><p>$<br>R(\theta) = \begin{bmatrix}<br>cos\theta &amp; -sin\theta &amp; 0 \<br>sin\theta &amp; cos\theta &amp; 0 \<br>0 &amp; 0 &amp; 1 \<br>\end{bmatrix}<br>$</p>
+<h4 id="shear"><a href="#shear" class="headerlink" title="shear"></a>shear</h4><p>$<br>H(a,b) = \begin{bmatrix}<br>1 &amp; a &amp; 0 \<br>b &amp; 1 &amp; 0 \<br>0 &amp; 0 &amp; 1 \<br>\end{bmatrix}<br>$</p>
+<h4 id="translate"><a href="#translate" class="headerlink" title="translate"></a>translate</h4><p>$<br>T(t_x,t_y) = \begin{bmatrix}<br>1 &amp; 0 &amp; t_x \<br>0 &amp; 1 &amp; t_y \<br>0 &amp; 0 &amp; 1 \<br>\end{bmatrix}<br>$</p>
+<h3 id="Inverse-transform"><a href="#Inverse-transform" class="headerlink" title="Inverse transform"></a>Inverse transform</h3><p>逆变换刚好对应逆矩阵</p>
+<h2 id="Lecture-4-Transformation-Cont"><a href="#Lecture-4-Transformation-Cont" class="headerlink" title="Lecture 4 Transformation Cont"></a>Lecture 4 Transformation Cont</h2><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/daduzimama/article/details/120509856">逆矩阵的求法</a></p>
+<p>当一个矩阵的逆等同于他的伴随矩阵，那么这个矩阵是正交矩阵。</p>
+<p>旋转矩阵是正交矩阵</p>
+<h3 id="3D-transformations"><a href="#3D-transformations" class="headerlink" title="3D transformations"></a>3D transformations</h3><ul>
+<li><p>Scale<br>$<br>S(s_x,s_y,s_z) = \begin{bmatrix}<br>s_x &amp; 0 &amp; 0 &amp; 0 \<br>0 &amp; s_y &amp; 0 &amp; 0 \<br>0 &amp; 0 &amp; s_z &amp; 0 \<br>0 &amp; 0 &amp; 0 &amp; 1 \<br>\end{bmatrix}<br>$</p>
+</li>
+<li><p>Translate<br>$<br>T(t_x,t_y,t_z) = \begin{bmatrix}<br>1 &amp; 0 &amp; 0 &amp; t_x \<br>0 &amp; 1 &amp; 0 &amp; t_y \<br>0 &amp; 0 &amp; 1 &amp; t_z \<br>0 &amp; 0 &amp; 0 &amp; 1 \<br>\end{bmatrix}<br>$</p>
+</li>
+<li><p>Rotate(Around x-, y-, z-axis)<br>$<br>R_x(\theta) = \begin{bmatrix}<br>1 &amp; 0 &amp; 0 &amp; 0 \<br>0 &amp; cos\theta &amp; -sin\theta &amp; 0 \<br>0 &amp; sin\theta &amp; cos\theta &amp; 0 \<br>0 &amp; 0 &amp; 0 &amp; 1 \<br>\end{bmatrix}\<br>$<br>$<br>R_y(\theta) = \begin{bmatrix}<br>cos\theta &amp; 0 &amp; sin\theta &amp; 0 \<br>0 &amp; 1 &amp; 0 &amp; 0 \<br>-sin\theta &amp; 0 &amp; cos\theta &amp; 0 \<br>0 &amp; 0 &amp; 0 &amp; 1 \<br>\end{bmatrix}\<br>$<br>$<br>R_z(\theta) = \begin{bmatrix}<br>cos\theta &amp; -sin\theta &amp; 0 &amp; 0 \<br>sin\theta &amp; cos\theta &amp; 0 &amp; 0 \<br>0 &amp; 0 &amp; 1 &amp; 0 \<br>0 &amp; 0 &amp; 0 &amp; 1 \<br>\end{bmatrix}<br>$</p>
+</li>
+</ul>
+<h4 id="Rodrigues’-Rotation-Formula『罗德里格斯旋转公式』"><a href="#Rodrigues’-Rotation-Formula『罗德里格斯旋转公式』" class="headerlink" title="Rodrigues’ Rotation Formula『罗德里格斯旋转公式』"></a>Rodrigues’ Rotation Formula『罗德里格斯旋转公式』</h4><p>Rotation by angle $\alpha$ around axis $n$</p>
+<p>$<br>\boldsymbol  {R}(\boldsymbol  {n},\alpha) = cos(\alpha)\boldsymbol  {I} + (1-cos(\alpha))\boldsymbol  {nn}^T + sin(\alpha)N\<br>N = \begin{bmatrix}<br>0 &amp; -n_z &amp; n_y \<br>n_z &amp; 0 &amp; -n_x \<br>-n_y &amp; n_x &amp; 0 \<br>\end{bmatrix}<br>$</p>
+<h3 id="Viewing-transformation『观测变换』"><a href="#Viewing-transformation『观测变换』" class="headerlink" title="Viewing transformation『观测变换』"></a>Viewing transformation『观测变换』</h3><h3 id="View-Camera-transformation『视图变换』"><a href="#View-Camera-transformation『视图变换』" class="headerlink" title="View / Camera transformation『视图变换』"></a>View / Camera transformation『视图变换』</h3><h3 id="Projection-transformation『投影变换』"><a href="#Projection-transformation『投影变换』" class="headerlink" title="Projection transformation『投影变换』"></a>Projection transformation『投影变换』</h3><h4 id="Orthographic-projection『正交投影』"><a href="#Orthographic-projection『正交投影』" class="headerlink" title="Orthographic projection『正交投影』"></a>Orthographic projection『正交投影』</h4><ul>
+<li>相机置于原点，面朝 -z 轴</li>
+<li>丢掉 z 轴</li>
+<li>Translate and scale to $[-1,1]^2$</li>
+</ul>
+<h5 id="In-general"><a href="#In-general" class="headerlink" title="In general"></a>In general</h5><ul>
+<li>We want to map a cuboid $[l,r] \times [b,t] \times [\boldsymbol f,\boldsymbol n]$ to the “canonical” cube$[-1,1]^3$</li>
+</ul>
+<h6 id="Transformation-matrix"><a href="#Transformation-matrix" class="headerlink" title="Transformation matrix"></a>Transformation matrix</h6><p>Translate(center to origin) -&gt; Scale(length/width/height to 2)</p>
+<p>$<br>M_{ortho} = \begin{bmatrix}<br>\frac{2}{r-l} &amp; 0 &amp; 0 &amp; 0 \<br>0 &amp; \frac{2}{t-b} &amp; 0 &amp; 0 \<br>0 &amp; 0 &amp; \frac{2}{\boldsymbol n-\boldsymbol f} &amp; 0 \<br>0 &amp; 0 &amp; 0 &amp; 1 \<br>\end{bmatrix}<br>·<br>\begin{bmatrix}<br>1 &amp; 0 &amp; 0 &amp; -\frac{r+l}{2} \<br>0 &amp; 1 &amp; 0 &amp; -\frac{t+b}{2} \<br>0 &amp; 0 &amp; 1 &amp; -\frac{\boldsymbol n+\boldsymbol f}{2} \<br>0 &amp; 0 &amp; 0 &amp; 1 \<br>\end{bmatrix}<br>= \begin{bmatrix}<br>\frac{2}{r-l} &amp; 0 &amp; 0 &amp; -\frac{r+l}{r-l} \<br>0 &amp; \frac{2}{t-b} &amp; 0 &amp; -\frac{t+b}{t-b} \<br>0 &amp; 0 &amp; \frac{2}{\boldsymbol n-\boldsymbol f} &amp; -\frac{\boldsymbol n+\boldsymbol f}{\boldsymbol n-\boldsymbol f} \<br>0 &amp; 0 &amp; 0 &amp; 1 \<br>\end{bmatrix}<br>$</p>
+<h4 id="Perspective-projection『透视投影』"><a href="#Perspective-projection『透视投影』" class="headerlink" title="Perspective projection『透视投影』"></a>Perspective projection『透视投影』</h4>
     </div>
 
     
@@ -352,7 +411,10 @@
     <a href="/posts/32cb02ce/" rel="prev" title="GAMES104Notes">
       <i class="fa fa-chevron-left"></i> GAMES104Notes
     </a></div>
-      <div class="post-nav-item"></div>
+      <div class="post-nav-item">
+    <a href="/posts/c63a25c3/" rel="next" title="Component-Based & Component-Oriented Programming">
+      Component-Based & Component-Oriented Programming <i class="fa fa-chevron-right"></i>
+    </a></div>
     </div>
       </footer>
     
@@ -412,7 +474,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Leture-1"><span class="nav-number">1.</span> <span class="nav-text">Leture 1</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Leture-3-Transform"><span class="nav-number">1.</span> <span class="nav-text">Leture 3 Transform</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Scale"><span class="nav-number">1.1.</span> <span class="nav-text">Scale</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Reflection-Matrix"><span class="nav-number">1.2.</span> <span class="nav-text">Reflection Matrix</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Shear-Matrix"><span class="nav-number">1.3.</span> <span class="nav-text">Shear Matrix</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Rotate-abount-origin-0-0-CCW-by-default-%E3%80%8E%E7%BB%95%E5%8E%9F%E7%82%B9%EF%BC%8C%E9%80%86%E6%97%B6%E9%92%88%E3%80%8F"><span class="nav-number">1.4.</span> <span class="nav-text">Rotate(abount origin$(0,0)$,CCW by default)『绕原点，逆时针』</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Linear-Transform-Matrices-of-the-same-dimension-%E3%80%8E%E7%9B%B8%E5%90%8C%E3%80%8F"><span class="nav-number">1.5.</span> <span class="nav-text">Linear Transform &#x3D; Matrices(of the same dimension)『相同』</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Translation"><span class="nav-number">1.6.</span> <span class="nav-text">Translation</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Homogeneous-Coordinates%E3%80%8E%E9%BD%90%E6%AC%A1%E5%9D%90%E6%A0%87%E3%80%8F"><span class="nav-number">1.7.</span> <span class="nav-text">Homogeneous Coordinates『齐次坐标』</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2D-transformations"><span class="nav-number">1.8.</span> <span class="nav-text">2D transformations</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#scale"><span class="nav-number">1.8.1.</span> <span class="nav-text">scale</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#rotate"><span class="nav-number">1.8.2.</span> <span class="nav-text">rotate</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#shear"><span class="nav-number">1.8.3.</span> <span class="nav-text">shear</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#translate"><span class="nav-number">1.8.4.</span> <span class="nav-text">translate</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Inverse-transform"><span class="nav-number">1.9.</span> <span class="nav-text">Inverse transform</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Lecture-4-Transformation-Cont"><span class="nav-number">2.</span> <span class="nav-text">Lecture 4 Transformation Cont</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3D-transformations"><span class="nav-number">2.1.</span> <span class="nav-text">3D transformations</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Rodrigues%E2%80%99-Rotation-Formula%E3%80%8E%E7%BD%97%E5%BE%B7%E9%87%8C%E6%A0%BC%E6%96%AF%E6%97%8B%E8%BD%AC%E5%85%AC%E5%BC%8F%E3%80%8F"><span class="nav-number">2.1.1.</span> <span class="nav-text">Rodrigues’ Rotation Formula『罗德里格斯旋转公式』</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Viewing-transformation%E3%80%8E%E8%A7%82%E6%B5%8B%E5%8F%98%E6%8D%A2%E3%80%8F"><span class="nav-number">2.2.</span> <span class="nav-text">Viewing transformation『观测变换』</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#View-Camera-transformation%E3%80%8E%E8%A7%86%E5%9B%BE%E5%8F%98%E6%8D%A2%E3%80%8F"><span class="nav-number">2.3.</span> <span class="nav-text">View &#x2F; Camera transformation『视图变换』</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Projection-transformation%E3%80%8E%E6%8A%95%E5%BD%B1%E5%8F%98%E6%8D%A2%E3%80%8F"><span class="nav-number">2.4.</span> <span class="nav-text">Projection transformation『投影变换』</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Orthographic-projection%E3%80%8E%E6%AD%A3%E4%BA%A4%E6%8A%95%E5%BD%B1%E3%80%8F"><span class="nav-number">2.4.1.</span> <span class="nav-text">Orthographic projection『正交投影』</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#In-general"><span class="nav-number">2.4.1.1.</span> <span class="nav-text">In general</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#Transformation-matrix"><span class="nav-number">2.4.1.1.1.</span> <span class="nav-text">Transformation matrix</span></a></li></ol></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Perspective-projection%E3%80%8E%E9%80%8F%E8%A7%86%E6%8A%95%E5%BD%B1%E3%80%8F"><span class="nav-number">2.4.2.</span> <span class="nav-text">Perspective projection『透视投影』</span></a></li></ol></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -428,7 +490,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">27</span>
+          <span class="site-state-item-count">29</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -477,16 +539,16 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">84k</span>
+    <span title="站点总字数">92k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">1:16</span>
+    <span title="站点阅读时长">1:23</span>
 </div>
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共32.5k字</span>
+  <span class="post-count">博客全站共36.7k字</span>
 </div>
 
     <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>

@@ -29,7 +29,7 @@
 <meta property="og:description" content="课前的话">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-10-30T13:49:03.000Z">
-<meta property="article:modified_time" content="2023-11-06T12:12:51.374Z">
+<meta property="article:modified_time" content="2023-11-12T04:55:11.293Z">
 <meta property="article:author" content="蛐蛐">
 <meta property="article:tag" content="GamePlay Programming Exprience">
 <meta name="twitter:card" content="summary">
@@ -245,7 +245,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-11-06 20:12:51" itemprop="dateModified" datetime="2023-11-06T20:12:51+08:00">2023-11-06</time>
+                <time title="修改时间：2023-11-12 12:55:11" itemprop="dateModified" datetime="2023-11-12T12:55:11+08:00">2023-11-12</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -397,7 +397,8 @@
 <h4 id="固定时间"><a href="#固定时间" class="headerlink" title="固定时间"></a>固定时间</h4><p>所以，在一些帧率敏感的模块中，我们往往更倾向于向目标帧率靠近，比如我们要达到 33 帧的效果，那么如果本帧在预测的事件前就完成了任务，就让先线程去做别的些什么什么，反之只好等待下一个目标时间。该方法被称为<code>帧率调控 frame-rate governing</code>。</p>
 <p>当然，只有游戏的平均帧率靠近该目标帧率的时候该方法才能尽可能的多发挥出效能。</p>
 <p>然而，维持帧率的稳定对游戏各个子系统的意义都是非凡的。在引擎物理模拟的数学积分，以固定的时间更新效果最佳，而且物理效果也会变得更稳定流畅。包括屏幕刷新率和游戏帧率的不匹配，也会导致画面撕裂 <code>tearing</code>. 甚至是游戏的录播回访，也和游戏稳住是否稳定息息相关。周所周知，游戏的回访并非真的是屏幕的录制，只不过他们存储了游戏时间内的事件和时间戳，在打开回访的时候依次输出而已。有个很有意思的例子就是 <code>王者荣耀</code> 的回放，其实就是开了一局新的本地游戏。</p>
-<h3 id="全局时间和局部时间"><a href="#全局时间和局部时间" class="headerlink" title="全局时间和局部时间"></a>全局时间和局部时间</h3><h2 id="游戏对象"><a href="#游戏对象" class="headerlink" title="游戏对象"></a>游戏对象</h2><h3 id="游戏对象的类型"><a href="#游戏对象的类型" class="headerlink" title="游戏对象的类型"></a>游戏对象的类型</h3><ul>
+<h3 id="全局时间和局部时间"><a href="#全局时间和局部时间" class="headerlink" title="全局时间和局部时间"></a>全局时间和局部时间</h3><p>典型的如动画的时间是游离于整体时间轴之上的，我们可以在编辑面板单独调控动画的时间流速甚至他们的开始和结束。</p>
+<h2 id="游戏对象"><a href="#游戏对象" class="headerlink" title="游戏对象"></a>游戏对象</h2><h3 id="游戏对象的类型"><a href="#游戏对象的类型" class="headerlink" title="游戏对象的类型"></a>游戏对象的类型</h3><ul>
 <li>需要渲染不需要处理逻辑<br>背景，不可交互的物品等</li>
 <li>既需要渲染也需要处理逻辑<br>玩家，敌人，子弹等</li>
 <li>不需要渲染但需要处理逻辑<br>摄像机，空气墙</li>
@@ -542,7 +543,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">27</span>
+          <span class="site-state-item-count">29</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -591,16 +592,16 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">84k</span>
+    <span title="站点总字数">92k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">1:16</span>
+    <span title="站点阅读时长">1:23</span>
 </div>
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共32.5k字</span>
+  <span class="post-count">博客全站共36.7k字</span>
 </div>
 
     <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
