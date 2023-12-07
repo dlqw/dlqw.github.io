@@ -14,10 +14,11 @@
 
 
 <link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"rdququ.top","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"manual","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+    var CONFIG = {"hostname":"rdququ.top","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"manual","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
     <script src="//code.jquery.com/jquery-2.0.3.min.js"></script>
@@ -242,7 +243,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-12-06 19:55:53" itemprop="dateModified" datetime="2023-12-06T19:55:53+08:00">2023-12-06</time>
+                <time title="修改时间：2023-12-07 16:15:56" itemprop="dateModified" datetime="2023-12-07T16:15:56+08:00">2023-12-07</time>
               </span>
 
           <br>
@@ -270,34 +271,15 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>起因是我在学习 runtiem 的 mesh 切割算法，需要判断目标 mesh 是否和切面相交（不相交的话我就不需要去处理了）</p>
-<h2 id="前提知识"><a href="#前提知识" class="headerlink" title="前提知识"></a>前提知识</h2><p>Unity 的 mesh 和 collider 都使用 AABB 包围盒</p>
-<h3 id="什么是-AABB-包围盒？"><a href="#什么是-AABB-包围盒？" class="headerlink" title="什么是 AABB 包围盒？"></a>什么是 AABB 包围盒？</h3><p>AABB ==&gt; Axis Aligned Bounding Box (轴对齐边界框)</p>
-<p>AABB（轴对齐边界框）是一个 3D 框。它的宽度/高度/深度不必相等，但宽度始终与 X 轴对齐，高度与 Y 轴对齐，深度与 Z 轴对齐。也就是说，这个盒子是不能旋转的。</p>
-<h3 id="如何表示-AABB？"><a href="#如何表示-AABB？" class="headerlink" title="如何表示 AABB？"></a>如何表示 AABB？</h3><p>有两种常见的方法，存储最左边和最右边的角，或者存储中心点和盒子在每侧延伸多远的向量。</p>
-<p>第一种：</p>
-<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">struct</span> AABB</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">public</span> Vector3 min;</span><br><span class="line">    <span class="keyword">public</span> Vector3 max;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>第二种：</p>
-<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">struct</span> AABB</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">public</span> Vector3 center;</span><br><span class="line">    <span class="keyword">public</span> Vector3 extents;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><img src="AABB表示法.png" alt="AABB表示法"></p>
-<h2 id="算法"><a href="#算法" class="headerlink" title="算法"></a>算法</h2><p>为了测试 AABB 和平面是否相交，我们首先必须将 AABB 的每个顶点投影到平面的法线上。这使我们 AABB 的所有顶点都在一条线上。</p>
-<p>然后，我们检查离平面最远的顶点。如果与顶点对角线相对的顶点位于平面的另一侧，则我们有一个交点。</p>
-<p>通用的 C# 代码如下，无论你的 AABB 是如何表示的(max/min 或 center/extents)，只需要稍作修改：</p>
-<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Test if AABB b intersects plane p</span></span><br><span class="line"><span class="function"><span class="built_in">int</span> <span class="title">TestAABBPlane</span>(<span class="params">AABB b, Plane p</span>)</span> &#123;</span><br><span class="line">    <span class="comment">// Convert AABB to center-extents representation</span></span><br><span class="line">    Point c = (b.max + b.min) * <span class="number">0.5f</span>; <span class="comment">// Compute AABB center</span></span><br><span class="line">    Point e = b.max - c; <span class="comment">// Compute positive extents</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// Compute the projection interval radius of b onto L(t) = b.c + t * p.n</span></span><br><span class="line">    <span class="built_in">float</span> r = e[<span class="number">0</span>]*Abs(p.n[<span class="number">0</span>]) + e[<span class="number">1</span>]*Abs(p.n[<span class="number">1</span>]) + e[<span class="number">2</span>]*Abs(p.n[<span class="number">2</span>]);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Compute distance of box center from plane</span></span><br><span class="line">    <span class="built_in">float</span> s = Dot(p.n, c) - p.d;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Intersection occurs when distance s falls within [-r,+r] interval</span></span><br><span class="line">    <span class="keyword">return</span> Abs(s) &lt;= r;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="让我们来解析这段代码"><a href="#让我们来解析这段代码" class="headerlink" title="让我们来解析这段代码"></a>让我们来解析这段代码</h3><ol>
-<li>函数传入了目标 Mesh 的 AABB，和目标平面</li>
-<li>进入后的两行假设你的 AABB 是用 max/min 表示的，如果你可以轻松调取 AABB 的 center 和 extents，那么这两行是可以被跳过的</li>
-<li>下一段代码计算了 AABB 的投影半径，这个半径是 AABB 投影到平面法线上的最大距离。</li>
-<li>其取 AABB 的范围和平面法线的绝对值的点积，用于确保计算出的长度是正值，因为两个向量中的元素都是正值或零。<script type="math/tex">n' = (\lvert n_{x} \rvert,\lvert n_{y} \rvert,\lvert n_{z} \rvert) \\ \vec{e} \cdot \vec{n'} = \lvert\vec{e} \rvert \lvert\vec{n'} \rvert \cos \theta \\ \lvert\vec{n'} \rvert =1 \\\vec{e} \cdot \vec{n'} = \lvert\vec{e} \rvert  \cos \theta</script></li>
-<li>下面计算了 AABB 中心点到平面的距离，计为 s</li>
-<li>最后的返回值即为 AABB 自身在平面法线上的距离和其中心到平面距离长短的判断</li>
-</ol>
-<h3 id="Unity-实现"><a href="#Unity-实现" class="headerlink" title="Unity 实现"></a>Unity 实现</h3><figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="built_in">bool</span> <span class="title">BoundPlaneIntersect</span>(<span class="params">Mesh mesh, <span class="keyword">ref</span> Plane plane</span>)</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">// Compute projection interval radius</span></span><br><span class="line">        <span class="built_in">float</span> r = mesh.bounds.extents.x * Mathf.Abs(plane.normal.x) +</span><br><span class="line">            mesh.bounds.extents.y * Mathf.Abs(plane.normal.y) +</span><br><span class="line">            mesh.bounds.extents.z * Mathf.Abs(plane.normal.z);<span class="comment">//做点乘，得出mesh包围盒的范围在平面法线上的投影，包围盒在平面法线方向上的最大距离</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">// Compute distance of box center from plane</span></span><br><span class="line">        <span class="built_in">float</span> s = Vector3.Dot(plane.normal, mesh.bounds.center) - (-plane.distance);<span class="comment">//前面点乘得mesh中心在平面法线上的投影，这是为了确保计算出的距离和后面的平面距离在同一方向</span></span><br><span class="line">        <span class="comment">//如果法线面朝内，后- (-plane.distance)为正，前mesh中心在与相对原点相交且与平面平行的平面‘靠近平面的一侧，Vector3.Dot(plane.normal, mesh.bounds.center)为负，符合逻辑</span></span><br><span class="line">        <span class="comment">//因为mesh中心和平面在同一侧，距离为相见</span></span><br><span class="line">        <span class="comment">//若mesh中心在与 相对原点相交且与平面平行的平面‘ 远离平面的一侧，就是说mesh中心与平面中间相隔了一个原点，那么前后就都是同号，符合逻辑</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">// Intersection occurs when distance s falls within [-r,+r] interval</span></span><br><span class="line">        <span class="keyword">return</span> Mathf.Abs(s) &lt;= r;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ol>
-<li><a target="_blank" rel="noopener" href="https://gdbooks.gitbooks.io/3dcollisions/content/Chapter1/aabb.html">AABB - Axis Aligned Bounding Box</a></li>
-<li><a target="_blank" rel="noopener" href="https://docs.unity.cn/cn/2021.3/ScriptReference/Bounds.html">Bounds-Unity_Documentation</a></li>
-</ol>
-
+          <p>起因是我在学习 runtime 的 mesh 切割算法，需要判断目标 mesh 是否和切面相交（不相交的话我就不需要去处理了）
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/posts/2c23d1d4/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -340,10 +322,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2023-12-04 22:20:41 / 修改时间：22:55:54" itemprop="dateCreated datePublished" datetime="2023-12-04T22:20:41+08:00">2023-12-04</time>
+              <time title="创建时间：2023-12-04 22:20:41" itemprop="dateCreated datePublished" datetime="2023-12-04T22:20:41+08:00">2023-12-04</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-12-07 16:16:24" itemprop="dateModified" datetime="2023-12-07T16:16:24+08:00">2023-12-07</time>
+              </span>
 
           <br>
             <span class="post-meta-item" title="本文字数">
@@ -351,7 +339,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>643</span>
+              <span>659</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -370,30 +358,18 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h2 id="关键词"><a href="#关键词" class="headerlink" title="关键词"></a>关键词</h2><ul>
+          <h2 id="关键词">关键词</h2>
+<ul>
 <li>.NET mono 虚拟机</li>
-<li>IL2CPP</li>
-</ul>
-<h3 id="为什么选择-mono"><a href="#为什么选择-mono" class="headerlink" title="为什么选择 mono"></a>为什么选择 mono</h3><p>Mono 是一个开源的 .NET 框架的实现，它可以在 Linux、Mac、Windows 等平台上运行，而且可以在这些平台上编译出可执行文件。</p>
-<p>开源、跨平台、Mono的开发工具( MonoDevelop 现在已被弃用)</p>
-<h3 id="为什么推出-IL2CPP"><a href="#为什么推出-IL2CPP" class="headerlink" title="为什么推出 IL2CPP"></a>为什么推出 IL2CPP</h3><ul>
-<li>Mono 没有合法身份， 微软收购之后的版权问题</li>
-<li>Mono 虚拟机 解释执行 .NET 字节码，效率低</li>
-<li>有些平台不允许内置 .net 虚拟机 (eg. iOS)</li>
-<li>如果有新的平台出现，Mono 难以为其提供支持(跨不了平台咯)，移植很麻烦(eg. WebGL)</li>
-</ul>
-<p>IL: Intermediate Language .NET框架中间语言, .NET字节码<br>IL2CPP: IL to C++，将IL转换为C++代码 —&gt; 编译为可执行文件 —&gt; native platform</p>
-<p>Unity:</p>
-<ol>
-<li>Unity C/C++ 以及 native 的开发 —&gt; 跨平台的 runtime (xcode, android studio)</li>
-<li>Unity 开发者脚本语言(C#) —&gt; .NET字节码 —&gt; .dll —&gt; IL code —&gt; IL2CPP —&gt; C++</li>
-<li>C# GC —&gt; c++ 为其提供支持<br>IL2CPP vm:支持 C# .NET 独有的特性，如反射，泛型，委托，lambda表达式等</li>
-</ol>
-<h3 id="IL2CPP-做了什么？有什么优势？"><a href="#IL2CPP-做了什么？有什么优势？" class="headerlink" title="IL2CPP 做了什么？有什么优势？"></a>IL2CPP 做了什么？有什么优势？</h3><ol>
-<li>跨平台可以执行问题 —&gt; Unity —&gt;&gt; 移植 IL2CPP —&gt; .NET 版本问题</li>
-<li>性能获得提升 —&gt; 基于 IL2CPP 发布(而不是 Mono)</li>
-</ol>
-
+<li>IL2CPP
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/posts/c896f832/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -444,7 +420,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-12-04 22:55:54" itemprop="dateModified" datetime="2023-12-04T22:55:54+08:00">2023-12-04</time>
+                <time title="修改时间：2023-12-07 20:23:13" itemprop="dateModified" datetime="2023-12-07T20:23:13+08:00">2023-12-07</time>
               </span>
 
           <br>
@@ -453,7 +429,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>779</span>
+              <span>764</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -472,29 +448,19 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h2 id="坐标系"><a href="#坐标系" class="headerlink" title="坐标系"></a>坐标系</h2><ul>
+          <h2 id="坐标系">坐标系</h2>
+<ul>
 <li>笛卡尔坐标系</li>
-<li>圆柱坐标系<br>垂直“高度与” $h$ 、从垂直轴发出的辐射轴 $r$ 、偏航角(yaw) $\theta$</li>
-<li>球坐标系<br>俯仰角(pitch) $\phi$ 、偏航角(yaw) $\theta$ 、半径长度 $r$<br>eg. 经纬线</li>
-</ul>
-<h3 id="笛卡尔坐标系的左手系和右手系"><a href="#笛卡尔坐标系的左手系和右手系" class="headerlink" title="笛卡尔坐标系的左手系和右手系"></a>笛卡尔坐标系的左手系和右手系</h3><p>手握拳，伸出大拇指，四指从 $x$ 轴指向 $y$ 轴，大拇指指向 $z$ 轴，这就是右手系。</p>
-<p>反之为左手系。</p>
-<h2 id="向量-vector"><a href="#向量-vector" class="headerlink" title="向量(vector)"></a>向量(vector)</h2><p>在 n 维空间中包含 modulus (模)和 direction (方向)的量。</p>
-<h3 id="模长"><a href="#模长" class="headerlink" title="模长"></a>模长</h3><p>向量的模长是向量的长度，用 $||\vec{v}||$ 表示。</p>
-<p>$<br>||\vec{v}|| = \sqrt{v_1^2 + v_2^2 + \cdots + v_n^2}<br>$</p>
-<h4 id="magic-number-卡马克快速平方根"><a href="#magic-number-卡马克快速平方根" class="headerlink" title="magic number (卡马克快速平方根)"></a>magic number (卡马克快速平方根)</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">float</span> <span class="title function_">Q_rsqrt</span><span class="params">( <span class="type">float</span> number )</span></span><br><span class="line">&#123;</span><br><span class="line"></span><br><span class="line">  <span class="type">long</span> i;</span><br><span class="line">  <span class="type">float</span> x2, y;</span><br><span class="line">  <span class="type">const</span> <span class="type">float</span> threehalfs = <span class="number">1.5F</span>;</span><br><span class="line"></span><br><span class="line">  x2 = number * <span class="number">0.5F</span>;</span><br><span class="line">  y = number;</span><br><span class="line">  i = * ( <span class="type">long</span> * ) &amp;y;                       <span class="comment">// evil floating point bit level hacking</span></span><br><span class="line">  i = <span class="number">0x5f3759df</span> - (i &gt;&gt; <span class="number">1</span>);                 <span class="comment">// what the fuck?</span></span><br><span class="line">  y = * ( <span class="type">float</span> * ) &amp;i;</span><br><span class="line">  y = y * (threehalfs - ( x2 * y * y ) );    <span class="comment">// 1st iteration</span></span><br><span class="line">  y = y * (threehalfs - ( x2 * y * y ) );    <span class="comment">// 2nd iteration, this can be removed</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> y;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV18j411i7bp">科普视频</a></p>
-<p><a target="_blank" rel="noopener" href="http://www.beyond3d.com/content/articles/8/">真正的作者</a></p>
-<h3 id="归一化和单位向量"><a href="#归一化和单位向量" class="headerlink" title="归一化和单位向量"></a>归一化和单位向量</h3><h3 id="三角形法则（加减法）"><a href="#三角形法则（加减法）" class="headerlink" title="三角形法则（加减法）"></a>三角形法则（加减法）</h3><h3 id="点积"><a href="#点积" class="headerlink" title="点积"></a>点积</h3><ul>
-<li>投影的计算</li>
-<li>是否共线</li>
-</ul>
-<h3 id="叉积"><a href="#叉积" class="headerlink" title="叉积"></a>叉积</h3><ul>
-<li>右手法则的原理</li>
-<li>点在三角形的内/外？</li>
-</ul>
-<h2 id="线性插值-Lerp"><a href="#线性插值-Lerp" class="headerlink" title="线性插值 (Lerp)"></a>线性插值 (Lerp)</h2><h2 id="矩阵"><a href="#矩阵" class="headerlink" title="矩阵"></a>矩阵</h2><h3 id="用矩阵表示点和向量"><a href="#用矩阵表示点和向量" class="headerlink" title="用矩阵表示点和向量"></a>用矩阵表示点和向量</h3><h3 id="单位矩阵"><a href="#单位矩阵" class="headerlink" title="单位矩阵"></a>单位矩阵</h3><h3 id="矩阵乘法"><a href="#矩阵乘法" class="headerlink" title="矩阵乘法"></a>矩阵乘法</h3><h3 id="矩阵的转置"><a href="#矩阵的转置" class="headerlink" title="矩阵的转置"></a>矩阵的转置</h3><h3 id="逆矩阵于逆矩阵的求法"><a href="#逆矩阵于逆矩阵的求法" class="headerlink" title="逆矩阵于逆矩阵的求法"></a>逆矩阵于逆矩阵的求法</h3><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/daduzimama/article/details/120509856">逆矩阵的求法</a></p>
-<h3 id="伴随矩阵"><a href="#伴随矩阵" class="headerlink" title="伴随矩阵"></a>伴随矩阵</h3><h3 id="正交矩阵"><a href="#正交矩阵" class="headerlink" title="正交矩阵"></a>正交矩阵</h3><h3 id="齐次坐标-来不及就不讲"><a href="#齐次坐标-来不及就不讲" class="headerlink" title="齐次坐标 (来不及就不讲)"></a><em>齐次坐标</em> (来不及就不讲)</h3>
+<li>圆柱坐标系 垂直“高度与” <span class="math inline">\(h\)</span> 、从垂直轴发出的辐射轴 <span class="math inline">\(r\)</span> 、偏航角(yaw) <span class="math inline">\(\theta\)</span></li>
+<li>球坐标系 俯仰角(pitch) <span class="math inline">\(\phi\)</span> 、偏航角(yaw) <span class="math inline">\(\theta\)</span> 、半径长度 <span class="math inline">\(r\)</span> eg. 经纬线
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/posts/90745bbc/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -573,7 +539,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>记录<br>
+          <p>记录
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/posts/b15b4e49/#more" rel="contents">
@@ -719,7 +685,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-12-07 14:57:59" itemprop="dateModified" datetime="2023-12-07T14:57:59+08:00">2023-12-07</time>
+                <time title="修改时间：2023-12-07 20:13:17" itemprop="dateModified" datetime="2023-12-07T20:13:17+08:00">2023-12-07</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -741,7 +707,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>8.4k</span>
+              <span>8.8k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -919,7 +885,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-11-12 12:56:20" itemprop="dateModified" datetime="2023-11-12T12:56:20+08:00">2023-11-12</time>
+                <time title="修改时间：2023-12-07 16:13:29" itemprop="dateModified" datetime="2023-12-07T16:13:29+08:00">2023-12-07</time>
               </span>
 
           <br>
@@ -1015,7 +981,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>634</span>
+              <span>635</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -1034,7 +1000,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p><a target="_blank" rel="noopener" href="https://docs.unity3d.com/ScriptReference/RectTransform.html">官方文档地址</a><br>
+          <p><a target="_blank" rel="noopener" href="https://docs.unity3d.com/ScriptReference/RectTransform.html">官方文档地址</a>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/posts/462539dc/#more" rel="contents">
@@ -1111,7 +1077,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>466</span>
+              <span>470</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -1130,7 +1096,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h2 id="GamePlay-Programming-Exprience"><a href="#GamePlay-Programming-Exprience" class="headerlink" title="GamePlay Programming Exprience"></a>GamePlay Programming Exprience</h2>
+          <h2 id="gameplay-programming-exprience">GamePlay Programming Exprience</h2>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/posts/e5afc9d6/#more" rel="contents">
@@ -1273,16 +1239,16 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">99k</span>
+    <span title="站点总字数">100k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">1:30</span>
+    <span title="站点阅读时长">1:31</span>
 </div>
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共39.8k字</span>
+  <span class="post-count">博客全站共40k字</span>
 </div>
 
     <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
@@ -1354,6 +1320,9 @@ $(document).ready(function() {
 
   
   <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
 
@@ -1393,6 +1362,9 @@ $(document).ready(function() {
   
 
   
+      
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/katex@0/dist/katex.min.css">
+
 
   
 
