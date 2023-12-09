@@ -243,7 +243,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-12-09 21:55:44" itemprop="dateModified" datetime="2023-12-09T21:55:44+08:00">2023-12-09</time>
+                <time title="修改时间：2023-12-09 21:59:55" itemprop="dateModified" datetime="2023-12-09T21:59:55+08:00">2023-12-09</time>
               </span>
 
           <br>
@@ -271,64 +271,15 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <span id="more"></span>
-<h2 id="创建">创建</h2>
-<p>选择 URP 模板创建不需要配置环境 普通 3D 项目，包管理器安装 Universal RP, visual effect graph，设置中正常配置 Graphics</p>
-<h2 id="光照模型">光照模型</h2>
-<p>Create =&gt; ShaderGraph =&gt; URP =&gt; Lit Shader Graph</p>
-<p>输入属性节点： <img data-src="输入属性节点.png" alt="输入属性节点" /></p>
-<p>属性设置： <img data-src="属性设置.png" alt="属性设置" /></p>
-<ul>
-<li>Precision [精度] [single/half] half 性能更好</li>
-</ul>
-<p>在 Universal 中</p>
-<ul>
-<li>Material [材质]
-<ul>
-<li>[sprite Custom] 自定义精灵</li>
-<li>[sprite Lit] 精灵光照</li>
-<li>[sprite Unlit] 精灵非光照</li>
-<li>[Decal] 贴花</li>
-<li>[Lit] 光照</li>
-<li>[Unlit] 非光照</li>
-</ul></li>
-<li>Allow Material Override [允许材质覆盖] [勾选] 可以通过材质检查器修改某些图形属性。</li>
-<li>workflow [工作流] [Specular/Metallic] [勾选] 镜面高光/金属工作流</li>
-<li>Surface Type [表面类型] [Opaque/Transparent] [半透明/不透明]</li>
-<li>Render Face [渲染面] [Front/Back/Double] [正面/背面/双面]</li>
-<li>Depth Write [深度写入] [Auto/Force Enabled/Force Disabled] [自动/强制开启/强制关闭]</li>
-<li>Depth Test [深度测试] [Never/Less/Equal/LessEqual/Greater/NotEqual/GreaterEqual/Always] [从不/小于/等于/小于等于/大于/不等于/大于等于/总是]</li>
-<li>Alpha Clipping [Alpha裁剪] [勾选]</li>
-<li>Receive Shadows [接收阴影] [勾选]</li>
-<li>Fragment Normal Space [片段法线空间] [Tangent/World/View] [切线/世界/视图]</li>
-<li>Clear Coat [清漆] [勾选]</li>
-<li>Custom Editor GUI [自定义编辑器GUI]</li>
-<li>Supports VFXGRAph [支持VFXGRAph] [勾选]</li>
-</ul>
-<p>顶点着色器: <img data-src="顶点着色器.png" alt="顶点着色器" /></p>
-<p>片段着色器: <img data-src="片元着色器.png" alt="片元着色器" /></p>
-<p>乘法节点 Multiply: 颜色叠加</p>
-<h3 id="fragment">Fragment</h3>
-<h4 id="base-color">Base Color</h4>
-<p>主贴图，展现了模型的基本纹理 可以新建一个 Texture2D 属性，然后将其作为输入 <img data-src="UnityShaderGraphBaseColor.png" alt="UnityShaderGraphBaseColor" /></p>
-<p>MainTexture 保持默认</p>
-<h4 id="normal">Normal</h4>
-<figure>
-<img data-src="UnityShaderGraphNormal.png" alt="UnityShaderGraphNormal" /><figcaption aria-hidden="true">UnityShaderGraphNormal</figcaption>
-</figure>
-<p>注意 Sample Texture 2D 的 Type 要设置为 Normal NormalTexture 的 Mode 选择 Normal Map</p>
-<h4 id="metallic">Metallic</h4>
-<p><img data-src="UnityShaderGraphMetallic.png" alt="UnityShaderGraphMetallic" /> 保持默认</p>
-<h4 id="smoothness">Smoothness</h4>
-<figure>
-<img data-src="UnityShaderGraphSmoothness.png" alt="UnityShaderGraphSmoothness" /><figcaption aria-hidden="true">UnityShaderGraphSmoothness</figcaption>
-</figure>
-<p>输出金属光泽度的 Alpha 通道与 Smoothness 通过 Multiply 乘法节点相乘, 得到输出值</p>
-<h4 id="emission">Emission</h4>
-<p><img data-src="UnityShaderGraphEmission.png" alt="UnityShaderGraphEmission" /> 自发光贴图与类型为 Boolean Keywork 的 EmissiveTexture 相乘来控制是否自发光，得到其输出值与 EmissionColor 相乘得到最终的输出值</p>
-<h4 id="ao">AO</h4>
-<p><img data-src="UnityShaderGraphAO.png" alt="UnityShaderGraphAO" /> 保持默认</p>
-
+          <p>学习笔记</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/posts/1fbb4100/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -407,7 +358,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>起因是我在学习 runtime 的 mesh 切割算法，需要判断目标 mesh 是否和切面相交（不相交的话我就不需要去处理了）
+          <p>起因是我在学习 runtime 的 mesh 切割算法，需要判断目标 mesh 是否和切面相交（不相交的话我就不需要去处理了）</p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/posts/2c23d1d4/#more" rel="contents">
@@ -475,7 +426,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>659</span>
+              <span>656</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -494,10 +445,11 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h2 id="关键词">关键词</h2>
+          <h2 id="关键词"><a class="markdownIt-Anchor" href="#关键词"></a> 关键词</h2>
 <ul>
 <li>.NET mono 虚拟机</li>
-<li>IL2CPP
+<li>IL2CPP</li>
+</ul>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/posts/c896f832/#more" rel="contents">
@@ -565,7 +517,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>764</span>
+              <span>829</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -584,11 +536,15 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h2 id="坐标系">坐标系</h2>
+          <h2 id="坐标系"><a class="markdownIt-Anchor" href="#坐标系"></a> 坐标系</h2>
 <ul>
 <li>笛卡尔坐标系</li>
-<li>圆柱坐标系 垂直“高度与” <span class="math inline">\(h\)</span> 、从垂直轴发出的辐射轴 <span class="math inline">\(r\)</span> 、偏航角(yaw) <span class="math inline">\(\theta\)</span></li>
-<li>球坐标系 俯仰角(pitch) <span class="math inline">\(\phi\)</span> 、偏航角(yaw) <span class="math inline">\(\theta\)</span> 、半径长度 <span class="math inline">\(r\)</span> eg. 经纬线
+<li>圆柱坐标系<br />
+垂直“高度与” <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>h</mi></mrow><annotation encoding="application/x-tex">h</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathnormal">h</span></span></span></span> 、从垂直轴发出的辐射轴 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>r</mi></mrow><annotation encoding="application/x-tex">r</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">r</span></span></span></span> 、偏航角(yaw) <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>θ</mi></mrow><annotation encoding="application/x-tex">\theta</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">θ</span></span></span></span></li>
+<li>球坐标系<br />
+俯仰角(pitch) <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ϕ</mi></mrow><annotation encoding="application/x-tex">\phi</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="mord mathnormal">ϕ</span></span></span></span> 、偏航角(yaw) <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>θ</mi></mrow><annotation encoding="application/x-tex">\theta</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">θ</span></span></span></span> 、半径长度 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>r</mi></mrow><annotation encoding="application/x-tex">r</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">r</span></span></span></span><br />
+eg. 经纬线</li>
+</ul>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/posts/90745bbc/#more" rel="contents">
@@ -675,7 +631,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>记录
+          <p>记录</p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/posts/b15b4e49/#more" rel="contents">
@@ -843,14 +799,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>11k</span>
+              <span>15k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>10 分钟</span>
+              <span>13 分钟</span>
             </span>
 
         </div>
@@ -1117,7 +1073,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>635</span>
+              <span>634</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -1136,7 +1092,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p><a target="_blank" rel="noopener" href="https://docs.unity3d.com/ScriptReference/RectTransform.html">官方文档地址</a>
+          <p><a target="_blank" rel="noopener" href="https://docs.unity3d.com/ScriptReference/RectTransform.html">官方文档地址</a></p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/posts/462539dc/#more" rel="contents">
@@ -1279,16 +1235,16 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">104k</span>
+    <span title="站点总字数">107k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">1:35</span>
+    <span title="站点阅读时长">1:38</span>
 </div>
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共41.6k字</span>
+  <span class="post-count">博客全站共42.5k字</span>
 </div>
 
     <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
