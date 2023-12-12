@@ -281,7 +281,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>619</span>
+              <span>622</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -300,21 +300,15 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>今天写了下“Unity环境配置和外部工具食用指南”给新人，结果插入图片（引用本地文件）的时候出问题了，博客上怎么也显示不出来。博主就去查，发现是hexo-asset-image这个插件的bug。这个链接是解决方案<a target="_blank" rel="noopener" href="https://blog.csdn.net/xjm850552586/article/details/84101345">https://blog.csdn.net/xjm850552586/article/details/84101345</a></p>
- <span id="more"></span>  
-<p>其实正常读取文件应该这么写：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;% asset_img example.jpg This is an example image %&#125;</span><br></pre></td></tr></table></figure>
-<p>但是博主觉得麻烦，就打算抛弃hexo-asset-image了，转而投向hexo-renderer-marked的怀抱，直接下载他</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install hexo-renderer-marked</span><br></pre></td></tr></table></figure>
-<p>站点配置文件也改一下</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">post_asset_folder: true</span><br><span class="line">marked:</span><br><span class="line">  prependRoot: true</span><br><span class="line">  postAsset: true</span><br></pre></td></tr></table></figure>
-<p>大功告成，图片正常显示了。<br />
-值得注意的是，markdown里链接本地图片是这么写的</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">![](folder/image.jpg)</span><br></pre></td></tr></table></figure>
-<p>但是由于hexo会把我们的图片和html文件放在一个文件夹，所以“folder/”还是删掉吧，但是这样在md编辑器里我们就预览不了图片了，真是有得必有失啊。（至少vscode是这样的）博主还是找找vscode有没有相关插件吧。</p>
-<p><img data-src="%E7%A4%BA%E4%BE%8B%E5%9B%BE.png" alt="示例图" /></p>
+        <p>今天写了下“Unity环境配置和外部工具食用指南”给新人，结果插入图片（引用本地文件）的时候出问题了，博客上怎么也显示不出来。博主就去查，发现是hexo-asset-image这个插件的bug。这个链接是解决方案<a target="_blank" rel="noopener" href="https://blog.csdn.net/xjm850552586/article/details/84101345" class="uri">https://blog.csdn.net/xjm850552586/article/details/84101345</a><br />
+<span id="more"></span><br />
+其实正常读取文件应该这么写： <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;% asset_img example.jpg This is an example image %&#125;</span><br></pre></td></tr></table></figure> 但是博主觉得麻烦，就打算抛弃hexo-asset-image了，转而投向hexo-renderer-marked的怀抱，直接下载他 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install hexo-renderer-marked</span><br></pre></td></tr></table></figure> 站点配置文件也改一下 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">post_asset_folder: true</span><br><span class="line">marked:</span><br><span class="line">  prependRoot: true</span><br><span class="line">  postAsset: true</span><br></pre></td></tr></table></figure> 大功告成，图片正常显示了。<br />
+值得注意的是，markdown里链接本地图片是这么写的 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">![](folder/image.jpg)</span><br></pre></td></tr></table></figure> 但是由于hexo会把我们的图片和html文件放在一个文件夹，所以“folder/”还是删掉吧，但是这样在md编辑器里我们就预览不了图片了，真是有得必有失啊。（至少vscode是这样的）博主还是找找vscode有没有相关插件吧。</p>
+<figure>
+<img data-src="示例图.png" alt="示例图" /><figcaption aria-hidden="true">示例图</figcaption>
+</figure>
 <hr />
-<p>本文作于2023-08-07，首发于个人博客<a href="https://rdququ.top/">https://rdququ.top/</a></p>
+<p>本文作于2023-08-07，首发于个人博客<a href="https://rdququ.top/" class="uri">https://rdququ.top/</a></p>
 
     </div>
 
@@ -454,7 +448,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">33</span>
+          <span class="site-state-item-count">35</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -503,7 +497,7 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">107k</span>
+    <span title="站点总字数">108k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
@@ -512,7 +506,7 @@
 </div>
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共42.5k字</span>
+  <span class="post-count">博客全站共43.6k字</span>
 </div>
 
     <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>

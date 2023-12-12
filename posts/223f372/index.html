@@ -22,27 +22,28 @@
   </script>
 
     <script src="//code.jquery.com/jquery-2.0.3.min.js"></script>
-  <meta name="description" content="GAMES104Notes">
+  <meta name="description" content="前置知识 归一化空间坐标 NDK(Normalized Device Coordinates) 在齐次裁剪空间的基础上进行透视除法或称齐次除法, 得到的坐标叫做NDC空间坐标。 一篇文章彻底弄懂齐次裁剪 - 知乎 (zhihu.com) 透视除法-齐次除法(perspective division-homogeneous division) 就是将齐次裁剪空间坐标positionCS的X">
 <meta property="og:type" content="article">
-<meta property="og:title" content="GAMES104Notes">
-<meta property="og:url" content="https://rdququ.top/posts/32cb02ce/index.html">
+<meta property="og:title" content="不透明物体与半透明物体边缘算法与Unity Shader Graph 实现">
+<meta property="og:url" content="https://rdququ.top/posts/223f372/index.html">
 <meta property="og:site_name" content="蛐蛐的软件开发世界">
-<meta property="og:description" content="GAMES104Notes">
+<meta property="og:description" content="前置知识 归一化空间坐标 NDK(Normalized Device Coordinates) 在齐次裁剪空间的基础上进行透视除法或称齐次除法, 得到的坐标叫做NDC空间坐标。 一篇文章彻底弄懂齐次裁剪 - 知乎 (zhihu.com) 透视除法-齐次除法(perspective division-homogeneous division) 就是将齐次裁剪空间坐标positionCS的X">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://rdququ.top/posts/32cb02ce/GAMES104_Zoo%20of%20Game%20Engines-1.png">
-<meta property="og:image" content="https://rdququ.top/posts/32cb02ce/GAMES104_Middlewares.png">
-<meta property="og:image" content="https://rdququ.top/posts/32cb02ce/SIMD-1.png">
-<meta property="og:image" content="https://rdququ.top/posts/32cb02ce/GAMES101_GPU_Architecture.png">
-<meta property="article:published_time" content="2023-11-06T04:49:57.000Z">
-<meta property="article:modified_time" content="2023-11-10T17:20:38.954Z">
+<meta property="og:image" content="https://pic4.zhimg.com/80/v2-4baca450c51c7f0eea873c42eeda0eef_720w.webp">
+<meta property="og:image" content="https://pic4.zhimg.com/80/v2-199f0cb63bdba7f81de4c826056dcbff_720w.webp">
+<meta property="og:image" content="https://pic3.zhimg.com/80/v2-439252aa4b98dac54ced99bf1460a58e_720w.webp">
+<meta property="og:image" content="https://pic2.zhimg.com/80/v2-fea83d5ed062c6bfe5dc8221e2d5d999_720w.webp">
+<meta property="og:image" content="https://rdququ.top/posts/223f372/image/%E4%B8%8D%E9%80%8F%E6%98%8E%E7%89%A9%E4%BD%93%E4%B8%8E%E5%8D%8A%E9%80%8F%E6%98%8E%E7%89%A9%E4%BD%93%E8%BE%B9%E7%BC%98%E7%AE%97%E6%B3%95%E4%B8%8EUnity-Shader-Graph-%E5%AE%9E%E7%8E%B0/1702390346535.png">
+<meta property="og:image" content="https://rdququ.top/posts/223f372/image/%E4%B8%8D%E9%80%8F%E6%98%8E%E7%89%A9%E4%BD%93%E4%B8%8E%E5%8D%8A%E9%80%8F%E6%98%8E%E7%89%A9%E4%BD%93%E8%BE%B9%E7%BC%98%E7%AE%97%E6%B3%95%E4%B8%8EUnity-Shader-Graph-%E5%AE%9E%E7%8E%B0/1702390608834.png">
+<meta property="og:image" content="https://rdququ.top/posts/223f372/image/%E4%B8%8D%E9%80%8F%E6%98%8E%E7%89%A9%E4%BD%93%E4%B8%8E%E5%8D%8A%E9%80%8F%E6%98%8E%E7%89%A9%E4%BD%93%E8%BE%B9%E7%BC%98%E7%AE%97%E6%B3%95%E4%B8%8EUnity-Shader-Graph-%E5%AE%9E%E7%8E%B0/1702390681409.png">
+<meta property="og:image" content="https://rdququ.top/posts/223f372/image/%E4%B8%8D%E9%80%8F%E6%98%8E%E7%89%A9%E4%BD%93%E4%B8%8E%E5%8D%8A%E9%80%8F%E6%98%8E%E7%89%A9%E4%BD%93%E8%BE%B9%E7%BC%98%E7%AE%97%E6%B3%95%E4%B8%8EUnity-Shader-Graph-%E5%AE%9E%E7%8E%B0/1702390730401.png">
+<meta property="article:published_time" content="2023-12-12T11:25:29.000Z">
+<meta property="article:modified_time" content="2023-12-12T14:49:10.911Z">
 <meta property="article:author" content="蛐蛐">
-<meta property="article:tag" content="计算机图形学">
-<meta property="article:tag" content="游戏引擎">
-<meta property="article:tag" content="GAMES104">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://rdququ.top/posts/32cb02ce/GAMES104_Zoo%20of%20Game%20Engines-1.png">
+<meta name="twitter:image" content="https://pic4.zhimg.com/80/v2-4baca450c51c7f0eea873c42eeda0eef_720w.webp">
 
-<link rel="canonical" href="https://rdququ.top/posts/32cb02ce/">
+<link rel="canonical" href="https://rdququ.top/posts/223f372/">
 
 
 <script id="page-configurations">
@@ -60,7 +61,7 @@
     <script src="/js/cursor/text.js"></script>
   
 
-  <title>GAMES104Notes | 蛐蛐的软件开发世界</title>
+  <title>不透明物体与半透明物体边缘算法与Unity Shader Graph 实现 | 蛐蛐的软件开发世界</title>
   
 
 
@@ -222,7 +223,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://rdququ.top/posts/32cb02ce/">
+    <link itemprop="mainEntityOfPage" href="https://rdququ.top/posts/223f372/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.png">
@@ -235,7 +236,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          GAMES104Notes
+          不透明物体与半透明物体边缘算法与Unity Shader Graph 实现
         </h1>
 
         <div class="post-meta">
@@ -245,28 +246,9 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
+              
 
-              <time title="创建时间：2023-11-06 12:49:57" itemprop="dateCreated datePublished" datetime="2023-11-06T12:49:57+08:00">2023-11-06</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-11-11 01:20:38" itemprop="dateModified" datetime="2023-11-11T01:20:38+08:00">2023-11-11</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%AD%A6%E4%B9%A0%E5%90%91/" itemprop="url" rel="index"><span itemprop="name">学习向</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%AD%A6%E4%B9%A0%E5%90%91/%E6%B8%B8%E6%88%8F%E5%BC%95%E6%93%8E/" itemprop="url" rel="index"><span itemprop="name">游戏引擎</span></a>
-                </span>
+              <time title="创建时间：2023-12-12 19:25:29 / 修改时间：22:49:10" itemprop="dateCreated datePublished" datetime="2023-12-12T19:25:29+08:00">2023-12-12</time>
             </span>
 
           
@@ -282,14 +264,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>1.7k</span>
+              <span>2.8k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>2 分钟</span>
+              <span>3 分钟</span>
             </span>
 
         </div>
@@ -301,123 +283,80 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>GAMES104Notes</p>
-<span id="more"></span>
+        <h2 id="前置知识">前置知识</h2>
+<h3 id="归一化空间坐标-ndknormalized-device-coordinates">归一化空间坐标 NDK(Normalized Device Coordinates)</h3>
+<p>在齐次裁剪空间的基础上进行透视除法或称齐次除法, 得到的坐标叫做NDC空间坐标。</p>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/102758967">一篇文章彻底弄懂齐次裁剪 - 知乎 (zhihu.com)</a></p>
+<h4 id="透视除法-齐次除法perspective-division-homogeneous-division">透视除法-齐次除法(<strong>perspective division</strong>-<strong>homogeneous division)</strong></h4>
+<p>就是将齐次裁剪空间坐标positionCS的X,Y,Z分量都除以W分量。</p>
+<p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/7e701d7bfd79">写给大家看的“透视除法” —— 齐次坐标和投影 - 简书 (jianshu.com)</a></p>
+<p><img data-src="https://pic4.zhimg.com/80/v2-4baca450c51c7f0eea873c42eeda0eef_720w.webp" /></p>
+<h2 id="算法原理">算法原理</h2>
+<h2 id="unity-shader-graph-实现">Unity Shader Graph 实现</h2>
+<h3 id="scenedepth">SceneDepth</h3>
+<blockquote>
+<p>Provides access to the current <strong>Camera</strong> 's depth buffer using input <strong>UV</strong> , which is expected to be normalized screen coordinates. Note: Depth buffer access requires depth buffer to be enabled on the active <strong>Render Pipeline</strong> . This process is different per <strong>Render Pipeline</strong> . It is recommended you read the documentation of your active <strong>Render Pipeline</strong> for information on enabling the depth buffer. If the depth buffer is unavailable this <a href="https://link.zhihu.com/?target=https%3A//docs.unity3d.com/Packages/com.unity.shadergraph%406.9/manual/Node.html">Node</a> will return mid grey.</p>
+</blockquote>
+<p>也就是说SceneDepth Node是对深度纹理进行获取的节点，只不过获取的方法不同，而深度纹理中存储的是NDC坐标的深度值。</p>
 <figure>
-<img data-src="GAMES104_Zoo%20of%20Game%20Engines-1.png" alt="AMES104_Zoo of Game Engines-1" /><figcaption aria-hidden="true">AMES104_Zoo of Game Engines-1</figcaption>
+<img data-src="https://pic4.zhimg.com/80/v2-199f0cb63bdba7f81de4c826056dcbff_720w.webp" alt="img" /><figcaption aria-hidden="true">img</figcaption>
+</figure>
+<ul>
+<li>Linear01获取的是线性的范围为[0,1]的深度值。 &gt; 想要把Raw Depth转换成线性 ，并且从近平面到远平面为0-1的深度，就需要Linear 01 Depth，这时0.5深度就是视锥体一半的位置。 &gt;</li>
+<li>Raw也就是深度纹理中存储的非线性，范围为[0,1]的值。 &gt; 表示深度缓冲的原始数据，普通的深度缓冲使用32位的浮点数表示深度，相机近平面的深度为0，远平面的深度为1。而Unity 使用了Reversed Z，这就使得近平面深度为1，而远平面深度为0，另外，如果相机的投影矩阵不是正交矩阵，那么深度缓冲中的深度就不是线性的，举个例子就是深度0.5代表的地方并不是视锥体一半的位置。 &gt;</li>
+<li>Eye获取的是视角空间下的线性深度值，范围为[near, far]。 &gt; Linear Eye Depth中深度为1表示沿着摄像机Z轴，距离为1个单位的地方，2就是距离两个单位的地方，以此类推。 &gt;</li>
+</ul>
+<h3 id="screenposition">ScreenPosition</h3>
+<blockquote>
+<p>Provides access to the mesh vertex or fragment's <strong>Screen Position</strong> .</p>
+</blockquote>
+<figure>
+<img data-src="https://pic3.zhimg.com/80/v2-439252aa4b98dac54ced99bf1460a58e_720w.webp" alt="img" /><figcaption aria-hidden="true">img</figcaption>
+</figure>
+<ul>
+<li>ScreenPosition在Default选项下会进行齐次除法运算（即除以w分量），这里的w范围为[0,1],也就是NDC下的w分量。经过透视除法的，左下角是（0，0）右上角是（1，1）的屏幕空间</li>
+<li>在Raw选项下，不会进行齐次除法运算,这里的w范围是[Near, Far],是Clip Space中的w分量。未经过透视除法的，左下角是（0，0）右上角是（1，1）的屏幕空间</li>
+<li>Center: 经过透视除法的，左下角是（-1，-1）右上角是（1，1）的屏幕空间</li>
+<li>Tiled: 经过透视除法的，分成上下均等的四块组成，每块左下角是（0，0）右上角是（1，1）的屏幕空间</li>
+</ul>
+<p>在这里ScreenPosition的w分量的含义也就是ClipSpace下的w分量，范围是[Near, Far],而当xy除以w分量后，越远的顶点也就会除以越大的w分量，就会产生透视现象。</p>
+<h3 id="存疑之处与我的观点证明">存疑之处与我的观点/证明</h3>
+<p>博主<a target="_blank" rel="noopener" href="https://www.zhihu.com/people/lute-li">Lute Li</a>，认为</p>
+<blockquote>
+<p>（Scene Depth是除开透明模型之外的深度，Screen Position是所有模型的深度，相减就是边缘）</p>
+</blockquote>
+<p>出处<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/109547098">从头学ShaderGraph 5-护盾材质 - 知乎 (zhihu.com)</a></p>
+<p><img data-src="https://pic2.zhimg.com/80/v2-fea83d5ed062c6bfe5dc8221e2d5d999_720w.webp" /></p>
+<p><strong>(Vertex Shader) =&gt; Clip Space =&gt; (透视除法) =&gt; NDC =&gt; (视口变换) =&gt; Window Space =&gt; (Fragment Shader)</strong></p>
+<p>现象很好观察，但是不知道原理，翻遍了官方文档和网上的教程也没能得到一个足够有说服力的解释，现在可以知道 SceneDepth 的 Eye 获取的是视角空间下的线性深度值，范围为[near, far]，ScreenPosition 的 w 分量是是 Clip Space 中未经过透视除法的值，范围也是[near, far]。我们知道物体自Eye/View/Camera Space(这玩意名字真多)到Cliping Space 要经过一次透视变换，或者说透视除法，所以实际上，Screen Graph 的 w 分量也许就是 Eye Space 下到相机的距离(不是深度，所以也存储了透明物体的距离)</p>
+<figure>
+<img data-src="image/不透明物体与半透明物体边缘算法与Unity-Shader-Graph-实现/1702390346535.png" alt="1702390346535" /><figcaption aria-hidden="true">1702390346535</figcaption>
+</figure>
+<p>上图的实验一定程度上看可以证明上文的观点。</p>
+<p>有趣的是，当我们把 Surface Type 修改为Transparent, 场景中的透明与不透明物体的交界处出现了一道淡淡的白线</p>
+<figure>
+<img data-src="image/不透明物体与半透明物体边缘算法与Unity-Shader-Graph-实现/1702390608834.png" alt="1702390608834" /><figcaption aria-hidden="true">1702390608834</figcaption>
+</figure>
+<p>我们将 Comparison 节点的输入值 B 调大，交界处出现了明显的白线</p>
+<figure>
+<img data-src="image/不透明物体与半透明物体边缘算法与Unity-Shader-Graph-实现/1702390681409.png" alt="1702390681409" /><figcaption aria-hidden="true">1702390681409</figcaption>
 </figure>
 <figure>
-<img data-src="GAMES104_Middlewares.png" alt="GAMES104_Middlewares" /><figcaption aria-hidden="true">GAMES104_Middlewares</figcaption>
+<img data-src="image/不透明物体与半透明物体边缘算法与Unity-Shader-Graph-实现/1702390730401.png" alt="1702390730401" /><figcaption aria-hidden="true">1702390730401</figcaption>
 </figure>
-<h2 id="引擎的基本架构">引擎的基本架构</h2>
-<p>自顶向底的五层架构</p>
-<ul>
-<li>Tool Layer 工具链和编辑环境</li>
-<li>Function Layer 游戏逻辑设计</li>
-<li>Resource Layer 处理存储不同种类的文件资源</li>
-<li>Core Layer 构建功能</li>
-<li>Platform Layer 硬件的运行环境，输入设备的差别，软件的发布平台</li>
-</ul>
-<h3 id="resource-layer">resource layer</h3>
-<p>importing: resource -&gt; asset</p>
-<p>全局唯一编号: GUID</p>
-<p>Runtime Asset Manager</p>
-<p>Manager Asset Life Cycle</p>
-<h3 id="function-layer">Function Layer</h3>
-<p>tick &amp; frame</p>
-<p>Multi-threading</p>
-<h3 id="core-layer">Core Layer</h3>
-<p>Math Library</p>
-<p>Math Efficiency eg. Quick and dirty hacks</p>
-<ul>
-<li>Carmack's 1/sqrt(x)</li>
-<li>Magic number</li>
-</ul>
-<p>eg. SIMD<img data-src="SIMD-1.png" alt="Alt text" /></p>
-<p>Data Structure and Containers</p>
-<p>Memory Management</p>
-<p>Foundation of Game Engine</p>
-<h3 id="platform-layer">Platform Layer</h3>
-<p>Target on Different Platform</p>
-<p>Graphics API eg. Render Hardware Interface(RHI)</p>
-<p>Hardware Architecture</p>
-<h3 id="tool-layer">Tool Layer</h3>
-<p>Allow Anyone to Create Game</p>
-<p>Digital Content Creation(DCC)</p>
-<h2 id="如何构建游戏世界">如何构建游戏世界</h2>
-<h3 id="game-objectgo">game object(GO)</h3>
-<h4 id="property">property</h4>
-<h4 id="behavior">behavior</h4>
-<h4 id="oop-vs.-component">OOP vs. Component</h4>
-<p>OOP 也符合直觉，但是在复杂的游戏世界中并没有非常清晰的父子继承关系。</p>
-<p>现在更多地使用 Component 的方式，将游戏对象的行为分解为多个组件，每个组件只负责一种行为。</p>
-<h4 id="component-based-tick">Component-based Tick</h4>
-<p>和曾经分GO Tick不同，现在是分Component Tick。由于 pipeline 效率更高</p>
-<h4 id="go-间通信">GO 间通信</h4>
-<ul>
-<li>Hard Code</li>
-<li>Event</li>
-<li>uid</li>
-</ul>
-<h4 id="scene-management">Scene Management</h4>
+<p>我们知道，初始输出的两个节点的取值范围都是[n,f]，所以当我们把对比节点的输入值B调到1的时候，边界就很明显了。</p>
+<p>现在，结果已经呼之欲出了，Scene Depth 节点的 Eye 输出的是深度值，我们知道，透明物体默认不会写入深度缓冲，Screen Position 输出的是简单的距离，故而相减可以得到边界。</p>
+<h2 id="参考资料与引用">参考资料与引用</h2>
 <ol type="1">
-<li><p>No division &amp; Drived by grid</p></li>
-<li><p>Spatial Data Structures</p>
-<ul>
-<li>Quadtree</li>
-<li>Octree</li>
-<li>Binary Space Partitioning(BSP)</li>
-<li>Bounding Volume Hierarchy(BVH)</li>
-<li>Scene Graph</li>
-</ul></li>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/535898515">unity urp 20 SceneDepth和ScreenPosition.w - 知乎 (zhihu.com)</a></li>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/347698766">Shader Graph中的Scene Depth和Screen Position - 知乎 (zhihu.com)</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1sa411C7Xd/">2022版Unity Shader Graph教程04 水面 (上) 超简单ShaderGraph入门_哔哩哔哩_bilibili</a></li>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/102758967">一篇文章彻底弄懂齐次裁剪 - 知乎 (zhihu.com)</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/7e701d7bfd79">写给大家看的“透视除法” —— 齐次坐标和投影 - 简书 (jianshu.com)</a></li>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/493733502">Unity Shader Graph 中深度纹理（Depth Texture）和屏幕空间坐标（Screen Position） - 知乎 (zhihu.com)</a></li>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/109547098">从头学ShaderGraph 5-护盾材质 - 知乎 (zhihu.com)</a></li>
+<li><a target="_blank" rel="noopener" href="https://carmencincotti.com/2022-05-02/homogeneous-coordinates-clip-space-ndc/#homogeneous-coordinates">Homogeneous Coordinates, Clip Space, and NDC | WebGPU | Carmen's Graphics Blog --- 齐次坐标、裁剪空间和 NDC |网络GPU |Carmen 的图形博客 (carmencincotti.com)</a></li>
 </ol>
-<h2 id="rendering">Rendering</h2>
-<h3 id="basics-of-game-rendering">Basics of Game Rendering</h3>
-<h4 id="gpu">GPU</h4>
-<h5 id="simdsingle-instruction-multiple-data单指令多数据">SIMD(Single Instruction Multiple Data/单指令多数据)</h5>
-<p><code>SMID_ADD c, a, b</code></p>
-<h5 id="simtsingle-instruction-multiple-thread单指令多线程">SIMT(Single Instruction Multiple Thread/单指令多线程)</h5>
-<p><code>SIMT_ADD c, a, b</code></p>
-<h5 id="gpu-architecture">GPU Architecture</h5>
-<ul>
-<li>GPC(Graphics Processing Cluster)</li>
-<li>SM(Streaming Multiprocessor)</li>
-<li>Texture Units</li>
-<li>CUDA Core</li>
-<li>Warp</li>
-</ul>
-<figure>
-<img data-src="GAMES101_GPU_Architecture.png" alt="GPU Architecture" /><figcaption aria-hidden="true">GPU Architecture</figcaption>
-</figure>
-<h5 id="data-flow-from-cpu-to-gpu">Data Flow From CPU to GPU</h5>
-<ul>
-<li>CPU and Main Memory</li>
-<li>CPU to GPU</li>
-<li>GPU and Video Memory</li>
-</ul>
-<p>尽可能让数据单向传输，从 CPU 到 GPU 尽可能不要从 GPU 里读数据</p>
-<h5 id="be-aware-of-cache-efficiency">Be Aware of Cache Efficiency</h5>
-<p>数据一定要放在一起为 Cache(缓存) 做准备</p>
-<h5 id="gpu-bounds-and-performance">GPU Bounds and Performance</h5>
-<h4 id="renderable">Renderable</h4>
-<h5 id="mesh">Mesh</h5>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">Vertex</span></span><br><span class="line">&#123;</span><br><span class="line">  Vector3 m_position;</span><br><span class="line">  <span class="comment">// other attributes</span></span><br><span class="line">  UByte4 m_color;</span><br><span class="line">  Vector3 m_normal;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">Mesh</span></span><br><span class="line">&#123;</span><br><span class="line">  Vertex m_vertex[<span class="number">3</span>];</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-<ul>
-<li>Vertex Data
-<ul>
-<li>Vertex declaration</li>
-<li>Vertex buffer</li>
-</ul></li>
-<li>Index Data
-<ul>
-<li>Index declaration</li>
-<li>Index buffer</li>
-</ul></li>
-</ul>
-<p>Triangle Strip 利好 Cache</p>
-<h3 id="material-shader-and-lighting">Material, Shader, and Lighting</h3>
-<h3 id="special-rendering">Special Rendering</h3>
-<h3 id="pipeline">Pipeline</h3>
 
     </div>
 
@@ -433,7 +372,7 @@
   </li>
   <li class="post-copyright-link">
     <strong>本文链接：</strong>
-    <a href="https://rdququ.top/posts/32cb02ce/" title="GAMES104Notes">https://rdququ.top/posts/32cb02ce/</a>
+    <a href="https://rdququ.top/posts/223f372/" title="不透明物体与半透明物体边缘算法与Unity Shader Graph 实现">https://rdququ.top/posts/223f372/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
@@ -462,11 +401,6 @@
 
 
       <footer class="post-footer">
-          <div class="post-tags">
-              <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9B%BE%E5%BD%A2%E5%AD%A6/" rel="tag"># 计算机图形学</a>
-              <a href="/tags/%E6%B8%B8%E6%88%8F%E5%BC%95%E6%93%8E/" rel="tag"># 游戏引擎</a>
-              <a href="/tags/GAMES104/" rel="tag"># GAMES104</a>
-          </div>
 
         
 
@@ -474,13 +408,10 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/posts/220dd5af/" rel="prev" title="2D图形——渲染、精灵和简单应用">
-      <i class="fa fa-chevron-left"></i> 2D图形——渲染、精灵和简单应用
+    <a href="/posts/e44777a7/" rel="prev" title="Unity_GC_浅谈">
+      <i class="fa fa-chevron-left"></i> Unity_GC_浅谈
     </a></div>
-      <div class="post-nav-item">
-    <a href="/posts/6206937d/" rel="next" title="GAMES101Notes">
-      GAMES101Notes <i class="fa fa-chevron-right"></i>
-    </a></div>
+      <div class="post-nav-item"></div>
     </div>
       </footer>
     
@@ -540,7 +471,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%95%E6%93%8E%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%9E%B6%E6%9E%84"><span class="nav-number">1.</span> <span class="nav-text">引擎的基本架构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#resource-layer"><span class="nav-number">1.1.</span> <span class="nav-text">resource layer</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#function-layer"><span class="nav-number">1.2.</span> <span class="nav-text">Function Layer</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#core-layer"><span class="nav-number">1.3.</span> <span class="nav-text">Core Layer</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#platform-layer"><span class="nav-number">1.4.</span> <span class="nav-text">Platform Layer</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#tool-layer"><span class="nav-number">1.5.</span> <span class="nav-text">Tool Layer</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E6%9E%84%E5%BB%BA%E6%B8%B8%E6%88%8F%E4%B8%96%E7%95%8C"><span class="nav-number">2.</span> <span class="nav-text">如何构建游戏世界</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#game-objectgo"><span class="nav-number">2.1.</span> <span class="nav-text">game object(GO)</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#property"><span class="nav-number">2.1.1.</span> <span class="nav-text">property</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#behavior"><span class="nav-number">2.1.2.</span> <span class="nav-text">behavior</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#oop-vs.-component"><span class="nav-number">2.1.3.</span> <span class="nav-text">OOP vs. Component</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#component-based-tick"><span class="nav-number">2.1.4.</span> <span class="nav-text">Component-based Tick</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#go-%E9%97%B4%E9%80%9A%E4%BF%A1"><span class="nav-number">2.1.5.</span> <span class="nav-text">GO 间通信</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#scene-management"><span class="nav-number">2.1.6.</span> <span class="nav-text">Scene Management</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#rendering"><span class="nav-number">3.</span> <span class="nav-text">Rendering</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#basics-of-game-rendering"><span class="nav-number">3.1.</span> <span class="nav-text">Basics of Game Rendering</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#gpu"><span class="nav-number">3.1.1.</span> <span class="nav-text">GPU</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#simdsingle-instruction-multiple-data%E5%8D%95%E6%8C%87%E4%BB%A4%E5%A4%9A%E6%95%B0%E6%8D%AE"><span class="nav-number">3.1.1.1.</span> <span class="nav-text">SIMD(Single Instruction Multiple Data&#x2F;单指令多数据)</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#simtsingle-instruction-multiple-thread%E5%8D%95%E6%8C%87%E4%BB%A4%E5%A4%9A%E7%BA%BF%E7%A8%8B"><span class="nav-number">3.1.1.2.</span> <span class="nav-text">SIMT(Single Instruction Multiple Thread&#x2F;单指令多线程)</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#gpu-architecture"><span class="nav-number">3.1.1.3.</span> <span class="nav-text">GPU Architecture</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#data-flow-from-cpu-to-gpu"><span class="nav-number">3.1.1.4.</span> <span class="nav-text">Data Flow From CPU to GPU</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#be-aware-of-cache-efficiency"><span class="nav-number">3.1.1.5.</span> <span class="nav-text">Be Aware of Cache Efficiency</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#gpu-bounds-and-performance"><span class="nav-number">3.1.1.6.</span> <span class="nav-text">GPU Bounds and Performance</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#renderable"><span class="nav-number">3.1.2.</span> <span class="nav-text">Renderable</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#mesh"><span class="nav-number">3.1.2.1.</span> <span class="nav-text">Mesh</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#material-shader-and-lighting"><span class="nav-number">3.2.</span> <span class="nav-text">Material, Shader, and Lighting</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#special-rendering"><span class="nav-number">3.3.</span> <span class="nav-text">Special Rendering</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#pipeline"><span class="nav-number">3.4.</span> <span class="nav-text">Pipeline</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86"><span class="nav-number">1.</span> <span class="nav-text">前置知识</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BD%92%E4%B8%80%E5%8C%96%E7%A9%BA%E9%97%B4%E5%9D%90%E6%A0%87-ndknormalized-device-coordinates"><span class="nav-number">1.1.</span> <span class="nav-text">归一化空间坐标 NDK(Normalized Device Coordinates)</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%80%8F%E8%A7%86%E9%99%A4%E6%B3%95-%E9%BD%90%E6%AC%A1%E9%99%A4%E6%B3%95perspective-division-homogeneous-division"><span class="nav-number">1.1.1.</span> <span class="nav-text">透视除法-齐次除法(perspective division-homogeneous division)</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AE%97%E6%B3%95%E5%8E%9F%E7%90%86"><span class="nav-number">2.</span> <span class="nav-text">算法原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#unity-shader-graph-%E5%AE%9E%E7%8E%B0"><span class="nav-number">3.</span> <span class="nav-text">Unity Shader Graph 实现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#scenedepth"><span class="nav-number">3.1.</span> <span class="nav-text">SceneDepth</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#screenposition"><span class="nav-number">3.2.</span> <span class="nav-text">ScreenPosition</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AD%98%E7%96%91%E4%B9%8B%E5%A4%84%E4%B8%8E%E6%88%91%E7%9A%84%E8%A7%82%E7%82%B9%E8%AF%81%E6%98%8E"><span class="nav-number">3.3.</span> <span class="nav-text">存疑之处与我的观点&#x2F;证明</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99%E4%B8%8E%E5%BC%95%E7%94%A8"><span class="nav-number">4.</span> <span class="nav-text">参考资料与引用</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -745,7 +676,7 @@ NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
       repo        : 'BlogComments',
       owner       : 'dlqw',
       admin       : ['dlqw'],
-      id          : '591472d51f26be1d9af6dbb6ff11054c',
+      id          : '25ba84478473ee9291a23b98706542c4',
         language: 'zh-CN',
       distractionFreeMode: true
     });

@@ -282,38 +282,38 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>起因是我在学习 runtime 的 mesh 切割算法，需要判断目标 mesh 是否和切面相交（不相交的话我就不需要去处理了）</p>
-<span id="more"></span>
-<h2 id="前提知识"><a class="markdownIt-Anchor" href="#前提知识"></a> 前提知识</h2>
+        <p>起因是我在学习 runtime 的 mesh 切割算法，需要判断目标 mesh 是否和切面相交（不相交的话我就不需要去处理了） <span id="more"></span> ## 前提知识</p>
 <p>Unity 的 mesh 和 collider 都使用 AABB 包围盒</p>
-<h3 id="什么是-aabb-包围盒"><a class="markdownIt-Anchor" href="#什么是-aabb-包围盒"></a> 什么是 AABB 包围盒？</h3>
+<h3 id="什么是-aabb-包围盒">什么是 AABB 包围盒？</h3>
 <p>AABB ==&gt; Axis Aligned Bounding Box (轴对齐边界框)</p>
 <p>AABB（轴对齐边界框）是一个 3D 框。它的宽度/高度/深度不必相等，但宽度始终与 X 轴对齐，高度与 Y 轴对齐，深度与 Z 轴对齐。也就是说，这个盒子是不能旋转的。</p>
-<h3 id="如何表示-aabb"><a class="markdownIt-Anchor" href="#如何表示-aabb"></a> 如何表示 AABB？</h3>
+<h3 id="如何表示-aabb">如何表示 AABB？</h3>
 <p>有两种常见的方法，存储最左边和最右边的角，或者存储中心点和盒子在每侧延伸多远的向量。</p>
 <p>第一种：</p>
 <figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">struct</span> AABB</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">public</span> Vector3 min;</span><br><span class="line">    <span class="keyword">public</span> Vector3 max;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>第二种：</p>
 <figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">struct</span> AABB</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">public</span> Vector3 center;</span><br><span class="line">    <span class="keyword">public</span> Vector3 extents;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><img data-src="AABB%E8%A1%A8%E7%A4%BA%E6%B3%95.png" alt="AABB表示法" /></p>
-<h2 id="算法"><a class="markdownIt-Anchor" href="#算法"></a> 算法</h2>
+<figure>
+<img data-src="AABB表示法.png" alt="AABB表示法" /><figcaption aria-hidden="true">AABB表示法</figcaption>
+</figure>
+<h2 id="算法">算法</h2>
 <p>为了测试 AABB 和平面是否相交，我们首先必须将 AABB 的每个顶点投影到平面的法线上。这使我们 AABB 的所有顶点都在一条线上。</p>
 <p>然后，我们检查离平面最远的顶点。如果与顶点对角线相对的顶点位于平面的另一侧，则我们有一个交点。</p>
 <p>通用的 C# 代码如下，无论你的 AABB 是如何表示的(max/min 或 center/extents)，只需要稍作修改：</p>
 <figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Test if AABB b intersects plane p</span></span><br><span class="line"><span class="function"><span class="built_in">int</span> <span class="title">TestAABBPlane</span>(<span class="params">AABB b, Plane p</span>)</span> &#123;</span><br><span class="line">    <span class="comment">// Convert AABB to center-extents representation</span></span><br><span class="line">    Point c = (b.max + b.min) * <span class="number">0.5f</span>; <span class="comment">// Compute AABB center</span></span><br><span class="line">    Point e = b.max - c; <span class="comment">// Compute positive extents</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// Compute the projection interval radius of b onto L(t) = b.c + t * p.n</span></span><br><span class="line">    <span class="built_in">float</span> r = e[<span class="number">0</span>]*Abs(p.n[<span class="number">0</span>]) + e[<span class="number">1</span>]*Abs(p.n[<span class="number">1</span>]) + e[<span class="number">2</span>]*Abs(p.n[<span class="number">2</span>]);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Compute distance of box center from plane</span></span><br><span class="line">    <span class="built_in">float</span> s = Dot(p.n, c) - p.d;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Intersection occurs when distance s falls within [-r,+r] interval</span></span><br><span class="line">    <span class="keyword">return</span> Abs(s) &lt;= r;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="让我们来解析这段代码"><a class="markdownIt-Anchor" href="#让我们来解析这段代码"></a> 让我们来解析这段代码</h3>
-<ol>
+<h3 id="让我们来解析这段代码">让我们来解析这段代码</h3>
+<ol type="1">
 <li>函数传入了目标 Mesh 的 AABB，和目标平面</li>
 <li>进入后的两行假设你的 AABB 是用 max/min 表示的，如果你可以轻松调取 AABB 的 center 和 extents，那么这两行是可以被跳过的</li>
 <li>下一段代码计算了 AABB 的投影半径，这个半径是 AABB 投影到平面法线上的最大距离。</li>
-<li>其取 AABB 的范围和平面法线的绝对值的点积，用于确保计算出的长度是正值，因为两个向量中的元素都是正值或零。$$n’ = (\lvert n_{x} \rvert,\lvert n_{y} \rvert,\lvert n_{z} \rvert) \ \vec{e} \cdot \vec{n’} = \lvert\vec{e} \rvert \lvert\vec{n’} \rvert \cos \theta \ \lvert\vec{n’} \rvert =1 \\vec{e} \cdot \vec{n’} = \lvert\vec{e} \rvert  \cos \theta$$</li>
+<li>其取 AABB 的范围和平面法线的绝对值的点积，用于确保计算出的长度是正值，因为两个向量中的元素都是正值或零。<span class="math display">\[n&#39; = (\lvert n_{x} \rvert,\lvert n_{y} \rvert,\lvert n_{z} \rvert) \\ \vec{e} \cdot \vec{n&#39;} = \lvert\vec{e} \rvert \lvert\vec{n&#39;} \rvert \cos \theta \\ \lvert\vec{n&#39;} \rvert =1 \\\vec{e} \cdot \vec{n&#39;} = \lvert\vec{e} \rvert  \cos \theta\]</span></li>
 <li>下面计算了 AABB 中心点到平面的距离，计为 s</li>
 <li>最后的返回值即为 AABB 自身在平面法线上的距离和其中心到平面距离长短的判断</li>
 </ol>
-<h3 id="unity-实现"><a class="markdownIt-Anchor" href="#unity-实现"></a> Unity 实现</h3>
+<h3 id="unity-实现">Unity 实现</h3>
 <figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="built_in">bool</span> <span class="title">BoundPlaneIntersect</span>(<span class="params">Mesh mesh, <span class="keyword">ref</span> Plane plane</span>)</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">// Compute projection interval radius</span></span><br><span class="line">        <span class="built_in">float</span> r = mesh.bounds.extents.x * Mathf.Abs(plane.normal.x) +</span><br><span class="line">            mesh.bounds.extents.y * Mathf.Abs(plane.normal.y) +</span><br><span class="line">            mesh.bounds.extents.z * Mathf.Abs(plane.normal.z);<span class="comment">//做点乘，得出mesh包围盒的范围在平面法线上的投影，包围盒在平面法线方向上的最大距离</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">// Compute distance of box center from plane</span></span><br><span class="line">        <span class="built_in">float</span> s = Vector3.Dot(plane.normal, mesh.bounds.center) - (-plane.distance);<span class="comment">//前面点乘得mesh中心在平面法线上的投影，这是为了确保计算出的距离和后面的平面距离在同一方向</span></span><br><span class="line">        <span class="comment">//如果法线面朝内，后- (-plane.distance)为正，前mesh中心在与相对原点相交且与平面平行的平面‘靠近平面的一侧，Vector3.Dot(plane.normal, mesh.bounds.center)为负，符合逻辑</span></span><br><span class="line">        <span class="comment">//因为mesh中心和平面在同一侧，距离为相见</span></span><br><span class="line">        <span class="comment">//若mesh中心在与 相对原点相交且与平面平行的平面‘ 远离平面的一侧，就是说mesh中心与平面中间相隔了一个原点，那么前后就都是同号，符合逻辑</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">// Intersection occurs when distance s falls within [-r,+r] interval</span></span><br><span class="line">        <span class="keyword">return</span> Mathf.Abs(s) &lt;= r;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-<h2 id="参考资料"><a class="markdownIt-Anchor" href="#参考资料"></a> 参考资料</h2>
-<ol>
+<h2 id="参考资料">参考资料</h2>
+<ol type="1">
 <li><a target="_blank" rel="noopener" href="https://gdbooks.gitbooks.io/3dcollisions/content/Chapter1/aabb.html">AABB - Axis Aligned Bounding Box</a></li>
 <li><a target="_blank" rel="noopener" href="https://docs.unity.cn/cn/2021.3/ScriptReference/Bounds.html">Bounds-Unity_Documentation</a></li>
 </ol>
@@ -434,7 +434,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%8D%E6%8F%90%E7%9F%A5%E8%AF%86"><span class="nav-number">1.</span> <span class="nav-text"> 前提知识</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-aabb-%E5%8C%85%E5%9B%B4%E7%9B%92"><span class="nav-number">1.1.</span> <span class="nav-text"> 什么是 AABB 包围盒？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E8%A1%A8%E7%A4%BA-aabb"><span class="nav-number">1.2.</span> <span class="nav-text"> 如何表示 AABB？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AE%97%E6%B3%95"><span class="nav-number">2.</span> <span class="nav-text"> 算法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%A9%E6%88%91%E4%BB%AC%E6%9D%A5%E8%A7%A3%E6%9E%90%E8%BF%99%E6%AE%B5%E4%BB%A3%E7%A0%81"><span class="nav-number">2.1.</span> <span class="nav-text"> 让我们来解析这段代码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#unity-%E5%AE%9E%E7%8E%B0"><span class="nav-number">2.2.</span> <span class="nav-text"> Unity 实现</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">3.</span> <span class="nav-text"> 参考资料</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-aabb-%E5%8C%85%E5%9B%B4%E7%9B%92"><span class="nav-number">1.</span> <span class="nav-text">什么是 AABB 包围盒？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E8%A1%A8%E7%A4%BA-aabb"><span class="nav-number">2.</span> <span class="nav-text">如何表示 AABB？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AE%97%E6%B3%95"><span class="nav-number"></span> <span class="nav-text">算法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%A9%E6%88%91%E4%BB%AC%E6%9D%A5%E8%A7%A3%E6%9E%90%E8%BF%99%E6%AE%B5%E4%BB%A3%E7%A0%81"><span class="nav-number">1.</span> <span class="nav-text">让我们来解析这段代码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#unity-%E5%AE%9E%E7%8E%B0"><span class="nav-number">2.</span> <span class="nav-text">Unity 实现</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number"></span> <span class="nav-text">参考资料</span></a></div>
       </div>
       <!--/noindex-->
 
@@ -450,7 +450,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">33</span>
+          <span class="site-state-item-count">35</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -499,7 +499,7 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">107k</span>
+    <span title="站点总字数">108k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
@@ -508,7 +508,7 @@
 </div>
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共42.5k字</span>
+  <span class="post-count">博客全站共43.6k字</span>
 </div>
 
     <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>

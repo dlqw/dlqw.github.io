@@ -22,17 +22,19 @@
   </script>
 
     <script src="//code.jquery.com/jquery-2.0.3.min.js"></script>
-  <meta name="description" content="正在学习unity中">
-<meta property="og:type" content="website">
-<meta property="og:title" content="蛐蛐的软件开发世界">
-<meta property="og:url" content="https://rdququ.top/categories/%E8%B5%84%E6%96%99%E5%90%91/%E8%AF%AD%E6%B3%95/index.html">
+  <meta name="description" content="Unity 底层的内存分配 托管内存 Mono 和 IL2CPP 的脚本虚拟机(virtual machines &#x3D;&gt; VMs)实现了托管内存系统(脚本内存系统)。这些VMs提供了数种受控内存环境。 Managed Heap 『托管堆』 GC 自动控制的内存区域。 Scripting Stack 『脚本栈』 在应用程序进入和退出任何代码范围时构建和展开 Native VM Me">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Unity_GC_浅谈">
+<meta property="og:url" content="https://rdququ.top/posts/e44777a7/index.html">
 <meta property="og:site_name" content="蛐蛐的软件开发世界">
-<meta property="og:description" content="正在学习unity中">
+<meta property="og:description" content="Unity 底层的内存分配 托管内存 Mono 和 IL2CPP 的脚本虚拟机(virtual machines &#x3D;&gt; VMs)实现了托管内存系统(脚本内存系统)。这些VMs提供了数种受控内存环境。 Managed Heap 『托管堆』 GC 自动控制的内存区域。 Scripting Stack 『脚本栈』 在应用程序进入和退出任何代码范围时构建和展开 Native VM Me">
 <meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-12-10T05:50:22.000Z">
+<meta property="article:modified_time" content="2023-12-10T12:10:20.528Z">
 <meta property="article:author" content="蛐蛐">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="https://rdququ.top/categories/%E8%B5%84%E6%96%99%E5%90%91/%E8%AF%AD%E6%B3%95/">
+<link rel="canonical" href="https://rdququ.top/posts/e44777a7/">
 
 
 <script id="page-configurations">
@@ -40,7 +42,7 @@
   CONFIG.page = {
     sidebar: "",
     isHome : false,
-    isPost : false,
+    isPost : true,
     lang   : 'zh-CN'
   };
 </script>
@@ -50,7 +52,7 @@
     <script src="/js/cursor/text.js"></script>
   
 
-  <title>分类: 语法 | 蛐蛐的软件开发世界</title>
+  <title>Unity_GC_浅谈 | 蛐蛐的软件开发世界</title>
   
 
 
@@ -205,57 +207,175 @@
         <div class="content-wrap">
           
 
-          <div class="content category">
+          <div class="content post posts-expand">
             
 
+    
   
   
-  
-  <div class="post-block">
-    <div class="posts-collapse">
-      <div class="collection-title">
-        <h2 class="collection-header">语法
-          <small>分类</small>
-        </h2>
-      </div>
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://rdququ.top/posts/e44777a7/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="蛐蛐">
+      <meta itemprop="description" content="正在学习unity中">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="蛐蛐的软件开发世界">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Unity_GC_浅谈
+        </h1>
+
+        <div class="post-meta">
+        
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-12-10 13:50:22 / 修改时间：20:10:20" itemprop="dateCreated datePublished" datetime="2023-12-10T13:50:22+08:00">2023-12-10</time>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>660</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
 
       
-    <div class="collection-year">
-      <span class="collection-header">2023</span>
+        <h2 id="unity-底层的内存分配">Unity 底层的内存分配</h2>
+<h3 id="托管内存">托管内存</h3>
+<p>Mono 和 IL2CPP 的脚本虚拟机(virtual machines =&gt; VMs)实现了托管内存系统(脚本内存系统)。这些VMs提供了数种受控内存环境。</p>
+<h4 id="managed-heap-托管堆">Managed Heap 『托管堆』</h4>
+<p>GC 自动控制的内存区域。</p>
+<h4 id="scripting-stack-脚本栈">Scripting Stack 『脚本栈』</h4>
+<p>在应用程序进入和退出任何代码范围时构建和展开</p>
+<h4 id="native-vm-memory-本地虚拟机内存">Native VM Memory 『本地虚拟机内存』</h4>
+<p>包含与 Unity 脚本层相关的内存，大多数情况下不需要主动管理。</p>
+<h3 id="c-非托管内存">C# 非托管内存</h3>
+<p>允许编写 C# 代码来访问本机内存以微调内存分配。 可以使用 Unity 核心 API 中的 Unity.Collections 命名空间（包括 NativeArray）和 Unity Collections 包中的数据结构来访问 C# 非托管内存。如果使用 Unity 的 C# Job 系统或 Burst，则必须使用 C# 非托管内存。</p>
+<h3 id="native-memory-本机内存">Native Memory 『本机内存』</h3>
+<h2 id="unity-应用的-gc-算法">Unity 应用的 GC 算法</h2>
+<h3 id="boehmgc">BoehmGC</h3>
+<h4 id="boehmgc-算法原理">BoehmGC 算法原理</h4>
+<h4 id="boehmgc-的内存管理">BoehmGC 的内存管理</h4>
+<h4 id="boehmgc-算法实现">BoehmGC 算法实现</h4>
+<h4 id="mono-与-il2cpp-中的-boehmgc">MONO 与 IL2CPP 中的 BoehmGC</h4>
+<h3 id="渐进式-gc">渐进式 GC</h3>
+<h2 id="参考资料">参考资料</h2>
+<ol type="1">
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/623849906">Unity 垃圾回收GC的原理？</a></li>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/265217138">Unity GC 学习总结</a></li>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/41023320">解读MONO内存管理和回收！</a></li>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/41398507">解读MONO内存管理：BOEHM GC原理及总结</a></li>
+<li><a target="_blank" rel="noopener" href="https://juejin.cn/post/6966954993869914119">Unity3D托管堆BoehmGC算法学习-内存分配篇</a></li>
+<li><a target="_blank" rel="noopener" href="https://juejin.cn/post/6968400262629163038">Unity3D托管堆BoehmGC算法学习-垃圾回收篇</a></li>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/381859536?">【笔记】Unity内存分配和回收的底层原理</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.unity3d.com/Manual/performance-memory-overview.html">Memory in Unity Unity</a></li>
+<li><a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Garbage_collection_(computer_science)">Garbage collection (computer science)</a></li>
+</ol>
+
     </div>
 
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
+    
+    
+    
+        
 
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2023-08-05T23:04:15+08:00"
-              content="2023-08-05">
-          08-05
-        </time>
-      </div>
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>蛐蛐
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://rdququ.top/posts/e44777a7/" title="Unity_GC_浅谈">https://rdququ.top/posts/e44777a7/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
 
-      <div class="post-title">
-          <a class="post-title-link" href="/posts/65271aca/" itemprop="url">
-            <span itemprop="name">unity协程（corounines）学习理解兼迭代器学习，异步多任务处理</span>
+        
+
+  <div class="followme">
+    <p>欢迎关注我的其它发布渠道</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/atom.xml">
+            <span class="icon">
+              <i class="fa fa-rss"></i>
+            </span>
+
+            <span class="label">RSS</span>
           </a>
-      </div>
-
-    </header>
-  </article>
-
+        </div>
     </div>
   </div>
-  
-  
-  
 
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/posts/1fbb4100/" rel="prev" title="UnityshaderGraph学习2021版">
+      <i class="fa fa-chevron-left"></i> UnityshaderGraph学习2021版
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/posts/223f372/" rel="next" title="不透明物体与半透明物体边缘算法与Unity Shader Graph 实现">
+      不透明物体与半透明物体边缘算法与Unity Shader Graph 实现 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
   
 
 
 
           </div>
           
+    <div class="comments" id="gitalk-container"></div>
 
 <script>
   window.addEventListener('tabs:register', () => {
@@ -302,6 +422,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#unity-%E5%BA%95%E5%B1%82%E7%9A%84%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D"><span class="nav-number">1.</span> <span class="nav-text">Unity 底层的内存分配</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%89%98%E7%AE%A1%E5%86%85%E5%AD%98"><span class="nav-number">1.1.</span> <span class="nav-text">托管内存</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#managed-heap-%E6%89%98%E7%AE%A1%E5%A0%86"><span class="nav-number">1.1.1.</span> <span class="nav-text">Managed Heap 『托管堆』</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#scripting-stack-%E8%84%9A%E6%9C%AC%E6%A0%88"><span class="nav-number">1.1.2.</span> <span class="nav-text">Scripting Stack 『脚本栈』</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#native-vm-memory-%E6%9C%AC%E5%9C%B0%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%86%85%E5%AD%98"><span class="nav-number">1.1.3.</span> <span class="nav-text">Native VM Memory 『本地虚拟机内存』</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#c-%E9%9D%9E%E6%89%98%E7%AE%A1%E5%86%85%E5%AD%98"><span class="nav-number">1.2.</span> <span class="nav-text">C# 非托管内存</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#native-memory-%E6%9C%AC%E6%9C%BA%E5%86%85%E5%AD%98"><span class="nav-number">1.3.</span> <span class="nav-text">Native Memory 『本机内存』</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#unity-%E5%BA%94%E7%94%A8%E7%9A%84-gc-%E7%AE%97%E6%B3%95"><span class="nav-number">2.</span> <span class="nav-text">Unity 应用的 GC 算法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#boehmgc"><span class="nav-number">2.1.</span> <span class="nav-text">BoehmGC</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#boehmgc-%E7%AE%97%E6%B3%95%E5%8E%9F%E7%90%86"><span class="nav-number">2.1.1.</span> <span class="nav-text">BoehmGC 算法原理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#boehmgc-%E7%9A%84%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86"><span class="nav-number">2.1.2.</span> <span class="nav-text">BoehmGC 的内存管理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#boehmgc-%E7%AE%97%E6%B3%95%E5%AE%9E%E7%8E%B0"><span class="nav-number">2.1.3.</span> <span class="nav-text">BoehmGC 算法实现</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#mono-%E4%B8%8E-il2cpp-%E4%B8%AD%E7%9A%84-boehmgc"><span class="nav-number">2.1.4.</span> <span class="nav-text">MONO 与 IL2CPP 中的 BoehmGC</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B8%90%E8%BF%9B%E5%BC%8F-gc"><span class="nav-number">2.2.</span> <span class="nav-text">渐进式 GC</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">3.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -495,6 +616,25 @@ $(document).ready(function() {
 
   
 
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '2b72d9fa7fcc851ff3a5',
+      clientSecret: '62e1dcf26b05a0e5bbb7318a5be41964412c7bc7',
+      repo        : 'BlogComments',
+      owner       : 'dlqw',
+      admin       : ['dlqw'],
+      id          : 'e883b5dcc0de2cae5e61cd7ac572f6b8',
+        language: 'zh-CN',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
 
 </body>
 </html>

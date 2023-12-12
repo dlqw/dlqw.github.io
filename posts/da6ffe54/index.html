@@ -22,12 +22,12 @@
   </script>
 
     <script src="//code.jquery.com/jquery-2.0.3.min.js"></script>
-  <meta name="description" content="以往我在做空判断的时候，都是这样写的： 1if (gameobject !&#x3D; null) 或者是 1if (gameobject &#x3D;&#x3D; null) return; 最近换了Rider， 他给我来了句提示与 &#39;null&#39; 的比较开销较大,奇奇怪怪，我换成了  if(gameobject) 就没有这些提示了，那么这两种写法到底有什么区别呢？">
+  <meta name="description" content="以往我在做空判断的时候，都是这样写的： 1if (gameobject !&#x3D; null) 或者是 1if (gameobject &#x3D;&#x3D; null) return; 最近换了Rider， 他给我来了句提示与 &#39;null&#39; 的比较开销较大,奇奇怪怪，我换成了 if(gameobject) 就没有这些提示了，那么这两种写法到底有什么区别呢？">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Unity中空判断与Destroy实现">
 <meta property="og:url" content="https://rdququ.top/posts/da6ffe54/index.html">
 <meta property="og:site_name" content="蛐蛐的软件开发世界">
-<meta property="og:description" content="以往我在做空判断的时候，都是这样写的： 1if (gameobject !&#x3D; null) 或者是 1if (gameobject &#x3D;&#x3D; null) return; 最近换了Rider， 他给我来了句提示与 &#39;null&#39; 的比较开销较大,奇奇怪怪，我换成了  if(gameobject) 就没有这些提示了，那么这两种写法到底有什么区别呢？">
+<meta property="og:description" content="以往我在做空判断的时候，都是这样写的： 1if (gameobject !&#x3D; null) 或者是 1if (gameobject &#x3D;&#x3D; null) return; 最近换了Rider， 他给我来了句提示与 &#39;null&#39; 的比较开销较大,奇奇怪怪，我换成了 if(gameobject) 就没有这些提示了，那么这两种写法到底有什么区别呢？">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-09-16T04:59:37.000Z">
 <meta property="article:modified_time" content="2023-09-18T15:09:15.409Z">
@@ -302,14 +302,13 @@
 <figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (gameobject != <span class="literal">null</span>)</span><br></pre></td></tr></table></figure>
 <p>或者是</p>
 <figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (gameobject == <span class="literal">null</span>) <span class="keyword">return</span>;</span><br></pre></td></tr></table></figure>
-<p>最近换了Rider， 他给我来了句提示<code>与 'null' 的比较开销较大</code>,奇奇怪怪，我换成了  <code>if(gameobject)</code> 就没有这些提示了，那么这两种写法到底有什么区别呢？</p>
- <span id="more"></span>
+<p>最近换了Rider， 他给我来了句提示<code>与 'null' 的比较开销较大</code>,奇奇怪怪，我换成了 <code>if(gameobject)</code> 就没有这些提示了，那么这两种写法到底有什么区别呢？ <span id="more"></span></p>
 <p>要讨论这两个问题，还真不是很简单，我们首先要了解<code>Object</code>,这里的<code>Object</code>是<code>System.Object</code>，也是<code>UnityEngine.Object</code>。</p>
 <p><code>System.Object</code>大家都很好理解，我们来看看<code>UnityEngine.Object</code>吧。</p>
 <p><code>UnityEngine.Object</code>继承自<code>system.Object</code>，是<code>Unity</code>所涉及所有物体的基类。</p>
 <p>但是他们也有区别，不得不谈的就是<code>销毁</code>和<code>空判断</code>。</p>
 <blockquote>
-<p>这是最常见的问题，在UnityEngine中我们销毁一个对象时，使用“<mark>”操作符与null比较结果为true，但是可以发现，我们还是可以引用这个变量，这主要是由于UnityEngine的</mark>操作符在销毁后即将Object置位null，但是对象本身需要被GC后才能达到真正意义上的销毁，也就是System.Object中的null；</p>
+<p>这是最常见的问题，在UnityEngine中我们销毁一个对象时，使用“==”操作符与null比较结果为true，但是可以发现，我们还是可以引用这个变量，这主要是由于UnityEngine的==操作符在销毁后即将Object置位null，但是对象本身需要被GC后才能达到真正意义上的销毁，也就是System.Object中的null；</p>
 </blockquote>
 <blockquote>
 <p>这里涉及到了托管的问题，如果不了解也不要紧，我可以告诉你从 UnityEngine.Object 继承的对象，包括托管和非托管两部分，当调用 Destroy 时，销毁的只是非托管部分，托管部分只能通过 C# 的垃圾回收器进行回收。</p>
@@ -328,16 +327,14 @@
 <p>可以发现<code>CompareBaseObjects</code>方法的实现也是绕不开的，我们来看看</p>
 <figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="built_in">bool</span> <span class="title">CompareBaseObjects</span>(<span class="params">Object lhs, Object rhs</span>)</span></span><br><span class="line">    &#123;</span><br><span class="line">      <span class="built_in">bool</span> flag1 = (<span class="built_in">object</span>) lhs == <span class="literal">null</span>;</span><br><span class="line">      <span class="built_in">bool</span> flag2 = (<span class="built_in">object</span>) rhs == <span class="literal">null</span>;</span><br><span class="line">      <span class="keyword">if</span> (flag2 &amp; flag1)</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">      <span class="keyword">if</span> (flag2)</span><br><span class="line">        <span class="keyword">return</span> !Object.IsNativeObjectAlive(lhs);</span><br><span class="line">      <span class="keyword">return</span> flag1 ? !Object.IsNativeObjectAlive(rhs) : lhs.m_InstanceID == rhs.m_InstanceID;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
 <p>看到这里，其实我们已经对之前的问题有了回答了</p>
-<p><code>UnityEngine.Object</code>中的布尔类型重载和<code>==</code>运算符重载，他们都是通过<code>CompareBaseObjects</code>来实现的<br />
-他们俩本质上都是采用了 <code>Unity</code> 层面上的检查。</p>
+<p><code>UnityEngine.Object</code>中的布尔类型重载和<code>==</code>运算符重载，他们都是通过<code>CompareBaseObjects</code>来实现的 他们俩本质上都是采用了 <code>Unity</code> 层面上的检查。</p>
 <p>对于这点，我们也可以证明</p>
 <p>请看方法<code>IsNativeObjectAlive</code></p>
 <figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="built_in">bool</span> <span class="title">IsNativeObjectAlive</span>(<span class="params">Object o</span>)</span></span><br><span class="line">   &#123;</span><br><span class="line">     <span class="keyword">if</span> (o.GetCachedPtr() != IntPtr.Zero)</span><br><span class="line">       <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">     <span class="keyword">return</span> !(o <span class="keyword">is</span> MonoBehaviour) &amp;&amp; !(o <span class="keyword">is</span> ScriptableObject) &amp;&amp; Object.DoesObjectWithInstanceIDExist(o.GetInstanceID());</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
 <p><code>Unity</code> 先调用<code>o.GetCachedPtr()</code> 方法检查目标对象的本机指针是否还存在, 要知道 <code>IntPtr</code> 并非 <code>Unity</code> 自己鼓捣出来的玩意， 他是<code>.NET Framework</code>和 <code>.NET Core</code>中的一个特殊的结构体，用于表示目标对象的本地指针. 如果本地指针不存在，那么就会调用<code>Object.DoesObjectWithInstanceIDExist</code>方法，这个方法会检查目标对象的实例ID是否存在,如果存在具有给定实例ID的对象，则返回 true.</p>
 <p>通过这种方法实现的空判断,实质上开销是特别大的,有些人会使用<code>System.Object.ReferenceEquals</code>,比如这样</p>
 <figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(System.Object.ReferenceEquals(gameobject, <span class="literal">null</span>))</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// TODO something</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>这样做,在性能上确实是有很大提升的,但是读到这里的朋友估计已经猜到我要讲什么了.<br />
-在执行<code>destroy</code>方法后,目标对象实质上并没有被回收,他只是被打上了一个<code>'tag'</code>的标签,而变量仍然在指向着堆对象.为什么<code>==</code>可以呢,因为<code>Unity</code>已经把他重载了.</p>
+<p>这样做,在性能上确实是有很大提升的,但是读到这里的朋友估计已经猜到我要讲什么了. 在执行<code>destroy</code>方法后,目标对象实质上并没有被回收,他只是被打上了一个<code>'tag'</code>的标签,而变量仍然在指向着堆对象.为什么<code>==</code>可以呢,因为<code>Unity</code>已经把他重载了.</p>
 <hr />
 
     </div>
@@ -474,7 +471,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">33</span>
+          <span class="site-state-item-count">35</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -523,7 +520,7 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">107k</span>
+    <span title="站点总字数">108k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
@@ -532,7 +529,7 @@
 </div>
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共42.5k字</span>
+  <span class="post-count">博客全站共43.6k字</span>
 </div>
 
     <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>

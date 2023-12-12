@@ -40,7 +40,7 @@
 <meta property="og:image" content="https://rdququ.top/posts/1fbb4100/UnityShaderGraphEmission.png">
 <meta property="og:image" content="https://rdququ.top/posts/1fbb4100/UnityShaderGraphAO.png">
 <meta property="article:published_time" content="2023-12-08T05:02:30.000Z">
-<meta property="article:modified_time" content="2023-12-09T13:59:55.579Z">
+<meta property="article:modified_time" content="2023-12-10T13:49:12.827Z">
 <meta property="article:author" content="蛐蛐">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://rdququ.top/posts/1fbb4100/%E8%BE%93%E5%85%A5%E5%B1%9E%E6%80%A7%E8%8A%82%E7%82%B9.png">
@@ -256,7 +256,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-12-09 21:59:55" itemprop="dateModified" datetime="2023-12-09T21:59:55+08:00">2023-12-09</time>
+                <time title="修改时间：2023-12-10 21:49:12" itemprop="dateModified" datetime="2023-12-10T21:49:12+08:00">2023-12-10</time>
               </span>
 
           
@@ -272,7 +272,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>1.2k</span>
+              <span>1.3k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -291,24 +291,19 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>学习笔记</p>
-<span id="more"></span>
-<h2 id="创建"><a class="markdownIt-Anchor" href="#创建"></a> 创建</h2>
-<p>选择 URP 模板创建不需要配置环境<br />
-普通 3D 项目，包管理器安装 Universal RP, visual effect graph，设置中正常配置 Graphics</p>
-<h2 id="光照模型"><a class="markdownIt-Anchor" href="#光照模型"></a> 光照模型</h2>
+        <p>学习笔记 <span id="more"></span></p>
+<h2 id="创建">创建</h2>
+<p>选择 URP 模板创建不需要配置环境 普通 3D 项目，包管理器安装 Universal RP, visual effect graph，设置中正常配置 Graphics</p>
+<h2 id="光照模型">光照模型</h2>
 <p>Create =&gt; ShaderGraph =&gt; URP =&gt; Lit Shader Graph</p>
-<p>输入属性节点：<br />
-<img data-src="%E8%BE%93%E5%85%A5%E5%B1%9E%E6%80%A7%E8%8A%82%E7%82%B9.png" alt="输入属性节点" /></p>
-<p>属性设置：<br />
-<img data-src="%E5%B1%9E%E6%80%A7%E8%AE%BE%E7%BD%AE.png" alt="属性设置" /></p>
+<p>输入属性节点： <img data-src="输入属性节点.png" alt="输入属性节点" /></p>
+<p>属性设置： <img data-src="属性设置.png" alt="属性设置" /></p>
 <ul>
 <li>Precision [精度] [single/half] half 性能更好</li>
 </ul>
 <p>在 Universal 中</p>
 <ul>
-<li>
-<p>Material [材质]</p>
+<li>Material [材质]
 <ul>
 <li>[sprite Custom] 自定义精灵</li>
 <li>[sprite Lit] 精灵光照</li>
@@ -316,72 +311,47 @@
 <li>[Decal] 贴花</li>
 <li>[Lit] 光照</li>
 <li>[Unlit] 非光照</li>
+</ul></li>
+<li>Allow Material Override [允许材质覆盖] [勾选] 可以通过材质检查器修改某些图形属性。</li>
+<li>workflow [工作流] [Specular/Metallic] [勾选] 镜面高光/金属工作流</li>
+<li>Surface Type [表面类型] [Opaque/Transparent] [半透明/不透明]</li>
+<li>Render Face [渲染面] [Front/Back/Double] [正面/背面/双面]</li>
+<li>Depth Write [深度写入] [Auto/Force Enabled/Force Disabled] [自动/强制开启/强制关闭]</li>
+<li>Depth Test [深度测试] [Never/Less/Equal/LessEqual/Greater/NotEqual/GreaterEqual/Always] [从不/小于/等于/小于等于/大于/不等于/大于等于/总是]</li>
+<li>Alpha Clipping [Alpha裁剪] [勾选]</li>
+<li>Receive Shadows [接收阴影] [勾选]</li>
+<li>Fragment Normal Space [片段法线空间] [Tangent/World/View] [切线/世界/视图]</li>
+<li>Clear Coat [清漆] [勾选]</li>
+<li>Custom Editor GUI [自定义编辑器GUI]</li>
+<li>Supports VFXGRAph [支持VFXGRAph] [勾选]</li>
 </ul>
-</li>
-<li>
-<p>Allow Material Override [允许材质覆盖] [勾选] 可以通过材质检查器修改某些图形属性。</p>
-</li>
-<li>
-<p>workflow [工作流] [Specular/Metallic] [勾选] 镜面高光/金属工作流</p>
-</li>
-<li>
-<p>Surface Type [表面类型] [Opaque/Transparent] [半透明/不透明]</p>
-</li>
-<li>
-<p>Render Face [渲染面] [Front/Back/Double] [正面/背面/双面]</p>
-</li>
-<li>
-<p>Depth Write [深度写入] [Auto/Force Enabled/Force Disabled] [自动/强制开启/强制关闭]</p>
-</li>
-<li>
-<p>Depth Test [深度测试] [Never/Less/Equal/LessEqual/Greater/NotEqual/GreaterEqual/Always] [从不/小于/等于/小于等于/大于/不等于/大于等于/总是]</p>
-</li>
-<li>
-<p>Alpha Clipping [Alpha裁剪] [勾选]</p>
-</li>
-<li>
-<p>Receive Shadows [接收阴影] [勾选]</p>
-</li>
-<li>
-<p>Fragment Normal Space [片段法线空间] [Tangent/World/View] [切线/世界/视图]</p>
-</li>
-<li>
-<p>Clear Coat [清漆] [勾选]</p>
-</li>
-<li>
-<p>Custom Editor GUI [自定义编辑器GUI]</p>
-</li>
-<li>
-<p>Supports VFXGRAph [支持VFXGRAph] [勾选]</p>
-</li>
-</ul>
-<p>顶点着色器:<br />
-<img data-src="%E9%A1%B6%E7%82%B9%E7%9D%80%E8%89%B2%E5%99%A8.png" alt="顶点着色器" /></p>
-<p>片段着色器:<br />
-<img data-src="%E7%89%87%E5%85%83%E7%9D%80%E8%89%B2%E5%99%A8.png" alt="片元着色器" /></p>
+<p>顶点着色器: <img data-src="顶点着色器.png" alt="顶点着色器" /></p>
+<p>片段着色器: <img data-src="片元着色器.png" alt="片元着色器" /></p>
 <p>乘法节点 Multiply: 颜色叠加</p>
-<h3 id="fragment"><a class="markdownIt-Anchor" href="#fragment"></a> Fragment</h3>
-<h4 id="base-color"><a class="markdownIt-Anchor" href="#base-color"></a> Base Color</h4>
-<p>主贴图，展现了模型的基本纹理<br />
-可以新建一个 Texture2D 属性，然后将其作为输入<br />
-<img data-src="UnityShaderGraphBaseColor.png" alt="UnityShaderGraphBaseColor" /></p>
+<h3 id="fragment">Fragment</h3>
+<h4 id="base-color">Base Color</h4>
+<p>主贴图，展现了模型的基本纹理 可以新建一个 Texture2D 属性，然后将其作为输入 <img data-src="UnityShaderGraphBaseColor.png" alt="UnityShaderGraphBaseColor" /></p>
 <p>MainTexture 保持默认</p>
-<h4 id="normal"><a class="markdownIt-Anchor" href="#normal"></a> Normal</h4>
-<p><img data-src="UnityShaderGraphNormal.png" alt="UnityShaderGraphNormal" /></p>
-<p>注意 Sample Texture 2D 的 Type 要设置为 Normal<br />
-NormalTexture 的 Mode 选择 Normal Map</p>
-<h4 id="metallic"><a class="markdownIt-Anchor" href="#metallic"></a> Metallic</h4>
-<p><img data-src="UnityShaderGraphMetallic.png" alt="UnityShaderGraphMetallic" /><br />
-保持默认</p>
-<h4 id="smoothness"><a class="markdownIt-Anchor" href="#smoothness"></a> Smoothness</h4>
-<p><img data-src="UnityShaderGraphSmoothness.png" alt="UnityShaderGraphSmoothness" /></p>
+<h4 id="normal">Normal</h4>
+<figure>
+<img data-src="UnityShaderGraphNormal.png" alt="UnityShaderGraphNormal" /><figcaption aria-hidden="true">UnityShaderGraphNormal</figcaption>
+</figure>
+<p>注意 Sample Texture 2D 的 Type 要设置为 Normal NormalTexture 的 Mode 选择 Normal Map</p>
+<h4 id="metallic">Metallic</h4>
+<p><img data-src="UnityShaderGraphMetallic.png" alt="UnityShaderGraphMetallic" /> 保持默认</p>
+<h4 id="smoothness">Smoothness</h4>
+<figure>
+<img data-src="UnityShaderGraphSmoothness.png" alt="UnityShaderGraphSmoothness" /><figcaption aria-hidden="true">UnityShaderGraphSmoothness</figcaption>
+</figure>
 <p>输出金属光泽度的 Alpha 通道与 Smoothness 通过 Multiply 乘法节点相乘, 得到输出值</p>
-<h4 id="emission"><a class="markdownIt-Anchor" href="#emission"></a> Emission</h4>
-<p><img data-src="UnityShaderGraphEmission.png" alt="UnityShaderGraphEmission" /><br />
-自发光贴图与类型为 Boolean Keywork 的 EmissiveTexture 相乘来控制是否自发光，得到其输出值与 EmissionColor 相乘得到最终的输出值</p>
-<h4 id="ao"><a class="markdownIt-Anchor" href="#ao"></a> AO</h4>
-<p><img data-src="UnityShaderGraphAO.png" alt="UnityShaderGraphAO" /><br />
-保持默认</p>
+<h4 id="emission">Emission</h4>
+<p><img data-src="UnityShaderGraphEmission.png" alt="UnityShaderGraphEmission" /> 自发光贴图与类型为 Boolean Keywork 的 EmissiveTexture 相乘来控制是否自发光，得到其输出值与 EmissionColor 相乘得到最终的输出值</p>
+<h4 id="ao">AO</h4>
+<p><img data-src="UnityShaderGraphAO.png" alt="UnityShaderGraphAO" /> 保持默认</p>
+<h3 id="sub-graph">Sub Graph</h3>
+<p>框选中对应节点右击 Convert to =&gt; Sub-graph</p>
+<h3 id="轮廓光边缘光">轮廓光/边缘光</h3>
+<p>Fresnel Effect</p>
 
     </div>
 
@@ -436,7 +406,10 @@ NormalTexture 的 Mode 选择 Normal Map</p>
     <a href="/posts/2c23d1d4/" rel="prev" title="AABB_Plane_intersection原理详解及Unity实现">
       <i class="fa fa-chevron-left"></i> AABB_Plane_intersection原理详解及Unity实现
     </a></div>
-      <div class="post-nav-item"></div>
+      <div class="post-nav-item">
+    <a href="/posts/e44777a7/" rel="next" title="Unity_GC_浅谈">
+      Unity_GC_浅谈 <i class="fa fa-chevron-right"></i>
+    </a></div>
     </div>
       </footer>
     
@@ -496,7 +469,7 @@ NormalTexture 的 Mode 选择 Normal Map</p>
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA"><span class="nav-number">1.</span> <span class="nav-text"> 创建</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%89%E7%85%A7%E6%A8%A1%E5%9E%8B"><span class="nav-number">2.</span> <span class="nav-text"> 光照模型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#fragment"><span class="nav-number">2.1.</span> <span class="nav-text"> Fragment</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#base-color"><span class="nav-number">2.1.1.</span> <span class="nav-text"> Base Color</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#normal"><span class="nav-number">2.1.2.</span> <span class="nav-text"> Normal</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#metallic"><span class="nav-number">2.1.3.</span> <span class="nav-text"> Metallic</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#smoothness"><span class="nav-number">2.1.4.</span> <span class="nav-text"> Smoothness</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#emission"><span class="nav-number">2.1.5.</span> <span class="nav-text"> Emission</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ao"><span class="nav-number">2.1.6.</span> <span class="nav-text"> AO</span></a></li></ol></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA"><span class="nav-number">1.</span> <span class="nav-text">创建</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%89%E7%85%A7%E6%A8%A1%E5%9E%8B"><span class="nav-number">2.</span> <span class="nav-text">光照模型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#fragment"><span class="nav-number">2.1.</span> <span class="nav-text">Fragment</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#base-color"><span class="nav-number">2.1.1.</span> <span class="nav-text">Base Color</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#normal"><span class="nav-number">2.1.2.</span> <span class="nav-text">Normal</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#metallic"><span class="nav-number">2.1.3.</span> <span class="nav-text">Metallic</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#smoothness"><span class="nav-number">2.1.4.</span> <span class="nav-text">Smoothness</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#emission"><span class="nav-number">2.1.5.</span> <span class="nav-text">Emission</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ao"><span class="nav-number">2.1.6.</span> <span class="nav-text">AO</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#sub-graph"><span class="nav-number">2.2.</span> <span class="nav-text">Sub Graph</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BD%AE%E5%BB%93%E5%85%89%E8%BE%B9%E7%BC%98%E5%85%89"><span class="nav-number">2.3.</span> <span class="nav-text">轮廓光&#x2F;边缘光</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -512,7 +485,7 @@ NormalTexture 的 Mode 选择 Normal Map</p>
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">33</span>
+          <span class="site-state-item-count">35</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -561,7 +534,7 @@ NormalTexture 的 Mode 选择 Normal Map</p>
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">107k</span>
+    <span title="站点总字数">108k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
@@ -570,7 +543,7 @@ NormalTexture 的 Mode 选择 Normal Map</p>
 </div>
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共42.5k字</span>
+  <span class="post-count">博客全站共43.6k字</span>
 </div>
 
     <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>

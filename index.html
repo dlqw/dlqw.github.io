@@ -211,6 +211,257 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://rdququ.top/posts/223f372/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="蛐蛐">
+      <meta itemprop="description" content="正在学习unity中">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="蛐蛐的软件开发世界">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/posts/223f372/" class="post-title-link" itemprop="url">不透明物体与半透明物体边缘算法与Unity Shader Graph 实现</a>
+        </h2>
+
+        <div class="post-meta">
+        
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-12-12 19:25:29 / 修改时间：22:49:10" itemprop="dateCreated datePublished" datetime="2023-12-12T19:25:29+08:00">2023-12-12</time>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2.8k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="前置知识">前置知识</h2>
+<h3 id="归一化空间坐标-ndknormalized-device-coordinates">归一化空间坐标 NDK(Normalized Device Coordinates)</h3>
+<p>在齐次裁剪空间的基础上进行透视除法或称齐次除法, 得到的坐标叫做NDC空间坐标。</p>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/102758967">一篇文章彻底弄懂齐次裁剪 - 知乎 (zhihu.com)</a></p>
+<h4 id="透视除法-齐次除法perspective-division-homogeneous-division">透视除法-齐次除法(<strong>perspective division</strong>-<strong>homogeneous division)</strong></h4>
+<p>就是将齐次裁剪空间坐标positionCS的X,Y,Z分量都除以W分量。</p>
+<p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/7e701d7bfd79">写给大家看的“透视除法” —— 齐次坐标和投影 - 简书 (jianshu.com)</a></p>
+<p><img data-src="https://pic4.zhimg.com/80/v2-4baca450c51c7f0eea873c42eeda0eef_720w.webp" /></p>
+<h2 id="算法原理">算法原理</h2>
+<h2 id="unity-shader-graph-实现">Unity Shader Graph 实现</h2>
+<h3 id="scenedepth">SceneDepth</h3>
+<blockquote>
+<p>Provides access to the current <strong>Camera</strong> 's depth buffer using input <strong>UV</strong> , which is expected to be normalized screen coordinates. Note: Depth buffer access requires depth buffer to be enabled on the active <strong>Render Pipeline</strong> . This process is different per <strong>Render Pipeline</strong> . It is recommended you read the documentation of your active <strong>Render Pipeline</strong> for information on enabling the depth buffer. If the depth buffer is unavailable this <a href="https://link.zhihu.com/?target=https%3A//docs.unity3d.com/Packages/com.unity.shadergraph%406.9/manual/Node.html">Node</a> will return mid grey.</p>
+</blockquote>
+<p>也就是说SceneDepth Node是对深度纹理进行获取的节点，只不过获取的方法不同，而深度纹理中存储的是NDC坐标的深度值。</p>
+<figure>
+<img data-src="https://pic4.zhimg.com/80/v2-199f0cb63bdba7f81de4c826056dcbff_720w.webp" alt="img" /><figcaption aria-hidden="true">img</figcaption>
+</figure>
+<ul>
+<li>Linear01获取的是线性的范围为[0,1]的深度值。 &gt; 想要把Raw Depth转换成线性 ，并且从近平面到远平面为0-1的深度，就需要Linear 01 Depth，这时0.5深度就是视锥体一半的位置。 &gt;</li>
+<li>Raw也就是深度纹理中存储的非线性，范围为[0,1]的值。 &gt; 表示深度缓冲的原始数据，普通的深度缓冲使用32位的浮点数表示深度，相机近平面的深度为0，远平面的深度为1。而Unity 使用了Reversed Z，这就使得近平面深度为1，而远平面深度为0，另外，如果相机的投影矩阵不是正交矩阵，那么深度缓冲中的深度就不是线性的，举个例子就是深度0.5代表的地方并不是视锥体一半的位置。 &gt;</li>
+<li>Eye获取的是视角空间下的线性深度值，范围为[near, far]。 &gt; Linear Eye Depth中深度为1表示沿着摄像机Z轴，距离为1个单位的地方，2就是距离两个单位的地方，以此类推。 &gt;</li>
+</ul>
+<h3 id="screenposition">ScreenPosition</h3>
+<blockquote>
+<p>Provides access to the mesh vertex or fragment's <strong>Screen Position</strong> .</p>
+</blockquote>
+<figure>
+<img data-src="https://pic3.zhimg.com/80/v2-439252aa4b98dac54ced99bf1460a58e_720w.webp" alt="img" /><figcaption aria-hidden="true">img</figcaption>
+</figure>
+<ul>
+<li>ScreenPosition在Default选项下会进行齐次除法运算（即除以w分量），这里的w范围为[0,1],也就是NDC下的w分量。经过透视除法的，左下角是（0，0）右上角是（1，1）的屏幕空间</li>
+<li>在Raw选项下，不会进行齐次除法运算,这里的w范围是[Near, Far],是Clip Space中的w分量。未经过透视除法的，左下角是（0，0）右上角是（1，1）的屏幕空间</li>
+<li>Center: 经过透视除法的，左下角是（-1，-1）右上角是（1，1）的屏幕空间</li>
+<li>Tiled: 经过透视除法的，分成上下均等的四块组成，每块左下角是（0，0）右上角是（1，1）的屏幕空间</li>
+</ul>
+<p>在这里ScreenPosition的w分量的含义也就是ClipSpace下的w分量，范围是[Near, Far],而当xy除以w分量后，越远的顶点也就会除以越大的w分量，就会产生透视现象。</p>
+<h3 id="存疑之处与我的观点证明">存疑之处与我的观点/证明</h3>
+<p>博主<a target="_blank" rel="noopener" href="https://www.zhihu.com/people/lute-li">Lute Li</a>，认为</p>
+<blockquote>
+<p>（Scene Depth是除开透明模型之外的深度，Screen Position是所有模型的深度，相减就是边缘）</p>
+</blockquote>
+<p>出处<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/109547098">从头学ShaderGraph 5-护盾材质 - 知乎 (zhihu.com)</a></p>
+<p><img data-src="https://pic2.zhimg.com/80/v2-fea83d5ed062c6bfe5dc8221e2d5d999_720w.webp" /></p>
+<p><strong>(Vertex Shader) =&gt; Clip Space =&gt; (透视除法) =&gt; NDC =&gt; (视口变换) =&gt; Window Space =&gt; (Fragment Shader)</strong></p>
+<p>现象很好观察，但是不知道原理，翻遍了官方文档和网上的教程也没能得到一个足够有说服力的解释，现在可以知道 SceneDepth 的 Eye 获取的是视角空间下的线性深度值，范围为[near, far]，ScreenPosition 的 w 分量是是 Clip Space 中未经过透视除法的值，范围也是[near, far]。我们知道物体自Eye/View/Camera Space(这玩意名字真多)到Cliping Space 要经过一次透视变换，或者说透视除法，所以实际上，Screen Graph 的 w 分量也许就是 Eye Space 下到相机的距离(不是深度，所以也存储了透明物体的距离)</p>
+<figure>
+<img data-src="image/不透明物体与半透明物体边缘算法与Unity-Shader-Graph-实现/1702390346535.png" alt="1702390346535" /><figcaption aria-hidden="true">1702390346535</figcaption>
+</figure>
+<p>上图的实验一定程度上看可以证明上文的观点。</p>
+<p>有趣的是，当我们把 Surface Type 修改为Transparent, 场景中的透明与不透明物体的交界处出现了一道淡淡的白线</p>
+<figure>
+<img data-src="image/不透明物体与半透明物体边缘算法与Unity-Shader-Graph-实现/1702390608834.png" alt="1702390608834" /><figcaption aria-hidden="true">1702390608834</figcaption>
+</figure>
+<p>我们将 Comparison 节点的输入值 B 调大，交界处出现了明显的白线</p>
+<figure>
+<img data-src="image/不透明物体与半透明物体边缘算法与Unity-Shader-Graph-实现/1702390681409.png" alt="1702390681409" /><figcaption aria-hidden="true">1702390681409</figcaption>
+</figure>
+<figure>
+<img data-src="image/不透明物体与半透明物体边缘算法与Unity-Shader-Graph-实现/1702390730401.png" alt="1702390730401" /><figcaption aria-hidden="true">1702390730401</figcaption>
+</figure>
+<p>我们知道，初始输出的两个节点的取值范围都是[n,f]，所以当我们把对比节点的输入值B调到1的时候，边界就很明显了。</p>
+<p>现在，结果已经呼之欲出了，Scene Depth 节点的 Eye 输出的是深度值，我们知道，透明物体默认不会写入深度缓冲，Screen Position 输出的是简单的距离，故而相减可以得到边界。</p>
+<h2 id="参考资料与引用">参考资料与引用</h2>
+<ol type="1">
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/535898515">unity urp 20 SceneDepth和ScreenPosition.w - 知乎 (zhihu.com)</a></li>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/347698766">Shader Graph中的Scene Depth和Screen Position - 知乎 (zhihu.com)</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1sa411C7Xd/">2022版Unity Shader Graph教程04 水面 (上) 超简单ShaderGraph入门_哔哩哔哩_bilibili</a></li>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/102758967">一篇文章彻底弄懂齐次裁剪 - 知乎 (zhihu.com)</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/7e701d7bfd79">写给大家看的“透视除法” —— 齐次坐标和投影 - 简书 (jianshu.com)</a></li>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/493733502">Unity Shader Graph 中深度纹理（Depth Texture）和屏幕空间坐标（Screen Position） - 知乎 (zhihu.com)</a></li>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/109547098">从头学ShaderGraph 5-护盾材质 - 知乎 (zhihu.com)</a></li>
+<li><a target="_blank" rel="noopener" href="https://carmencincotti.com/2022-05-02/homogeneous-coordinates-clip-space-ndc/#homogeneous-coordinates">Homogeneous Coordinates, Clip Space, and NDC | WebGPU | Carmen's Graphics Blog --- 齐次坐标、裁剪空间和 NDC |网络GPU |Carmen 的图形博客 (carmencincotti.com)</a></li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://rdququ.top/posts/e44777a7/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="蛐蛐">
+      <meta itemprop="description" content="正在学习unity中">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="蛐蛐的软件开发世界">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/posts/e44777a7/" class="post-title-link" itemprop="url">Unity_GC_浅谈</a>
+        </h2>
+
+        <div class="post-meta">
+        
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-12-10 13:50:22 / 修改时间：20:10:20" itemprop="dateCreated datePublished" datetime="2023-12-10T13:50:22+08:00">2023-12-10</time>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>660</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="unity-底层的内存分配">Unity 底层的内存分配</h2>
+<h3 id="托管内存">托管内存</h3>
+<p>Mono 和 IL2CPP 的脚本虚拟机(virtual machines =&gt; VMs)实现了托管内存系统(脚本内存系统)。这些VMs提供了数种受控内存环境。</p>
+<h4 id="managed-heap-托管堆">Managed Heap 『托管堆』</h4>
+<p>GC 自动控制的内存区域。</p>
+<h4 id="scripting-stack-脚本栈">Scripting Stack 『脚本栈』</h4>
+<p>在应用程序进入和退出任何代码范围时构建和展开</p>
+<h4 id="native-vm-memory-本地虚拟机内存">Native VM Memory 『本地虚拟机内存』</h4>
+<p>包含与 Unity 脚本层相关的内存，大多数情况下不需要主动管理。</p>
+<h3 id="c-非托管内存">C# 非托管内存</h3>
+<p>允许编写 C# 代码来访问本机内存以微调内存分配。 可以使用 Unity 核心 API 中的 Unity.Collections 命名空间（包括 NativeArray）和 Unity Collections 包中的数据结构来访问 C# 非托管内存。如果使用 Unity 的 C# Job 系统或 Burst，则必须使用 C# 非托管内存。</p>
+<h3 id="native-memory-本机内存">Native Memory 『本机内存』</h3>
+<h2 id="unity-应用的-gc-算法">Unity 应用的 GC 算法</h2>
+<h3 id="boehmgc">BoehmGC</h3>
+<h4 id="boehmgc-算法原理">BoehmGC 算法原理</h4>
+<h4 id="boehmgc-的内存管理">BoehmGC 的内存管理</h4>
+<h4 id="boehmgc-算法实现">BoehmGC 算法实现</h4>
+<h4 id="mono-与-il2cpp-中的-boehmgc">MONO 与 IL2CPP 中的 BoehmGC</h4>
+<h3 id="渐进式-gc">渐进式 GC</h3>
+<h2 id="参考资料">参考资料</h2>
+<ol type="1">
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/623849906">Unity 垃圾回收GC的原理？</a></li>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/265217138">Unity GC 学习总结</a></li>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/41023320">解读MONO内存管理和回收！</a></li>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/41398507">解读MONO内存管理：BOEHM GC原理及总结</a></li>
+<li><a target="_blank" rel="noopener" href="https://juejin.cn/post/6966954993869914119">Unity3D托管堆BoehmGC算法学习-内存分配篇</a></li>
+<li><a target="_blank" rel="noopener" href="https://juejin.cn/post/6968400262629163038">Unity3D托管堆BoehmGC算法学习-垃圾回收篇</a></li>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/381859536?">【笔记】Unity内存分配和回收的底层原理</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.unity3d.com/Manual/performance-memory-overview.html">Memory in Unity Unity</a></li>
+<li><a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Garbage_collection_(computer_science)">Garbage collection (computer science)</a></li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://rdququ.top/posts/1fbb4100/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -243,7 +494,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-12-09 21:59:55" itemprop="dateModified" datetime="2023-12-09T21:59:55+08:00">2023-12-09</time>
+                <time title="修改时间：2023-12-10 21:49:12" itemprop="dateModified" datetime="2023-12-10T21:49:12+08:00">2023-12-10</time>
               </span>
 
           <br>
@@ -252,7 +503,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>1.2k</span>
+              <span>1.3k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -271,7 +522,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>学习笔记</p>
+          <p>学习笔记
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/posts/1fbb4100/#more" rel="contents">
@@ -358,7 +609,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>起因是我在学习 runtime 的 mesh 切割算法，需要判断目标 mesh 是否和切面相交（不相交的话我就不需要去处理了）</p>
+          <p>起因是我在学习 runtime 的 mesh 切割算法，需要判断目标 mesh 是否和切面相交（不相交的话我就不需要去处理了）
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/posts/2c23d1d4/#more" rel="contents">
@@ -426,7 +677,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>656</span>
+              <span>659</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -445,11 +696,10 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h2 id="关键词"><a class="markdownIt-Anchor" href="#关键词"></a> 关键词</h2>
+          <h2 id="关键词">关键词</h2>
 <ul>
 <li>.NET mono 虚拟机</li>
-<li>IL2CPP</li>
-</ul>
+<li>IL2CPP
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/posts/c896f832/#more" rel="contents">
@@ -517,7 +767,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>829</span>
+              <span>764</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -536,15 +786,11 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h2 id="坐标系"><a class="markdownIt-Anchor" href="#坐标系"></a> 坐标系</h2>
+          <h2 id="坐标系">坐标系</h2>
 <ul>
 <li>笛卡尔坐标系</li>
-<li>圆柱坐标系<br />
-垂直“高度与” <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>h</mi></mrow><annotation encoding="application/x-tex">h</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathnormal">h</span></span></span></span> 、从垂直轴发出的辐射轴 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>r</mi></mrow><annotation encoding="application/x-tex">r</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">r</span></span></span></span> 、偏航角(yaw) <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>θ</mi></mrow><annotation encoding="application/x-tex">\theta</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">θ</span></span></span></span></li>
-<li>球坐标系<br />
-俯仰角(pitch) <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ϕ</mi></mrow><annotation encoding="application/x-tex">\phi</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="mord mathnormal">ϕ</span></span></span></span> 、偏航角(yaw) <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>θ</mi></mrow><annotation encoding="application/x-tex">\theta</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">θ</span></span></span></span> 、半径长度 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>r</mi></mrow><annotation encoding="application/x-tex">r</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">r</span></span></span></span><br />
-eg. 经纬线</li>
-</ul>
+<li>圆柱坐标系 垂直“高度与” <span class="math inline">\(h\)</span> 、从垂直轴发出的辐射轴 <span class="math inline">\(r\)</span> 、偏航角(yaw) <span class="math inline">\(\theta\)</span></li>
+<li>球坐标系 俯仰角(pitch) <span class="math inline">\(\phi\)</span> 、偏航角(yaw) <span class="math inline">\(\theta\)</span> 、半径长度 <span class="math inline">\(r\)</span> eg. 经纬线
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/posts/90745bbc/#more" rel="contents">
@@ -631,7 +877,7 @@ eg. 经纬线</li>
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>记录</p>
+          <p>记录
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/posts/b15b4e49/#more" rel="contents">
@@ -777,7 +1023,7 @@ eg. 经纬线</li>
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-12-09 14:57:06" itemprop="dateModified" datetime="2023-12-09T14:57:06+08:00">2023-12-09</time>
+                <time title="修改时间：2023-12-12 19:28:14" itemprop="dateModified" datetime="2023-12-12T19:28:14+08:00">2023-12-12</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -799,14 +1045,14 @@ eg. 经纬线</li>
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>15k</span>
+              <span>12k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>13 分钟</span>
+              <span>11 分钟</span>
             </span>
 
         </div>
@@ -941,180 +1187,6 @@ eg. 经纬线</li>
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://rdququ.top/posts/220dd5af/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="蛐蛐">
-      <meta itemprop="description" content="正在学习unity中">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="蛐蛐的软件开发世界">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/posts/220dd5af/" class="post-title-link" itemprop="url">2D图形——渲染、精灵和简单应用</a>
-        </h2>
-
-        <div class="post-meta">
-        
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2023-11-05 22:03:42" itemprop="dateCreated datePublished" datetime="2023-11-05T22:03:42+08:00">2023-11-05</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-12-07 16:13:29" itemprop="dateModified" datetime="2023-12-07T16:13:29+08:00">2023-12-07</time>
-              </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>4.5k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>4 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>2D 渲染基础</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/posts/220dd5af/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://rdququ.top/posts/462539dc/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="蛐蛐">
-      <meta itemprop="description" content="正在学习unity中">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="蛐蛐的软件开发世界">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/posts/462539dc/" class="post-title-link" itemprop="url">Unity rectTransform 解析</a>
-        </h2>
-
-        <div class="post-meta">
-        
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2023-11-04 12:35:35" itemprop="dateCreated datePublished" datetime="2023-11-04T12:35:35+08:00">2023-11-04</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-11-06 22:16:05" itemprop="dateModified" datetime="2023-11-06T22:16:05+08:00">2023-11-06</time>
-              </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>634</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p><a target="_blank" rel="noopener" href="https://docs.unity3d.com/ScriptReference/RectTransform.html">官方文档地址</a></p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/posts/462539dc/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1186,7 +1258,7 @@ eg. 经纬线</li>
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">33</span>
+          <span class="site-state-item-count">35</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1235,7 +1307,7 @@ eg. 经纬线</li>
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">107k</span>
+    <span title="站点总字数">108k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
@@ -1244,7 +1316,7 @@ eg. 经纬线</li>
 </div>
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共42.5k字</span>
+  <span class="post-count">博客全站共43.6k字</span>
 </div>
 
     <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
