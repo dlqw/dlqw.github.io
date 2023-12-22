@@ -9,8 +9,28 @@
     <atom:link href="https://rdququ.top/rss2.xml" rel="self" type="application/rss+xml"/>
     
     <description>正在学习unity中</description>
-    <pubDate>Tue, 12 Dec 2023 14:56:04 GMT</pubDate>
+    <pubDate>Fri, 15 Dec 2023 14:32:29 GMT</pubDate>
     <generator>http://hexo.io/</generator>
+    
+    <item>
+      <title>test</title>
+      <link>https://rdququ.top/posts/d87f7e0c/</link>
+      <guid>https://rdququ.top/posts/d87f7e0c/</guid>
+      <pubDate>Fri, 15 Dec 2023 13:07:25 GMT</pubDate>
+      
+      <description>&lt;h1 id=&quot;贝塞尔曲线&quot;&gt;贝塞尔曲线&lt;/h1&gt;
+&lt;p&gt;平滑的曲线，计算机图形学的天堂，线性代数的产物 同时这篇文章也是关于嵌入html与js的测试&lt;/p&gt;</description>
+      
+      
+      
+      <content:encoded><![CDATA[<h1 id="贝塞尔曲线">贝塞尔曲线</h1><p>平滑的曲线，计算机图形学的天堂，线性代数的产物 同时这篇文章也是关于嵌入html与js的测试</p><span id="more"></span><p><strong>贝塞尔曲线方程</strong></p><p>$ P(t)= {<em>{i=0}^{n}} P_iB</em>{i,n}(t),t$</p><p>对于$ iN^* $</p><p>$ B_{i,n}(t)=C_n<sup>it</sup>i(1-t)<sup>{n-i}=t</sup>i(1-t)^{n-i} $</p><h2 id="推导过程">推导过程</h2><p>To be continue</p><h2 id="演示程序">演示程序</h2><p>搬运自知乎id 何方 原地址https://zhuanlan.zhihu.com/p/180508343 侵权删，等博主学习了一些前端后，会自己重写</p><body><style>        .buttonContainer button {            border-radius: 5px;            border: none;            background-color: #66ccff31;            height: 30px;            width: 54px;            box-shadow: 2px 2px 2px 2px rgba(0 0 0 / 0.4);            margin-right: 10px;        }    </style><canvas id="canvas" style="border: 1px solid" width="500%" height="500%"></canvas><div class="buttonContainer"><pre><code>    &lt;div&gt;        &lt;button id=&quot;draw&quot;&gt;画图&lt;/button&gt;        &lt;button id=&quot;reDraw&quot;&gt;重画&lt;/button&gt;        &lt;button id=&quot;clear&quot;&gt;清空&lt;/button&gt;        &lt;button id=&quot;radom&quot;&gt;随机&lt;/button&gt;    &lt;/div&gt;&lt;/div&gt;&lt;script&gt;    const cv = document.getElementById(&quot;canvas&quot;);    const draw = document.getElementById(&quot;draw&quot;);    const clear = document.getElementById(&quot;clear&quot;);    const reDraw = document.getElementById(&quot;reDraw&quot;);    if (/Mobi|Android|iPhone/i.test(navigator.userAgent)) &#123;        cv.height = 290;        cv.width = 290;    &#125;    let points = [];    const ctx = cv.getContext(&quot;2d&quot;);    let offset = 0;    let timer;    function calcMiddlePoint(p1, p2) &#123;        return &#123; x: (p2.x - p1.x) * offset + p1.x, y: (p2.y - p1.y) * offset + p1.y &#125;;    &#125;    let finalPoints = [];    function drawLine() &#123;        let last = &#123;&#125;        ctx.strokeStyle = &quot;red&quot;;        ctx.lineWidth = 3;        ctx.beginPath();        finalPoints.forEach((&#123; x, y &#125;, index) =&gt; &#123;            if (index === 0) &#123;                ctx.moveTo(x, y)            &#125; else &#123;                ctx.lineTo(x, y)            &#125;        &#125;);        ctx.stroke();    &#125;    function drawLines(ps, color) &#123;        if (ps.length &lt; 2) &#123;            const &#123; x, y &#125; = ps[0];            finalPoints.push(&#123; x, y &#125;);            drawLine();            return;        &#125;        ctx.lineWidth = 1;        ctx.strokeStyle = color || &quot;green&quot;;        ctx.beginPath();        for (let i = 0; i &lt; ps.length; i++) &#123;            const &#123; x, y &#125; = ps[i];            if (i === 0) &#123;                ctx.moveTo(x, y);            &#125; else &#123;                ctx.lineTo(x, y);            &#125;        &#125;        ctx.stroke();        const pps = [];        for (let i = 0; i &lt; ps.length - 1; i++) &#123;            pps.push(calcMiddlePoint(ps[i], ps[i + 1], .5));        &#125;        drawLines(pps)    &#125;    function doDraw() &#123;        if (points.length &lt; 2) &#123;            alert(`无法画图，请至少指定2个点`);            return;        &#125;        timer &amp;&amp; clearInterval(timer);        drawLines(points, &#39;blue&#39;);        timer = setInterval(() =&gt; &#123;            offset += 0.001;            window.requestAnimationFrame(() =&gt; &#123;                ctx.clearRect(0, 0, cv.width, cv.height);                drawLines(points, &#39;blue&#39;);            &#125;);            if (offset &gt;= 1) &#123;                clearInterval(timer);            &#125;        &#125;, 1);    &#125;    reDraw.addEventListener(&quot;click&quot;, function () &#123;        finalPoints = [];        offset = 0;        ctx.clearRect(0, 0, cv.width, cv.height);        doDraw();    &#125;);    draw.addEventListener(&quot;click&quot;, doDraw);    clear.addEventListener(&quot;click&quot;, () =&gt; &#123;        points = [];        finalPoints = [];        offset = 0;        ctx.clearRect(0, 0, cv.width, cv.height);    &#125;);    cv.addEventListener(&quot;click&quot;, function (e) &#123;        points.push(&#123; x: e.offsetX, y: e.offsetY &#125;);        console.log(&quot;point:&quot;, &#123; x: e.offsetX, y: e.offsetY &#125;);        ctx.fillStyle = &quot;black&quot;;        ctx.beginPath();        ctx.arc(e.offsetX, e.offsetY, 2, 0, Math.PI * 2);        ctx.fill();    &#125;);    radom.addEventListener(&quot;click&quot;, () =&gt; &#123;        points = [];        finalPoints = [];        offset = 0;        ctx.clearRect(0, 0, cv.width, cv.height);        for (let i = 0; i &lt; 10; i++) &#123;            points.push(&#123; x: Math.random() * cv.width, y: Math.random() * cv.height &#125;)        &#125;        doDraw();    &#125;);&lt;/script&gt;</code></pre></body>]]></content:encoded>
+      
+      
+      
+      
+      <comments>https://rdququ.top/posts/d87f7e0c/#disqus_thread</comments>
+      
+    </item>
     
     <item>
       <title>不透明物体与半透明物体边缘算法与Unity Shader Graph 实现</title>
@@ -198,35 +218,6 @@
       
       
       <comments>https://rdququ.top/posts/6206937d/#disqus_thread</comments>
-      
-    </item>
-    
-    <item>
-      <title>GAMES104Notes</title>
-      <link>https://rdququ.top/posts/32cb02ce/</link>
-      <guid>https://rdququ.top/posts/32cb02ce/</guid>
-      <pubDate>Mon, 06 Nov 2023 04:49:57 GMT</pubDate>
-      
-      <description>&lt;p&gt;GAMES104Notes&lt;/p&gt;</description>
-      
-      
-      
-      <content:encoded><![CDATA[<p>GAMES104Notes</p><span id="more"></span><figure><img data-src="GAMES104_Zoo%20of%20Game%20Engines-1.png" alt="AMES104_Zoo of Game Engines-1" /><figcaption aria-hidden="true">AMES104_Zoo of Game Engines-1</figcaption></figure><figure><img data-src="GAMES104_Middlewares.png" alt="GAMES104_Middlewares" /><figcaption aria-hidden="true">GAMES104_Middlewares</figcaption></figure><h2 id="引擎的基本架构">引擎的基本架构</h2><p>自顶向底的五层架构</p><ul><li>Tool Layer 工具链和编辑环境</li><li>Function Layer 游戏逻辑设计</li><li>Resource Layer 处理存储不同种类的文件资源</li><li>Core Layer 构建功能</li><li>Platform Layer 硬件的运行环境，输入设备的差别，软件的发布平台</li></ul><h3 id="resource-layer">resource layer</h3><p>importing: resource -&gt; asset</p><p>全局唯一编号: GUID</p><p>Runtime Asset Manager</p><p>Manager Asset Life Cycle</p><h3 id="function-layer">Function Layer</h3><p>tick &amp; frame</p><p>Multi-threading</p><h3 id="core-layer">Core Layer</h3><p>Math Library</p><p>Math Efficiency eg. Quick and dirty hacks</p><ul><li>Carmack's 1/sqrt(x)</li><li>Magic number</li></ul><p>eg. SIMD<img data-src="SIMD-1.png" alt="Alt text" /></p><p>Data Structure and Containers</p><p>Memory Management</p><p>Foundation of Game Engine</p><h3 id="platform-layer">Platform Layer</h3><p>Target on Different Platform</p><p>Graphics API eg. Render Hardware Interface(RHI)</p><p>Hardware Architecture</p><h3 id="tool-layer">Tool Layer</h3><p>Allow Anyone to Create Game</p><p>Digital Content Creation(DCC)</p><h2 id="如何构建游戏世界">如何构建游戏世界</h2><h3 id="game-objectgo">game object(GO)</h3><h4 id="property">property</h4><h4 id="behavior">behavior</h4><h4 id="oop-vs.-component">OOP vs. Component</h4><p>OOP 也符合直觉，但是在复杂的游戏世界中并没有非常清晰的父子继承关系。</p><p>现在更多地使用 Component 的方式，将游戏对象的行为分解为多个组件，每个组件只负责一种行为。</p><h4 id="component-based-tick">Component-based Tick</h4><p>和曾经分GO Tick不同，现在是分Component Tick。由于 pipeline 效率更高</p><h4 id="go-间通信">GO 间通信</h4><ul><li>Hard Code</li><li>Event</li><li>uid</li></ul><h4 id="scene-management">Scene Management</h4><ol type="1"><li><p>No division &amp; Drived by grid</p></li><li><p>Spatial Data Structures</p><ul><li>Quadtree</li><li>Octree</li><li>Binary Space Partitioning(BSP)</li><li>Bounding Volume Hierarchy(BVH)</li><li>Scene Graph</li></ul></li></ol><h2 id="rendering">Rendering</h2><h3 id="basics-of-game-rendering">Basics of Game Rendering</h3><h4 id="gpu">GPU</h4><h5 id="simdsingle-instruction-multiple-data单指令多数据">SIMD(Single Instruction Multiple Data/单指令多数据)</h5><p><code>SMID_ADD c, a, b</code></p><h5 id="simtsingle-instruction-multiple-thread单指令多线程">SIMT(Single Instruction Multiple Thread/单指令多线程)</h5><p><code>SIMT_ADD c, a, b</code></p><h5 id="gpu-architecture">GPU Architecture</h5><ul><li>GPC(Graphics Processing Cluster)</li><li>SM(Streaming Multiprocessor)</li><li>Texture Units</li><li>CUDA Core</li><li>Warp</li></ul><figure><img data-src="GAMES101_GPU_Architecture.png" alt="GPU Architecture" /><figcaption aria-hidden="true">GPU Architecture</figcaption></figure><h5 id="data-flow-from-cpu-to-gpu">Data Flow From CPU to GPU</h5><ul><li>CPU and Main Memory</li><li>CPU to GPU</li><li>GPU and Video Memory</li></ul><p>尽可能让数据单向传输，从 CPU 到 GPU 尽可能不要从 GPU 里读数据</p><h5 id="be-aware-of-cache-efficiency">Be Aware of Cache Efficiency</h5><p>数据一定要放在一起为 Cache(缓存) 做准备</p><h5 id="gpu-bounds-and-performance">GPU Bounds and Performance</h5><h4 id="renderable">Renderable</h4><h5 id="mesh">Mesh</h5><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">Vertex</span></span><br><span class="line">&#123;</span><br><span class="line">  Vector3 m_position;</span><br><span class="line">  <span class="comment">// other attributes</span></span><br><span class="line">  UByte4 m_color;</span><br><span class="line">  Vector3 m_normal;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">Mesh</span></span><br><span class="line">&#123;</span><br><span class="line">  Vertex m_vertex[<span class="number">3</span>];</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure><ul><li>Vertex Data<ul><li>Vertex declaration</li><li>Vertex buffer</li></ul></li><li>Index Data<ul><li>Index declaration</li><li>Index buffer</li></ul></li></ul><p>Triangle Strip 利好 Cache</p><h3 id="material-shader-and-lighting">Material, Shader, and Lighting</h3><h3 id="special-rendering">Special Rendering</h3><h3 id="pipeline">Pipeline</h3>]]></content:encoded>
-      
-      
-      <category domain="https://rdququ.top/categories/%E5%AD%A6%E4%B9%A0%E5%90%91/">学习向</category>
-      
-      <category domain="https://rdququ.top/categories/%E5%AD%A6%E4%B9%A0%E5%90%91/%E6%B8%B8%E6%88%8F%E5%BC%95%E6%93%8E/">游戏引擎</category>
-      
-      
-      <category domain="https://rdququ.top/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9B%BE%E5%BD%A2%E5%AD%A6/">计算机图形学</category>
-      
-      <category domain="https://rdququ.top/tags/%E6%B8%B8%E6%88%8F%E5%BC%95%E6%93%8E/">游戏引擎</category>
-      
-      <category domain="https://rdququ.top/tags/GAMES104/">GAMES104</category>
-      
-      
-      <comments>https://rdququ.top/posts/32cb02ce/#disqus_thread</comments>
       
     </item>
     
