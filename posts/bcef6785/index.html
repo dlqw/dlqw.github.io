@@ -14,11 +14,10 @@
 
 
 <link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
-  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"rdququ.top","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"manual","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+    var CONFIG = {"hostname":"rdququ.top","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"manual","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
     <script src="//code.jquery.com/jquery-2.0.3.min.js"></script>
@@ -90,8 +89,12 @@
 
   <script src="https://cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome/css/font-awesome.min.css"/>
-<link rel="alternate" href="/rss2.xml" title="蛐蛐的软件开发世界" type="application/rss+xml">
-</head>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><link rel="alternate" href="/rss2.xml" title="蛐蛐的软件开发世界" type="application/rss+xml">
+<link href="https://cdn.bootcss.com/KaTeX/0.11.1/katex.min.css" rel="stylesheet" /></head>
 
 <body itemscope itemtype="http://schema.org/WebPage">
   <div class="container use-motion">
@@ -290,7 +293,7 @@
 <h2 id="什么是-snapshot-compressive-imaging-快照压缩成像">什么是 Snapshot Compressive Imaging (快照压缩成像)？</h2>
 <h3 id="二维检测和高维以3d为例检测是什么">二维检测和高维(以3D为例)检测是什么？</h3>
 <figure>
-<img data-src="p1.jpg" alt="图一" /><figcaption aria-hidden="true">图一</figcaption>
+<img src="p1.jpg" alt="图一" /><figcaption aria-hidden="true">图一</figcaption>
 </figure>
 <p>单目 3D 检测和 2D 检测具有相同的输入数据模态和不同的预测目标。2D 检测任务一般要求在给定一张输入图像后，检测出物体的类别和 2D 框；单目 3D 检测则设定在给定同样的一张二维图像下，检测出物体的类别和 3D 框，其中 3D 框通常拥有至少 7 个自由度：三维位置，三维框大小以及转向角</p>
 <span id="more"></span>
@@ -301,12 +304,12 @@ Via novel optical designs, the 2D detector samples the HD data in a compressive 
 <h3 id="什么是-data-cube-数据立方体">什么是 Data-Cube (数据立方体)？</h3>
 <p>数据立方体是一种多维数据模型, 并且只有三维。</p>
 <figure>
-<img data-src="Data-Cube.png" alt="数据立方体" /><figcaption aria-hidden="true">数据立方体</figcaption>
+<img src="Data-Cube.png" alt="数据立方体" /><figcaption aria-hidden="true">数据立方体</figcaption>
 </figure>
 <h4 id="什么是多维数据模型">什么是多维数据模型？</h4>
 <p>多维模型的相关概念： - 多维数据模型：为了满足用户从多角度多层次进行数据查询和分析的需要而建立起来的基于事实和维的数据库模型，其基本的应用是为了实现OLAP（Online Analytical Processing） - 立方体：它是由维度构建出来的多维空间，包含了所要分析的基础数据，所有的聚合数据操作都在它上面进行 - 维度：观察数据的一种角度，比如在上图中address、item、time都可以被看作一个维度，直观上来看维度是一个立方体的轴，比如三个维度可以构成一个立方体的空间 - 维度成员：构成维度的基本单位，比如对于time维，包含Q1、Q2、Q3、Q4四个维度成员 - 层次：维度的层次结构，它存在两种：自然层次和用户自定义层次。比如对于时间维，可以分为年、月、日三个层次，也可以分为年、季度、月三个层次。一个维可以有多个层次，它是单位数据聚集的一种路径 - 级别：级别组成层次，比如年、月、日分别是时间维的三个级别 - 度量：一个数值函数，可以对数据立方体空间中的每个点求值；度量值自然就是度量的结果 - 事实表：存放度量值得表，同时存放了维表得外键，所有分析所用得数据最终都来自事实表 - 维表：对于维度的描述，每个维度对应一个或多个维表，一个维度对应一个表的是星型模式，对应多个表的是雪花模式 - OLAP：Online Analytical Processing，联机分析处理，是一种多维、分析式的查询处理技术，它是一种基于维度的数据分析方法，它的基本特征是：面向主题、集成性、时序性、非易失性、动态性、客户/服务器结构、开放式的数据库连接、多维数据分析、灵活的报表生成、图形化的用户界面</p>
 <figure>
-<img data-src="多维模型.png" alt="多维数据模型" /><figcaption aria-hidden="true">多维数据模型</figcaption>
+<img src="多维模型.png" alt="多维数据模型" /><figcaption aria-hidden="true">多维数据模型</figcaption>
 </figure>
 <h3 id="什么是-cs-compressive-sensing-压缩感知">什么是 CS (Compressive Sensing) 『压缩感知』?</h3>
 <p>压缩感知本质上一个线性逆问题 (linear inverse problem)，目的是从少量的线性测量 (linear measurements) 中还原高维的信号。</p>
@@ -333,7 +336,7 @@ Via novel optical designs, the 2D detector samples the HD data in a compressive 
 <p>按照上述定义，非线性激活函数Relu（根据输出的正负区间进行简单粗暴的二分）、dropout机制（根据概率进行二分）都可以理解为泛化的mask操作。</p>
 <p>正如其名 mask 在宏观上的表现就是<code>遮罩</code></p>
 <figure>
-<img data-src="mask.png" alt="使用mask提取ROI区域" /><figcaption aria-hidden="true">使用mask提取ROI区域</figcaption>
+<img src="mask.png" alt="使用mask提取ROI区域" /><figcaption aria-hidden="true">使用mask提取ROI区域</figcaption>
 </figure>
 <h3 id="什么是-cassi-coded-aperture-snapshot-spectral-imaging-编码孔径快照光谱成像">什么是 CASSI (Coded Aperture Snapshot Spectral Imaging) 『编码孔径快照光谱成像』</h3>
 <p>CASSI (coded aperture snapshot spectral imaging)是一种具有代表性的高光谱图像捕获SCI系统。</p>
@@ -616,9 +619,6 @@ $(document).ready(function() {
 
   
   <script src="/lib/anime.min.js"></script>
-  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
-  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
-  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
 

@@ -14,11 +14,10 @@
 
 
 <link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
-  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"rdququ.top","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"manual","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+    var CONFIG = {"hostname":"rdququ.top","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"manual","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
     <script src="//code.jquery.com/jquery-2.0.3.min.js"></script>
@@ -93,8 +92,12 @@
 
   <script src="https://cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome/css/font-awesome.min.css"/>
-<link rel="alternate" href="/rss2.xml" title="蛐蛐的软件开发世界" type="application/rss+xml">
-</head>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><link rel="alternate" href="/rss2.xml" title="蛐蛐的软件开发世界" type="application/rss+xml">
+<link href="https://cdn.bootcss.com/KaTeX/0.11.1/katex.min.css" rel="stylesheet" /></head>
 
 <body itemscope itemtype="http://schema.org/WebPage">
   <div class="container use-motion">
@@ -304,10 +307,10 @@
         <p>GAMES104Notes</p>
 <span id="more"></span>
 <figure>
-<img data-src="GAMES104_Zoo%20of%20Game%20Engines-1.png" alt="AMES104_Zoo of Game Engines-1" /><figcaption aria-hidden="true">AMES104_Zoo of Game Engines-1</figcaption>
+<img src="GAMES104_Zoo%20of%20Game%20Engines-1.png" alt="AMES104_Zoo of Game Engines-1" /><figcaption aria-hidden="true">AMES104_Zoo of Game Engines-1</figcaption>
 </figure>
 <figure>
-<img data-src="GAMES104_Middlewares.png" alt="GAMES104_Middlewares" /><figcaption aria-hidden="true">GAMES104_Middlewares</figcaption>
+<img src="GAMES104_Middlewares.png" alt="GAMES104_Middlewares" /><figcaption aria-hidden="true">GAMES104_Middlewares</figcaption>
 </figure>
 <h2 id="引擎的基本架构">引擎的基本架构</h2>
 <p>自顶向底的五层架构</p>
@@ -333,7 +336,7 @@
 <li>Carmack's 1/sqrt(x)</li>
 <li>Magic number</li>
 </ul>
-<p>eg. SIMD<img data-src="SIMD-1.png" alt="Alt text" /></p>
+<p>eg. SIMD<img src="SIMD-1.png" alt="Alt text" /></p>
 <p>Data Structure and Containers</p>
 <p>Memory Management</p>
 <p>Foundation of Game Engine</p>
@@ -387,7 +390,7 @@
 <li>Warp</li>
 </ul>
 <figure>
-<img data-src="GAMES101_GPU_Architecture.png" alt="GPU Architecture" /><figcaption aria-hidden="true">GPU Architecture</figcaption>
+<img src="GAMES101_GPU_Architecture.png" alt="GPU Architecture" /><figcaption aria-hidden="true">GPU Architecture</figcaption>
 </figure>
 <h5 id="data-flow-from-cpu-to-gpu">Data Flow From CPU to GPU</h5>
 <ul>
@@ -686,9 +689,6 @@ $(document).ready(function() {
 
   
   <script src="/lib/anime.min.js"></script>
-  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
-  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
-  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
 

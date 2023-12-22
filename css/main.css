@@ -1194,7 +1194,7 @@ pre .javascript .function {
 }
 .links-of-author a::before,
 .links-of-author span.exturl::before {
-  background: #144ec6;
+  background: #a7596c;
   border-radius: 50%;
   content: ' ';
   display: inline-block;
@@ -2809,3 +2809,4 @@ code {
   overflow-wrap: break-word;
   word-wrap: break-word;
 }
+@import "https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/katex.min.css";

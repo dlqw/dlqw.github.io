@@ -14,11 +14,10 @@
 
 
 <link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
-  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"rdququ.top","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"manual","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+    var CONFIG = {"hostname":"rdququ.top","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"manual","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
     <script src="//code.jquery.com/jquery-2.0.3.min.js"></script>
@@ -94,8 +93,12 @@
 
   <script src="https://cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome/css/font-awesome.min.css"/>
-<link rel="alternate" href="/rss2.xml" title="蛐蛐的软件开发世界" type="application/rss+xml">
-</head>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><link rel="alternate" href="/rss2.xml" title="蛐蛐的软件开发世界" type="application/rss+xml">
+<link href="https://cdn.bootcss.com/KaTeX/0.11.1/katex.min.css" rel="stylesheet" /></head>
 
 <body itemscope itemtype="http://schema.org/WebPage">
   <div class="container use-motion">
@@ -291,7 +294,7 @@
 <h4 id="透视除法-齐次除法perspective-division-homogeneous-division">透视除法-齐次除法(<strong>perspective division</strong>-<strong>homogeneous division)</strong></h4>
 <p>就是将齐次裁剪空间坐标positionCS的X,Y,Z分量都除以W分量。</p>
 <p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/7e701d7bfd79">写给大家看的“透视除法” —— 齐次坐标和投影 - 简书 (jianshu.com)</a></p>
-<p><img data-src="https://pic4.zhimg.com/80/v2-4baca450c51c7f0eea873c42eeda0eef_720w.webp" /></p>
+<p><img src="https://pic4.zhimg.com/80/v2-4baca450c51c7f0eea873c42eeda0eef_720w.webp" /></p>
 <h2 id="算法原理">算法原理</h2>
 <h2 id="unity-shader-graph-实现">Unity Shader Graph 实现</h2>
 <h3 id="scenedepth">SceneDepth</h3>
@@ -300,7 +303,7 @@
 </blockquote>
 <p>也就是说SceneDepth Node是对深度纹理进行获取的节点，只不过获取的方法不同，而深度纹理中存储的是NDC坐标的深度值。</p>
 <figure>
-<img data-src="https://pic4.zhimg.com/80/v2-199f0cb63bdba7f81de4c826056dcbff_720w.webp" alt="img" /><figcaption aria-hidden="true">img</figcaption>
+<img src="https://pic4.zhimg.com/80/v2-199f0cb63bdba7f81de4c826056dcbff_720w.webp" alt="img" /><figcaption aria-hidden="true">img</figcaption>
 </figure>
 <ul>
 <li>Linear01获取的是线性的范围为[0,1]的深度值。 &gt; 想要把Raw Depth转换成线性 ，并且从近平面到远平面为0-1的深度，就需要Linear 01 Depth，这时0.5深度就是视锥体一半的位置。 &gt;</li>
@@ -312,7 +315,7 @@
 <p>Provides access to the mesh vertex or fragment's <strong>Screen Position</strong> .</p>
 </blockquote>
 <figure>
-<img data-src="https://pic3.zhimg.com/80/v2-439252aa4b98dac54ced99bf1460a58e_720w.webp" alt="img" /><figcaption aria-hidden="true">img</figcaption>
+<img src="https://pic3.zhimg.com/80/v2-439252aa4b98dac54ced99bf1460a58e_720w.webp" alt="img" /><figcaption aria-hidden="true">img</figcaption>
 </figure>
 <ul>
 <li>ScreenPosition在Default选项下会进行齐次除法运算（即除以w分量），这里的w范围为[0,1],也就是NDC下的w分量。经过透视除法的，左下角是（0，0）右上角是（1，1）的屏幕空间</li>
@@ -327,23 +330,23 @@
 <p>（Scene Depth是除开透明模型之外的深度，Screen Position是所有模型的深度，相减就是边缘）</p>
 </blockquote>
 <p>出处<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/109547098">从头学ShaderGraph 5-护盾材质 - 知乎 (zhihu.com)</a></p>
-<p><img data-src="https://pic2.zhimg.com/80/v2-fea83d5ed062c6bfe5dc8221e2d5d999_720w.webp" /></p>
+<p><img src="https://pic2.zhimg.com/80/v2-fea83d5ed062c6bfe5dc8221e2d5d999_720w.webp" /></p>
 <p><strong>(Vertex Shader) =&gt; Clip Space =&gt; (透视除法) =&gt; NDC =&gt; (视口变换) =&gt; Window Space =&gt; (Fragment Shader)</strong></p>
 <p>现象很好观察，但是不知道原理，翻遍了官方文档和网上的教程也没能得到一个足够有说服力的解释，现在可以知道 SceneDepth 的 Eye 获取的是视角空间下的线性深度值，范围为[near, far]，ScreenPosition 的 w 分量是是 Clip Space 中未经过透视除法的值，范围也是[near, far]。我们知道物体自Eye/View/Camera Space(这玩意名字真多)到Cliping Space 要经过一次透视变换，或者说透视除法，所以实际上，Screen Graph 的 w 分量也许就是 Eye Space 下到相机的距离(不是深度，所以也存储了透明物体的距离)</p>
 <figure>
-<img data-src="image/不透明物体与半透明物体边缘算法与Unity-Shader-Graph-实现/1702390346535.png" alt="1702390346535" /><figcaption aria-hidden="true">1702390346535</figcaption>
+<img src="image/不透明物体与半透明物体边缘算法与Unity-Shader-Graph-实现/1702390346535.png" alt="1702390346535" /><figcaption aria-hidden="true">1702390346535</figcaption>
 </figure>
 <p>上图的实验一定程度上看可以证明上文的观点。</p>
 <p>有趣的是，当我们把 Surface Type 修改为Transparent, 场景中的透明与不透明物体的交界处出现了一道淡淡的白线</p>
 <figure>
-<img data-src="image/不透明物体与半透明物体边缘算法与Unity-Shader-Graph-实现/1702390608834.png" alt="1702390608834" /><figcaption aria-hidden="true">1702390608834</figcaption>
+<img src="image/不透明物体与半透明物体边缘算法与Unity-Shader-Graph-实现/1702390608834.png" alt="1702390608834" /><figcaption aria-hidden="true">1702390608834</figcaption>
 </figure>
 <p>我们将 Comparison 节点的输入值 B 调大，交界处出现了明显的白线</p>
 <figure>
-<img data-src="image/不透明物体与半透明物体边缘算法与Unity-Shader-Graph-实现/1702390681409.png" alt="1702390681409" /><figcaption aria-hidden="true">1702390681409</figcaption>
+<img src="image/不透明物体与半透明物体边缘算法与Unity-Shader-Graph-实现/1702390681409.png" alt="1702390681409" /><figcaption aria-hidden="true">1702390681409</figcaption>
 </figure>
 <figure>
-<img data-src="image/不透明物体与半透明物体边缘算法与Unity-Shader-Graph-实现/1702390730401.png" alt="1702390730401" /><figcaption aria-hidden="true">1702390730401</figcaption>
+<img src="image/不透明物体与半透明物体边缘算法与Unity-Shader-Graph-实现/1702390730401.png" alt="1702390730401" /><figcaption aria-hidden="true">1702390730401</figcaption>
 </figure>
 <p>我们知道，初始输出的两个节点的取值范围都是[n,f]，所以当我们把对比节点的输入值B调到1的时候，边界就很明显了。</p>
 <p>现在，结果已经呼之欲出了，Scene Depth 节点的 Eye 输出的是深度值，我们知道，透明物体默认不会写入深度缓冲，Screen Position 输出的是简单的距离，故而相减可以得到边界。</p>
@@ -621,9 +624,6 @@ $(document).ready(function() {
 
   
   <script src="/lib/anime.min.js"></script>
-  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
-  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
-  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
 

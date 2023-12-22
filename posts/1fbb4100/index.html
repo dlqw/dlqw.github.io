@@ -14,11 +14,10 @@
 
 
 <link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
-  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"rdququ.top","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"manual","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+    var CONFIG = {"hostname":"rdququ.top","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"manual","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
     <script src="//code.jquery.com/jquery-2.0.3.min.js"></script>
@@ -96,8 +95,12 @@
 
   <script src="https://cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome/css/font-awesome.min.css"/>
-<link rel="alternate" href="/rss2.xml" title="蛐蛐的软件开发世界" type="application/rss+xml">
-</head>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><link rel="alternate" href="/rss2.xml" title="蛐蛐的软件开发世界" type="application/rss+xml">
+<link href="https://cdn.bootcss.com/KaTeX/0.11.1/katex.min.css" rel="stylesheet" /></head>
 
 <body itemscope itemtype="http://schema.org/WebPage">
   <div class="container use-motion">
@@ -296,8 +299,8 @@
 <p>选择 URP 模板创建不需要配置环境 普通 3D 项目，包管理器安装 Universal RP, visual effect graph，设置中正常配置 Graphics</p>
 <h2 id="光照模型">光照模型</h2>
 <p>Create =&gt; ShaderGraph =&gt; URP =&gt; Lit Shader Graph</p>
-<p>输入属性节点： <img data-src="输入属性节点.png" alt="输入属性节点" /></p>
-<p>属性设置： <img data-src="属性设置.png" alt="属性设置" /></p>
+<p>输入属性节点： <img src="输入属性节点.png" alt="输入属性节点" /></p>
+<p>属性设置： <img src="属性设置.png" alt="属性设置" /></p>
 <ul>
 <li>Precision [精度] [single/half] half 性能更好</li>
 </ul>
@@ -325,29 +328,29 @@
 <li>Custom Editor GUI [自定义编辑器GUI]</li>
 <li>Supports VFXGRAph [支持VFXGRAph] [勾选]</li>
 </ul>
-<p>顶点着色器: <img data-src="顶点着色器.png" alt="顶点着色器" /></p>
-<p>片段着色器: <img data-src="片元着色器.png" alt="片元着色器" /></p>
+<p>顶点着色器: <img src="顶点着色器.png" alt="顶点着色器" /></p>
+<p>片段着色器: <img src="片元着色器.png" alt="片元着色器" /></p>
 <p>乘法节点 Multiply: 颜色叠加</p>
 <h3 id="fragment">Fragment</h3>
 <h4 id="base-color">Base Color</h4>
-<p>主贴图，展现了模型的基本纹理 可以新建一个 Texture2D 属性，然后将其作为输入 <img data-src="UnityShaderGraphBaseColor.png" alt="UnityShaderGraphBaseColor" /></p>
+<p>主贴图，展现了模型的基本纹理 可以新建一个 Texture2D 属性，然后将其作为输入 <img src="UnityShaderGraphBaseColor.png" alt="UnityShaderGraphBaseColor" /></p>
 <p>MainTexture 保持默认</p>
 <h4 id="normal">Normal</h4>
 <figure>
-<img data-src="UnityShaderGraphNormal.png" alt="UnityShaderGraphNormal" /><figcaption aria-hidden="true">UnityShaderGraphNormal</figcaption>
+<img src="UnityShaderGraphNormal.png" alt="UnityShaderGraphNormal" /><figcaption aria-hidden="true">UnityShaderGraphNormal</figcaption>
 </figure>
 <p>注意 Sample Texture 2D 的 Type 要设置为 Normal NormalTexture 的 Mode 选择 Normal Map</p>
 <h4 id="metallic">Metallic</h4>
-<p><img data-src="UnityShaderGraphMetallic.png" alt="UnityShaderGraphMetallic" /> 保持默认</p>
+<p><img src="UnityShaderGraphMetallic.png" alt="UnityShaderGraphMetallic" /> 保持默认</p>
 <h4 id="smoothness">Smoothness</h4>
 <figure>
-<img data-src="UnityShaderGraphSmoothness.png" alt="UnityShaderGraphSmoothness" /><figcaption aria-hidden="true">UnityShaderGraphSmoothness</figcaption>
+<img src="UnityShaderGraphSmoothness.png" alt="UnityShaderGraphSmoothness" /><figcaption aria-hidden="true">UnityShaderGraphSmoothness</figcaption>
 </figure>
 <p>输出金属光泽度的 Alpha 通道与 Smoothness 通过 Multiply 乘法节点相乘, 得到输出值</p>
 <h4 id="emission">Emission</h4>
-<p><img data-src="UnityShaderGraphEmission.png" alt="UnityShaderGraphEmission" /> 自发光贴图与类型为 Boolean Keywork 的 EmissiveTexture 相乘来控制是否自发光，得到其输出值与 EmissionColor 相乘得到最终的输出值</p>
+<p><img src="UnityShaderGraphEmission.png" alt="UnityShaderGraphEmission" /> 自发光贴图与类型为 Boolean Keywork 的 EmissiveTexture 相乘来控制是否自发光，得到其输出值与 EmissionColor 相乘得到最终的输出值</p>
 <h4 id="ao">AO</h4>
-<p><img data-src="UnityShaderGraphAO.png" alt="UnityShaderGraphAO" /> 保持默认</p>
+<p><img src="UnityShaderGraphAO.png" alt="UnityShaderGraphAO" /> 保持默认</p>
 <h3 id="sub-graph">Sub Graph</h3>
 <p>框选中对应节点右击 Convert to =&gt; Sub-graph</p>
 <h3 id="轮廓光边缘光">轮廓光/边缘光</h3>
@@ -615,9 +618,6 @@ $(document).ready(function() {
 
   
   <script src="/lib/anime.min.js"></script>
-  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
-  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
-  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
 

@@ -14,11 +14,10 @@
 
 
 <link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
-  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"rdququ.top","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"manual","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+    var CONFIG = {"hostname":"rdququ.top","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"manual","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
     <script src="//code.jquery.com/jquery-2.0.3.min.js"></script>
@@ -88,8 +87,12 @@
 
   <script src="https://cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome/css/font-awesome.min.css"/>
-<link rel="alternate" href="/rss2.xml" title="蛐蛐的软件开发世界" type="application/rss+xml">
-</head>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><link rel="alternate" href="/rss2.xml" title="蛐蛐的软件开发世界" type="application/rss+xml">
+<link href="https://cdn.bootcss.com/KaTeX/0.11.1/katex.min.css" rel="stylesheet" /></head>
 
 <body itemscope itemtype="http://schema.org/WebPage">
   <div class="container use-motion">
@@ -295,7 +298,7 @@
 <p>不过要想让画面动起来，而不是显示器上某个像素点一直再发不同的光，然而其他地方却一片黑，我们的电子流就要去射击不同的像素点，让整个显示器都呈现出画面。我们管这叫扫描。当然这里也运用到了人眼的视觉残留效应，想必大家很清楚。</p>
 <p>当然扫描也不是乱扫的，是有章法有规则的，请看下图。</p>
 <figure>
-<img data-src="CRT显示器扫描.png" alt="CRT显示器扫描" /><figcaption aria-hidden="true">CRT显示器扫描</figcaption>
+<img src="CRT显示器扫描.png" alt="CRT显示器扫描" /><figcaption aria-hidden="true">CRT显示器扫描</figcaption>
 </figure>
 <p>这张图大家肯定超级熟悉吧。电子枪从左上角向右扫，然后再从右向左扫，直到扫完整个屏幕。欸，我估计聪明的小伙伴已经发现了，这个扫描线不是绝对水平的，而是略微带一点倾斜。这也是为了让扫描线能扫过整个屏幕而不是只在一条横线上来回扫。从左向右扫的每条扫描线都略微下坡，其实这个下坡的度数是可以算出来的，其斜率大约为 -1/水平分辨率, 非常好算，我就不带大家算一遍了。</p>
 <h4 id="消隐期-blank">消隐期 BLANK</h4>
@@ -330,7 +333,7 @@
 <h3 id="精灵表单">精灵表单</h3>
 <p>为了保证精灵完全对其，我们通常要求美术绘制的角色起码得是同一个尺寸，在过去，这个尺寸往往是 <span class="math inline">\(2^n\)</span> 次方，这也是许多库内部规定好的。当然，我们现在已经不追 <span class="math inline">\(2^n\)</span> 次方了，但是仍然需要一个角色一系列的动画帧保持相同的大小，并且，别的角色也最好按照设定保持类似的比例。</p>
 <p>许多美术给图喜欢一张一张的给，那么这其实是让每张图片都成为以一个单独的纹理，并且图片中也会存在大量的留白，虽然现代引擎对这一类资源做过优化，但是不管是对内存，还是对程序员（有些美术给图之后往往就甩手不管图片的裁剪了）的头发来说，这都是一件很痛苦的事情。</p>
-<p>一个更好的做法是将所有的动画帧放在一张图片上，这张图片，我们叫做精灵表单，这张表单上的图片，我们希望间距足够小，并且成行成列的对齐，这样不仅能节省不少内存空间，还可以让处理素材更加快捷。 <img data-src="AttackCombo.png" alt="AttackCombo" /> 下面我提供一个打包的小工具，大家可以试试。 <a target="_blank" rel="noopener" href="https://www.codeandweb.com/texturepacker">TexturePacker</a></p>
+<p>一个更好的做法是将所有的动画帧放在一张图片上，这张图片，我们叫做精灵表单，这张表单上的图片，我们希望间距足够小，并且成行成列的对齐，这样不仅能节省不少内存空间，还可以让处理素材更加快捷。 <img src="AttackCombo.png" alt="AttackCombo" /> 下面我提供一个打包的小工具，大家可以试试。 <a target="_blank" rel="noopener" href="https://www.codeandweb.com/texturepacker">TexturePacker</a></p>
 <p>当然，游戏引擎对图片的大小，长和宽都是有限制的。最好不要把所有图片都塞进一张精灵表里。</p>
 <h2 id="滚屏">滚屏</h2>
 <p>在以前简单的 2D 游戏中，比如俄罗斯方块一类，游戏中所有元素都可以在一张固定大小的小小屏幕中展现出来，但随着玩法的更新迭代，游戏的世界也越来越大，再也不是一张固定大小的图片能承载的下的了。屏幕的大小没有办法改变，但实际上可显示的图片是可与改变的，想象一下，你面前有一张巨大的画布，你用一个木框去框住一小部分，这时候你再扯动，这时候这张远超木框大小的画布的全部内容就都可以再一个小小的屏幕中全部展现出来。</p>
@@ -616,9 +619,6 @@ $(document).ready(function() {
 
   
   <script src="/lib/anime.min.js"></script>
-  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
-  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
-  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
 

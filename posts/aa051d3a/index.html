@@ -14,11 +14,10 @@
 
 
 <link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
-  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"rdququ.top","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"manual","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+    var CONFIG = {"hostname":"rdququ.top","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"manual","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
     <script src="//code.jquery.com/jquery-2.0.3.min.js"></script>
@@ -92,8 +91,12 @@
 
   <script src="https://cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome/css/font-awesome.min.css"/>
-<link rel="alternate" href="/rss2.xml" title="蛐蛐的软件开发世界" type="application/rss+xml">
-</head>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><link rel="alternate" href="/rss2.xml" title="蛐蛐的软件开发世界" type="application/rss+xml">
+<link href="https://cdn.bootcss.com/KaTeX/0.11.1/katex.min.css" rel="stylesheet" /></head>
 
 <body itemscope itemtype="http://schema.org/WebPage">
   <div class="container use-motion">
@@ -291,28 +294,28 @@
 <p>Diffusion model 是一种深度生成模型（无监督生成模型），它属于：<br />
 机器学习 -&gt; 无监督学习 -&gt; 概率模型 -&gt; 生成模型 <span id="more"></span></p>
 <figure>
-<img data-src="DM归属.png" alt="分类图" /><figcaption aria-hidden="true">分类图</figcaption>
+<img src="DM归属.png" alt="分类图" /><figcaption aria-hidden="true">分类图</figcaption>
 </figure>
 <p>概率模型是为了求得数据的后验概率<span class="math inline">\(P(Y|X)\)</span>或者联合验概率<span class="math inline">\(P(X,Y)\)</span><br />
 对于监督学习而言，判别模型主要是求后验概率，也就是通过输入的特征X去求标签信息Y。生成模型主要是未了求得联合概率，对于X，求出X与不同标签之间的联合概率，取最大的那个标签作为预测结果。</p>
 <h3 id="隐空间和隐变量-latent-spacehidden-variables">隐空间和隐变量 (latent space/hidden variables)</h3>
 <figure>
-<img data-src="隐变量.png" alt="间接" /><figcaption aria-hidden="true">间接</figcaption>
+<img src="隐变量.png" alt="间接" /><figcaption aria-hidden="true">间接</figcaption>
 </figure>
 <p>a 直接到 b 比较困难，所以可以通过间接变量 c 来实现。</p>
 <h3 id="基本算法">基本算法</h3>
 <figure>
-<img data-src="autoencoder.png" alt="autoencoder" /><figcaption aria-hidden="true">autoencoder</figcaption>
+<img src="autoencoder.png" alt="autoencoder" /><figcaption aria-hidden="true">autoencoder</figcaption>
 </figure>
 <figure>
-<img data-src="diffusion.png" alt="diffusion" /><figcaption aria-hidden="true">diffusion</figcaption>
+<img src="diffusion.png" alt="diffusion" /><figcaption aria-hidden="true">diffusion</figcaption>
 </figure>
 <p><span class="math inline">\(X_0\)</span> 是原始的输入图像，<span class="math inline">\(X_T\)</span> 是 total noise</p>
 <p>在从右往左的过程中的每一步都会给样本增加一个小的满足高斯分布的噪声，整个过程为一个一阶马尔可夫过程，这是一个正向扩散过程，如果把它反过来，也就是从左往右看上图，那么就是一个反向扩散过程。</p>
 <p>正向分布的时候添加的噪声都是符合高斯分布的，那么这些噪声合并后仍然是处于高斯分布的。但是当我们逆推这一过程的时候，除非我们拥有整体数据集合，不然我们是没有办法直接求解的，通常来说我们会训练一个模型 <span class="math inline">\(p_θ\)</span>来预测反向扩散过程的条件概率 <span class="math inline">\(q(x_{t-1}|x_t)\)</span>. 通过这个模型，我们输入 <span class="math inline">\(X_t\)</span> 和 <span class="math inline">\(t\)</span> 可以预测出 <span class="math inline">\(X_{t-1}\)</span> 的条件概率分布(如果正向扩散每步增加的噪声够小,它可以被视为高斯分布)的均值 <span class="math inline">\(μ_θ(x_t,t)\)</span>和方差 <span class="math inline">\(\sum_θ(x_t,t)\)</span>，基于预测值,我们可以从 <span class="math inline">\(x_{t-1}\)</span>的高斯分布 <span class="math inline">\(p_θ(x_{t-1}|x_t)\)</span>中采样出 <span class="math inline">\(X_{t-1}\)</span> 的值，从而得到 <span class="math inline">\(x_{t-1}\)</span> 的一个可能的取值,后面以此类推,我们就可以逐步去噪生成一张图片.</p>
 <p>这个模型在 DDPM 中是 U-net 网络 PixelCNN++.</p>
 <p>简单来说,这里的反向传播,或者说是 decoder,又或者说是生成器,其实就是在简单的拟合正向部分的逆过程的每一小步.</p>
-<p>当然,训练我们的噪声预测器需要大量的数据集,不过这仍然不值得担心,因为正向传播的每一步我们都是在给图像逐步加噪,我们可以轻松地获取从0到T每个过程的所有样本. <img data-src="UNet.png" alt="UNet" /> 上面这张图非常清晰的展现了 U-net 的训练.</p>
+<p>当然,训练我们的噪声预测器需要大量的数据集,不过这仍然不值得担心,因为正向传播的每一步我们都是在给图像逐步加噪,我们可以轻松地获取从0到T每个过程的所有样本. <img src="UNet.png" alt="UNet" /> 上面这张图非常清晰的展现了 U-net 的训练.</p>
 
     </div>
 
@@ -579,9 +582,6 @@ $(document).ready(function() {
 
   
   <script src="/lib/anime.min.js"></script>
-  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
-  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
-  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
 

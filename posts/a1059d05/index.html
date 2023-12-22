@@ -14,11 +14,10 @@
 
 
 <link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
-  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"rdququ.top","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"manual","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+    var CONFIG = {"hostname":"rdququ.top","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"manual","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
     <script src="//code.jquery.com/jquery-2.0.3.min.js"></script>
@@ -99,8 +98,12 @@
 
   <script src="https://cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome/css/font-awesome.min.css"/>
-<link rel="alternate" href="/rss2.xml" title="蛐蛐的软件开发世界" type="application/rss+xml">
-</head>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><link rel="alternate" href="/rss2.xml" title="蛐蛐的软件开发世界" type="application/rss+xml">
+<link href="https://cdn.bootcss.com/KaTeX/0.11.1/katex.min.css" rel="stylesheet" /></head>
 
 <body itemscope itemtype="http://schema.org/WebPage">
   <div class="container use-motion">
@@ -314,17 +317,17 @@
         <h2 id="怎么下载unity">怎么下载Unity</h2>
 <p>Unity中国官网: https://unity.cn/<br />
 ### 注册Unity ID 无论是选择用邮箱还是用手机号码，Unity都会要求你接受手机验证码，这时候部分号码可能会接收不到验证码，如果连续三次出现这种情况，不要犹豫，换个号码就行，不需要使用接码平台。后续的登录使用邮箱就可以了。 <span id="more"></span> ### 下载Unity Hub 点右上角的下载Unity,再点击页面中的绿色按钮“下载Unity Hub”，选择对应的版本即可。 ### 下载Unity 打开Hub,如果没有登录先登录。点击你的头像，再点击里面的管理许可证，拿到免费的个人版许可证。<br />
-<img data-src="许可证.png" title="许可证" alt="许可证" /><br />
-中文设置： <img data-src="Hub中文.png" title="Hub中文" alt="Hub中文" /> 在此之后点击左侧边栏的安装，选择2022.3.4f1c1安装即可，也可以根据个人喜好选择其他版本，过高或者过低的版本可能会有各种不适配的问题。(其实可以多装几个版本，如果你的磁盘空间够大的话)<br />
-安装的页面，除了最下面的简体中文语言包可以勾选，其他都没必要勾，以后要用可以再额外安装。 <img data-src="安装unity.png" title="安装unity" alt="安装unity" /></p>
+<img src="许可证.png" title="许可证" alt="许可证" /><br />
+中文设置： <img src="Hub中文.png" title="Hub中文" alt="Hub中文" /> 在此之后点击左侧边栏的安装，选择2022.3.4f1c1安装即可，也可以根据个人喜好选择其他版本，过高或者过低的版本可能会有各种不适配的问题。(其实可以多装几个版本，如果你的磁盘空间够大的话)<br />
+安装的页面，除了最下面的简体中文语言包可以勾选，其他都没必要勾，以后要用可以再额外安装。 <img src="安装unity.png" title="安装unity" alt="安装unity" /></p>
 <h2 id="怎么配置unity">怎么配置Unity</h2>
 <h3 id="vs2022">VS2022</h3>
-<p>学校里的课程教的使用vs2010啊，当然我们实际开发时不可能使用vs2010的。出于方便易上手考虑，先讲一下vs2022的Unity配置，非常简单，下载的时候勾选一下这个就行 <img data-src="vs2022.png" title="vs2022" alt="vs2022" /></p>
+<p>学校里的课程教的使用vs2010啊，当然我们实际开发时不可能使用vs2010的。出于方便易上手考虑，先讲一下vs2022的Unity配置，非常简单，下载的时候勾选一下这个就行 <img src="vs2022.png" title="vs2022" alt="vs2022" /></p>
 <h3 id="vscode">vscode</h3>
-<p>vscode是很强大的文本编辑器，这里我们也介绍一下。主要下载这些插件： <img data-src="vscode插件1.png" title="vscode插件" alt="vscode插件" /> <img data-src="vscode插件2.png" title="vscode插件" alt="vscode插件" /> <img data-src="vscode插件3.png" title="vscode插件" alt="vscode插件" /><br />
+<p>vscode是很强大的文本编辑器，这里我们也介绍一下。主要下载这些插件： <img src="vscode插件1.png" title="vscode插件" alt="vscode插件" /> <img src="vscode插件2.png" title="vscode插件" alt="vscode插件" /> <img src="vscode插件3.png" title="vscode插件" alt="vscode插件" /><br />
 中文插件搜Chinese就行，不过多介绍</p>
 <h3 id="配置unity">配置Unity</h3>
-<p>先随便打开一个项目 看左上角的Edit，他下面有个Preferences，打开之后看图 <img data-src="Unity语言.png" title="Unity语言" alt="Unity语言" /> <img data-src="外部工具.png" title="外部工具" alt="外部工具" /> external script editor（就是第一个）选择你喜欢的就行（vs2022/vscode）</p>
+<p>先随便打开一个项目 看左上角的Edit，他下面有个Preferences，打开之后看图 <img src="Unity语言.png" title="Unity语言" alt="Unity语言" /> <img src="外部工具.png" title="外部工具" alt="外部工具" /> external script editor（就是第一个）选择你喜欢的就行（vs2022/vscode）</p>
 <table style="width:6%;">
 <colgroup>
 <col style="width: 5%" />
@@ -605,9 +608,6 @@ $(document).ready(function() {
 
   
   <script src="/lib/anime.min.js"></script>
-  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
-  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
-  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
 
