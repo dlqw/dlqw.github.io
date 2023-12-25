@@ -21,12 +21,12 @@
   </script>
 
     <script src="//code.jquery.com/jquery-2.0.3.min.js"></script>
-  <meta name="description" content="贝塞尔曲线 平滑的曲线，计算机图形学的天堂，线性代数的产物 同时这篇文章也是关于嵌入html与js的测试">
+  <meta name="description" content="贝塞尔曲线平滑的曲线，计算机图形学的天堂，线性代数的产物同时这篇文章也是关于嵌入html与js的测试">
 <meta property="og:type" content="article">
 <meta property="og:title" content="test">
 <meta property="og:url" content="https://rdququ.top/posts/d87f7e0c/index.html">
 <meta property="og:site_name" content="蛐蛐的软件开发世界">
-<meta property="og:description" content="贝塞尔曲线 平滑的曲线，计算机图形学的天堂，线性代数的产物 同时这篇文章也是关于嵌入html与js的测试">
+<meta property="og:description" content="贝塞尔曲线平滑的曲线，计算机图形学的天堂，线性代数的产物同时这篇文章也是关于嵌入html与js的测试">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-12-15T13:07:25.000Z">
 <meta property="article:modified_time" content="2023-12-15T14:32:29.416Z">
@@ -258,14 +258,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>3.2k</span>
+              <span>2.4k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>3 分钟</span>
+              <span>2 分钟</span>
             </span>
 
         </div>
@@ -277,19 +277,16 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h1 id="贝塞尔曲线">贝塞尔曲线</h1>
-<p>平滑的曲线，计算机图形学的天堂，线性代数的产物 同时这篇文章也是关于嵌入html与js的测试</p>
+        <h1 id="贝塞尔曲线"><a href="#贝塞尔曲线" class="headerlink" title="贝塞尔曲线"></a>贝塞尔曲线</h1><p>平滑的曲线，计算机图形学的天堂，线性代数的产物<br>同时这篇文章也是关于嵌入html与js的测试</p>
 <span id="more"></span>
 <p><strong>贝塞尔曲线方程</strong></p>
-<p>$ P(t)= {<em>{i=0}^{n}} P_iB</em>{i,n}(t),t$</p>
-<p>对于$ iN^* $</p>
-<p>$ B_{i,n}(t)=C_n<sup>it</sup>i(1-t)<sup>{n-i}=t</sup>i(1-t)^{n-i} $</p>
-<h2 id="推导过程">推导过程</h2>
-<p>To be continue</p>
-<h2 id="演示程序">演示程序</h2>
-<p>搬运自知乎id 何方 原地址https://zhuanlan.zhihu.com/p/180508343 侵权删，等博主学习了一些前端后，会自己重写</p>
+<p>$ P(t)= {\textstyle \sum<em>{i=0}^{n}} P_iB</em>{i,n}(t),t\in [0,1] $</p>
+<p>对于$ i\in N^* $</p>
+<p>$ B_{i,n}(t)=C_n^it^i(1-t)^{n-i}=\frac{n!}{i!(n-i)!}t^i(1-t)^{n-i} $</p>
+<h2 id="推导过程"><a href="#推导过程" class="headerlink" title="推导过程"></a>推导过程</h2><p>To be continue</p>
+<h2 id="演示程序"><a href="#演示程序" class="headerlink" title="演示程序"></a>演示程序</h2><p>搬运自知乎id 何方<br>原地址<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/180508343">https://zhuanlan.zhihu.com/p/180508343</a><br>侵权删，等博主学习了一些前端后，会自己重写</p>
 <body>
-<style>
+    <style>
         .buttonContainer button {
             border-radius: 5px;
             border: none;
@@ -300,122 +297,121 @@
             margin-right: 10px;
         }
     </style>
-<canvas id="canvas" style="border: 1px solid" width="500%" height="500%">
-</canvas>
-<div class="buttonContainer">
-<pre><code>    &lt;div&gt;
-        &lt;button id=&quot;draw&quot;&gt;画图&lt;/button&gt;
-        &lt;button id=&quot;reDraw&quot;&gt;重画&lt;/button&gt;
-        &lt;button id=&quot;clear&quot;&gt;清空&lt;/button&gt;
-        &lt;button id=&quot;radom&quot;&gt;随机&lt;/button&gt;
-    &lt;/div&gt;
-&lt;/div&gt;
-&lt;script&gt;
-    const cv = document.getElementById(&quot;canvas&quot;);
-    const draw = document.getElementById(&quot;draw&quot;);
-    const clear = document.getElementById(&quot;clear&quot;);
-    const reDraw = document.getElementById(&quot;reDraw&quot;);
-    if (/Mobi|Android|iPhone/i.test(navigator.userAgent)) &#123;
-        cv.height = 290;
-        cv.width = 290;
-    &#125;
-    let points = [];
-    const ctx = cv.getContext(&quot;2d&quot;);
-    let offset = 0;
-    let timer;
-    function calcMiddlePoint(p1, p2) &#123;
-        return &#123; x: (p2.x - p1.x) * offset + p1.x, y: (p2.y - p1.y) * offset + p1.y &#125;;
-    &#125;
-    let finalPoints = [];
-    function drawLine() &#123;
-        let last = &#123;&#125;
-        ctx.strokeStyle = &quot;red&quot;;
-        ctx.lineWidth = 3;
-        ctx.beginPath();
-        finalPoints.forEach((&#123; x, y &#125;, index) =&gt; &#123;
-            if (index === 0) &#123;
-                ctx.moveTo(x, y)
-            &#125; else &#123;
-                ctx.lineTo(x, y)
-            &#125;
-        &#125;);
-        ctx.stroke();
-    &#125;
-    function drawLines(ps, color) &#123;
-        if (ps.length &lt; 2) &#123;
-            const &#123; x, y &#125; = ps[0];
-            finalPoints.push(&#123; x, y &#125;);
-            drawLine();
-            return;
-        &#125;
-        ctx.lineWidth = 1;
-        ctx.strokeStyle = color || &quot;green&quot;;
-        ctx.beginPath();
-        for (let i = 0; i &lt; ps.length; i++) &#123;
-            const &#123; x, y &#125; = ps[i];
-            if (i === 0) &#123;
-                ctx.moveTo(x, y);
-            &#125; else &#123;
-                ctx.lineTo(x, y);
-            &#125;
-        &#125;
-        ctx.stroke();
-        const pps = [];
-        for (let i = 0; i &lt; ps.length - 1; i++) &#123;
-            pps.push(calcMiddlePoint(ps[i], ps[i + 1], .5));
-        &#125;
-        drawLines(pps)
-    &#125;
-    function doDraw() &#123;
-        if (points.length &lt; 2) &#123;
-            alert(`无法画图，请至少指定2个点`);
-            return;
-        &#125;
-        timer &amp;&amp; clearInterval(timer);
-        drawLines(points, &#39;blue&#39;);
-        timer = setInterval(() =&gt; &#123;
-            offset += 0.001;
-            window.requestAnimationFrame(() =&gt; &#123;
-                ctx.clearRect(0, 0, cv.width, cv.height);
-                drawLines(points, &#39;blue&#39;);
-            &#125;);
-            if (offset &gt;= 1) &#123;
-                clearInterval(timer);
-            &#125;
-        &#125;, 1);
-    &#125;
-    reDraw.addEventListener(&quot;click&quot;, function () &#123;
-        finalPoints = [];
-        offset = 0;
-        ctx.clearRect(0, 0, cv.width, cv.height);
-        doDraw();
-    &#125;);
-    draw.addEventListener(&quot;click&quot;, doDraw);
-    clear.addEventListener(&quot;click&quot;, () =&gt; &#123;
-        points = [];
-        finalPoints = [];
-        offset = 0;
-        ctx.clearRect(0, 0, cv.width, cv.height);
-    &#125;);
-    cv.addEventListener(&quot;click&quot;, function (e) &#123;
-        points.push(&#123; x: e.offsetX, y: e.offsetY &#125;);
-        console.log(&quot;point:&quot;, &#123; x: e.offsetX, y: e.offsetY &#125;);
-        ctx.fillStyle = &quot;black&quot;;
-        ctx.beginPath();
-        ctx.arc(e.offsetX, e.offsetY, 2, 0, Math.PI * 2);
-        ctx.fill();
-    &#125;);
-    radom.addEventListener(&quot;click&quot;, () =&gt; &#123;
-        points = [];
-        finalPoints = [];
-        offset = 0;
-        ctx.clearRect(0, 0, cv.width, cv.height);
-        for (let i = 0; i &lt; 10; i++) &#123;
-            points.push(&#123; x: Math.random() * cv.width, y: Math.random() * cv.height &#125;)
-        &#125;
-        doDraw();
-    &#125;);
-&lt;/script&gt;</code></pre>
+    <canvas id="canvas" style="border: 1px solid" width="500%" height="500%"></canvas>
+    <div class="buttonContainer">
+        <div>
+            <button id="draw">画图</button>
+            <button id="reDraw">重画</button>
+            <button id="clear">清空</button>
+            <button id="radom">随机</button>
+        </div>
+    </div>
+    <script>
+        const cv = document.getElementById("canvas");
+        const draw = document.getElementById("draw");
+        const clear = document.getElementById("clear");
+        const reDraw = document.getElementById("reDraw");
+        if (/Mobi|Android|iPhone/i.test(navigator.userAgent)) {
+            cv.height = 290;
+            cv.width = 290;
+        }
+        let points = [];
+        const ctx = cv.getContext("2d");
+        let offset = 0;
+        let timer;
+        function calcMiddlePoint(p1, p2) {
+            return { x: (p2.x - p1.x) * offset + p1.x, y: (p2.y - p1.y) * offset + p1.y };
+        }
+        let finalPoints = [];
+        function drawLine() {
+            let last = {}
+            ctx.strokeStyle = "red";
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            finalPoints.forEach(({ x, y }, index) => {
+                if (index === 0) {
+                    ctx.moveTo(x, y)
+                } else {
+                    ctx.lineTo(x, y)
+                }
+            });
+            ctx.stroke();
+        }
+        function drawLines(ps, color) {
+            if (ps.length < 2) {
+                const { x, y } = ps[0];
+                finalPoints.push({ x, y });
+                drawLine();
+                return;
+            }
+            ctx.lineWidth = 1;
+            ctx.strokeStyle = color || "green";
+            ctx.beginPath();
+            for (let i = 0; i < ps.length; i++) {
+                const { x, y } = ps[i];
+                if (i === 0) {
+                    ctx.moveTo(x, y);
+                } else {
+                    ctx.lineTo(x, y);
+                }
+            }
+            ctx.stroke();
+            const pps = [];
+            for (let i = 0; i < ps.length - 1; i++) {
+                pps.push(calcMiddlePoint(ps[i], ps[i + 1], .5));
+            }
+            drawLines(pps)
+        }
+        function doDraw() {
+            if (points.length < 2) {
+                alert(`无法画图，请至少指定2个点`);
+                return;
+            }
+            timer && clearInterval(timer);
+            drawLines(points, 'blue');
+            timer = setInterval(() => {
+                offset += 0.001;
+                window.requestAnimationFrame(() => {
+                    ctx.clearRect(0, 0, cv.width, cv.height);
+                    drawLines(points, 'blue');
+                });
+                if (offset >= 1) {
+                    clearInterval(timer);
+                }
+            }, 1);
+        }
+        reDraw.addEventListener("click", function () {
+            finalPoints = [];
+            offset = 0;
+            ctx.clearRect(0, 0, cv.width, cv.height);
+            doDraw();
+        });
+        draw.addEventListener("click", doDraw);
+        clear.addEventListener("click", () => {
+            points = [];
+            finalPoints = [];
+            offset = 0;
+            ctx.clearRect(0, 0, cv.width, cv.height);
+        });
+        cv.addEventListener("click", function (e) {
+            points.push({ x: e.offsetX, y: e.offsetY });
+            console.log("point:", { x: e.offsetX, y: e.offsetY });
+            ctx.fillStyle = "black";
+            ctx.beginPath();
+            ctx.arc(e.offsetX, e.offsetY, 2, 0, Math.PI * 2);
+            ctx.fill();
+        });
+        radom.addEventListener("click", () => {
+            points = [];
+            finalPoints = [];
+            offset = 0;
+            ctx.clearRect(0, 0, cv.width, cv.height);
+            for (let i = 0; i < 10; i++) {
+                points.push({ x: Math.random() * cv.width, y: Math.random() * cv.height })
+            }
+            doDraw();
+        });
+    </script>
 </body>
 
     </div>
@@ -596,16 +592,16 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">111k</span>
+    <span title="站点总字数">109k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">1:41</span>
+    <span title="站点阅读时长">1:39</span>
 </div>
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共44.3k字</span>
+  <span class="post-count">博客全站共43.9k字</span>
 </div>
 
     <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
@@ -731,6 +727,9 @@ $(document).ready(function() {
         // inlineMath: {'[+]': [['$', '$']]},
         inlineMath: [['$', '$'], ['\\(', '\\)']],
         tags: 'none'
+        svg: {
+          fontCache: 'global'
+        }
       },
       options: {
         renderActions: {
