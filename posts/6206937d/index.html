@@ -43,7 +43,7 @@
 <meta property="og:image" content="https://rdququ.top/posts/6206937d/GraphicsPipeline.png">
 <meta property="og:image" content="https://rdququ.top/posts/6206937d/image/GAMES101Notes/%E4%B8%89%E8%A7%92%E5%BD%A2%E9%87%8C%E7%9A%84%E9%87%8D%E5%BF%83%E5%9D%90%E6%A0%87.png">
 <meta property="article:published_time" content="2023-11-06T13:51:16.000Z">
-<meta property="article:modified_time" content="2023-12-22T14:43:58.310Z">
+<meta property="article:modified_time" content="2023-12-25T05:11:07.534Z">
 <meta property="article:author" content="蛐蛐">
 <meta property="article:tag" content="GAMES101Notes">
 <meta name="twitter:card" content="summary">
@@ -264,7 +264,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-12-22 22:43:58" itemprop="dateModified" datetime="2023-12-22T22:43:58+08:00">2023-12-22</time>
+                <time title="修改时间：2023-12-25 13:11:07" itemprop="dateModified" datetime="2023-12-25T13:11:07+08:00">2023-12-25</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -293,14 +293,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>11k</span>
+              <span>12k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>10 分钟</span>
+              <span>11 分钟</span>
             </span>
 
         </div>
@@ -314,149 +314,189 @@
       
         <p>GAMES101Notes</p>
 <span id="more"></span>
-<h2 id="Leture-3-Transform"><a href="#Leture-3-Transform" class="headerlink" title="Leture 3 Transform"></a>Leture 3 Transform</h2><ul>
-<li>Modeling<br>-&gt;transformation, rotation, scaling<br>eg. Camera &amp; IK</li>
-<li>Viewing<br>-&gt; (3D to 2D)projection</li>
-</ul>
-<h3 id="Scale"><a href="#Scale" class="headerlink" title="Scale"></a>Scale</h3><script type="math/tex; mode=display">
-x' = sx \\ y' = sy</script><script type="math/tex; mode=display">
-\begin{bmatrix}
-x' \\
-y' \\
-\end{bmatrix} =
-\begin{bmatrix}
-s & 0 \\
-0 & s \\
-\end{bmatrix}
-\begin{bmatrix}
-x \\
-y \\
-\end{bmatrix}</script><script type="math/tex; mode=display">
-\begin{bmatrix}
-x' \\
-y' \\
-\end{bmatrix} =
-\begin{bmatrix}
-s_x & 0 \\
-0 & s_y \\
-\end{bmatrix}
-\begin{bmatrix}
-x \\
-y \\
-\end{bmatrix}</script><h3 id="Reflection-Matrix"><a href="#Reflection-Matrix" class="headerlink" title="Reflection Matrix"></a>Reflection Matrix</h3><script type="math/tex; mode=display">
-x' = -x \\
-y' = -y</script><script type="math/tex; mode=display">
-\begin{bmatrix}
-x' \\
-y' \\
-\end{bmatrix} =
-\begin{bmatrix}
--1 & 0 \\
-0 & -1 \\
-\end{bmatrix}
-\begin{bmatrix}
-x \\
-y \\
-\end{bmatrix}</script><h3 id="Shear-Matrix"><a href="#Shear-Matrix" class="headerlink" title="Shear Matrix"></a>Shear Matrix</h3><script type="math/tex; mode=display">
-x' = x + ay \\
-y' = y + bx</script><script type="math/tex; mode=display">
-\begin{bmatrix}
-x' \\
-y' \\
-\end{bmatrix} =
-\begin{bmatrix}
-1 & a \\
-b & 1 \\
-\end{bmatrix}
-\begin{bmatrix}
-x \\
-y \\
-\end{bmatrix}</script><h3 id="Rotate-abount-origin-0-0-CCW-by-default-『绕原点，逆时针』"><a href="#Rotate-abount-origin-0-0-CCW-by-default-『绕原点，逆时针』" class="headerlink" title="Rotate(abount origin$(0,0)$,CCW by default)『绕原点，逆时针』"></a>Rotate(abount origin$(0,0)$,CCW by default)『绕原点，逆时针』</h3><script type="math/tex; mode=display">
-x' = xcos\theta - ysin\theta \\
-y' = xsin\theta + ycos\theta</script><script type="math/tex; mode=display">
-\begin{bmatrix}
-x' \\
-y' \\
-\end{bmatrix} =
-\begin{bmatrix}
-cos\theta & -sin\theta \\
-sin\theta & cos\theta \\
-\end{bmatrix}
-\begin{bmatrix}
-x \\
-y \\
-\end{bmatrix}</script><script type="math/tex; mode=display">
-R = \begin{bmatrix}
-cos\theta & -sin\theta \\
-sin\theta & cos\theta \\
-\end{bmatrix}</script><h3 id="Linear-Transform-Matrices-of-the-same-dimension-『相同』"><a href="#Linear-Transform-Matrices-of-the-same-dimension-『相同』" class="headerlink" title="Linear Transform = Matrices(of the same dimension)『相同』"></a>Linear Transform = Matrices(of the same dimension)『相同』</h3><script type="math/tex; mode=display">
-x' = ax + by \\
-y' = cx + dy</script><script type="math/tex; mode=display">
-\begin{bmatrix}
-x' \\
-y' \\
-\end{bmatrix} =
-\begin{bmatrix}
-a & b \\
-c & d \\
-\end{bmatrix}
-\begin{bmatrix}
-x \\
-y \\
-\end{bmatrix}</script><script type="math/tex; mode=display">
-x' = Mx</script><h3 id="Translation"><a href="#Translation" class="headerlink" title="Translation"></a>Translation</h3><script type="math/tex; mode=display">
-x' = x + t_x
-\\
-y' = y + t_y</script><script type="math/tex; mode=display">
-\begin{bmatrix}
-x' \\
-y' \\
-\end{bmatrix} =
-\begin{bmatrix}
-1 & 0 \\
-0 & 1 \\
-\end{bmatrix}
-\begin{bmatrix}
-x \\
-y \\
-\end{bmatrix} +
-\begin{bmatrix}
-t_x \\
-t_y \\
-\end{bmatrix}</script><script type="math/tex; mode=display">
-\begin{bmatrix}
-x' \\
-y' \\
-\end{bmatrix} =
-\begin{bmatrix}
-a & b \\
-c & d \\
-\end{bmatrix}
-\begin{bmatrix}
-x \\
-y \\
-\end{bmatrix} +
-\begin{bmatrix}
-t_x \\
-t_y \\
-\end{bmatrix}</script><p>显然，平移不是线性变换</p>
-<p>但是我们想要有一个大统一的概念可以描述这些变换</p>
-<h3 id="Homogeneous-Coordinates『齐次坐标』"><a href="#Homogeneous-Coordinates『齐次坐标』" class="headerlink" title="Homogeneous Coordinates『齐次坐标』"></a>Homogeneous Coordinates『齐次坐标』</h3><p>Add a third coordinate $w$ to $(x,y)$</p>
+<h2 id="leture-3-transform">Leture 3 Transform</h2>
 <ul>
-<li>2D point: $= (x,y,1)^T$</li>
-<li>2D vector: $= (x,y,0)^T$</li>
+<li>Modeling -&gt;transformation, rotation, scaling eg. Camera &amp; IK</li>
+<li>Viewing -&gt; (3D to 2D)projection</li>
+</ul>
+<h3 id="scale">Scale</h3>
+<p><span class="math display">\[
+x&#39; = sx \\ y&#39; = sy
+\]</span></p>
+<p><span class="math display">\[
+\begin{bmatrix}
+x&#39; \\
+y&#39; \\
+\end{bmatrix} =
+\begin{bmatrix}
+s &amp; 0 \\
+0 &amp; s \\
+\end{bmatrix}
+\begin{bmatrix}
+x \\
+y \\
+\end{bmatrix}
+\]</span></p>
+<p><span class="math display">\[
+\begin{bmatrix}
+x&#39; \\
+y&#39; \\
+\end{bmatrix} =
+\begin{bmatrix}
+s_x &amp; 0 \\
+0 &amp; s_y \\
+\end{bmatrix}
+\begin{bmatrix}
+x \\
+y \\
+\end{bmatrix}
+\]</span></p>
+<h3 id="reflection-matrix">Reflection Matrix</h3>
+<p><span class="math display">\[
+x&#39; = -x \\
+y&#39; = -y
+\]</span></p>
+<p><span class="math display">\[
+\begin{bmatrix}
+x&#39; \\
+y&#39; \\
+\end{bmatrix} =
+\begin{bmatrix}
+-1 &amp; 0 \\
+0 &amp; -1 \\
+\end{bmatrix}
+\begin{bmatrix}
+x \\
+y \\
+\end{bmatrix}
+\]</span></p>
+<h3 id="shear-matrix">Shear Matrix</h3>
+<p><span class="math display">\[
+x&#39; = x + ay \\
+y&#39; = y + bx
+\]</span></p>
+<p><span class="math display">\[
+\begin{bmatrix}
+x&#39; \\
+y&#39; \\
+\end{bmatrix} =
+\begin{bmatrix}
+1 &amp; a \\
+b &amp; 1 \\
+\end{bmatrix}
+\begin{bmatrix}
+x \\
+y \\
+\end{bmatrix}
+\]</span></p>
+<h3 id="rotateabount-origin00ccw-by-default绕原点逆时针">Rotate(abount origin<span class="math inline">\((0,0)\)</span>,CCW by default)『绕原点，逆时针』</h3>
+<p><span class="math display">\[
+x&#39; = xcos\theta - ysin\theta \\
+y&#39; = xsin\theta + ycos\theta
+\]</span></p>
+<p><span class="math display">\[
+\begin{bmatrix}
+x&#39; \\
+y&#39; \\
+\end{bmatrix} =
+\begin{bmatrix}
+cos\theta &amp; -sin\theta \\
+sin\theta &amp; cos\theta \\
+\end{bmatrix}
+\begin{bmatrix}
+x \\
+y \\
+\end{bmatrix}
+\]</span></p>
+<p><span class="math display">\[
+R = \begin{bmatrix}
+cos\theta &amp; -sin\theta \\
+sin\theta &amp; cos\theta \\
+\end{bmatrix}
+\]</span></p>
+<h3 id="linear-transform-matricesof-the-same-dimension相同">Linear Transform = Matrices(of the same dimension)『相同』</h3>
+<p><span class="math display">\[
+x&#39; = ax + by \\
+y&#39; = cx + dy
+\]</span></p>
+<p><span class="math display">\[
+\begin{bmatrix}
+x&#39; \\
+y&#39; \\
+\end{bmatrix} =
+\begin{bmatrix}
+a &amp; b \\
+c &amp; d \\
+\end{bmatrix}
+\begin{bmatrix}
+x \\
+y \\
+\end{bmatrix}
+\]</span></p>
+<p><span class="math display">\[
+x&#39; = Mx
+\]</span></p>
+<h3 id="translation">Translation</h3>
+<p><span class="math display">\[
+x&#39; = x + t_x
+\\
+y&#39; = y + t_y
+\]</span></p>
+<p><span class="math display">\[
+\begin{bmatrix}
+x&#39; \\
+y&#39; \\
+\end{bmatrix} =
+\begin{bmatrix}
+1 &amp; 0 \\
+0 &amp; 1 \\
+\end{bmatrix}
+\begin{bmatrix}
+x \\
+y \\
+\end{bmatrix} +
+\begin{bmatrix}
+t_x \\
+t_y \\
+\end{bmatrix}
+\]</span></p>
+<p><span class="math display">\[
+\begin{bmatrix}
+x&#39; \\
+y&#39; \\
+\end{bmatrix} =
+\begin{bmatrix}
+a &amp; b \\
+c &amp; d \\
+\end{bmatrix}
+\begin{bmatrix}
+x \\
+y \\
+\end{bmatrix} +
+\begin{bmatrix}
+t_x \\
+t_y \\
+\end{bmatrix}
+\]</span></p>
+<p>显然，平移不是线性变换</p>
+<p>但是我们想要有一个大统一的概念可以描述这些变换</p>
+<h3 id="homogeneous-coordinates齐次坐标">Homogeneous Coordinates『齐次坐标』</h3>
+<p>Add a third coordinate <span class="math inline">\(w\)</span> to <span class="math inline">\((x,y)\)</span></p>
+<ul>
+<li>2D point: <span class="math inline">\(= (x,y,1)^T\)</span></li>
+<li>2D vector: <span class="math inline">\(= (x,y,0)^T\)</span></li>
 </ul>
 <p>Maxtrix representation of translation</p>
-<script type="math/tex; mode=display">
+<p><span class="math display">\[
 \begin{bmatrix}
-x' \\
-y' \\
-w' \\
+x&#39; \\
+y&#39; \\
+w&#39; \\
 \end{bmatrix} =
 \begin{bmatrix}
-1 & 0 & t_x \\
-0 & 1 & t_y \\
-0 & 0 & 1 \\
+1 &amp; 0 &amp; t_x \\
+0 &amp; 1 &amp; t_y \\
+0 &amp; 0 &amp; 1 \\
 \end{bmatrix} ·
 \begin{bmatrix}
 x \\
@@ -467,79 +507,296 @@ y \\
 x + t_x \\
 y + t_y \\
 1 \\
-\end{bmatrix}</script><p>$w$ 的意义是什么呢？</p>
-<p>In homogeneous coordinates, $\begin{bmatrix}x \y \w \\end{bmatrix}$  is the 2D point$\begin{bmatrix}\frac{x}{w} \\frac{y}{w} \1\end{bmatrix}, w \neq 0$</p>
-<h3 id="2D-transformations"><a href="#2D-transformations" class="headerlink" title="2D transformations"></a>2D transformations</h3><h4 id="scale"><a href="#scale" class="headerlink" title="scale"></a>scale</h4><script type="math/tex; mode=display">
+\end{bmatrix}
+\]</span></p>
+<p><span class="math inline">\(w\)</span> 的意义是什么呢？</p>
+<p>In homogeneous coordinates, <span class="math inline">\(\begin{bmatrix}x \\y \\w \\\end{bmatrix}\)</span> is the 2D point<span class="math inline">\(\begin{bmatrix}\frac{x}{w} \\\frac{y}{w} \\1\end{bmatrix}, w \neq 0\)</span></p>
+<h3 id="d-transformations">2D transformations</h3>
+<h4 id="scale-1">scale</h4>
+<p><span class="math display">\[
 S(s_x,s_y) = \begin{bmatrix}
-s_x & 0 & 0 \\
-0 & s_y & 0 \\
-0 & 0 & 1 \\
-\end{bmatrix}</script><script type="math/tex; mode=display">
+s_x &amp; 0 &amp; 0 \\
+0 &amp; s_y &amp; 0 \\
+0 &amp; 0 &amp; 1 \\
+\end{bmatrix}
+\]</span></p>
+<p><span class="math display">\[
 S(s_x,s_y) = \begin{bmatrix}
-s_x & 0 & 0 \\
-0 & s_y & 0 \\
-0 & 0 & 1 \\
-\end{bmatrix}</script><h4 id="rotate"><a href="#rotate" class="headerlink" title="rotate"></a>rotate</h4><script type="math/tex; mode=display">
+s_x &amp; 0 &amp; 0 \\
+0 &amp; s_y &amp; 0 \\
+0 &amp; 0 &amp; 1 \\
+\end{bmatrix}
+\]</span></p>
+<h4 id="rotate">rotate</h4>
+<p><span class="math display">\[
 R(\theta) = \begin{bmatrix}
-cos\theta & -sin\theta & 0 \\
-sin\theta & cos\theta & 0 \\
-0 & 0 & 1 \\
-\end{bmatrix}</script><h4 id="shear"><a href="#shear" class="headerlink" title="shear"></a>shear</h4><p>$<br>H(a,b) = \begin{bmatrix}<br>1 &amp; a &amp; 0 \<br>b &amp; 1 &amp; 0 \<br>0 &amp; 0 &amp; 1 \<br>\end{bmatrix}<br>$</p>
-<h4 id="translate"><a href="#translate" class="headerlink" title="translate"></a>translate</h4><p>$<br>T(t_x,t_y) = \begin{bmatrix}<br>1 &amp; 0 &amp; t_x \<br>0 &amp; 1 &amp; t_y \<br>0 &amp; 0 &amp; 1 \<br>\end{bmatrix}<br>$</p>
-<h3 id="Inverse-transform"><a href="#Inverse-transform" class="headerlink" title="Inverse transform"></a>Inverse transform</h3><p>逆变换刚好对应逆矩阵</p>
-<h2 id="Lecture-4-Transformation-Cont"><a href="#Lecture-4-Transformation-Cont" class="headerlink" title="Lecture 4 Transformation Cont"></a>Lecture 4 Transformation Cont</h2><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/daduzimama/article/details/120509856">逆矩阵的求法</a></p>
+cos\theta &amp; -sin\theta &amp; 0 \\
+sin\theta &amp; cos\theta &amp; 0 \\
+0 &amp; 0 &amp; 1 \\
+\end{bmatrix}
+\]</span></p>
+<h4 id="shear">shear</h4>
+$ H(a,b) =
+<span class="math display">\[\begin{bmatrix}
+1 &amp; a &amp; 0 \\
+b &amp; 1 &amp; 0 \\
+0 &amp; 0 &amp; 1 \\
+\end{bmatrix}\]</span>
+<p>$</p>
+<h4 id="translate">translate</h4>
+$ T(t_x,t_y) =
+<span class="math display">\[\begin{bmatrix}
+1 &amp; 0 &amp; t_x \\
+0 &amp; 1 &amp; t_y \\
+0 &amp; 0 &amp; 1 \\
+\end{bmatrix}\]</span>
+<p>$</p>
+<h3 id="inverse-transform">Inverse transform</h3>
+<p>逆变换刚好对应逆矩阵</p>
+<h2 id="lecture-4-transformation-cont">Lecture 4 Transformation Cont</h2>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/daduzimama/article/details/120509856">逆矩阵的求法</a></p>
 <p>当一个矩阵的逆等同于他的伴随矩阵，那么这个矩阵是正交矩阵。</p>
 <p>旋转矩阵是正交矩阵</p>
-<h3 id="3D-transformations"><a href="#3D-transformations" class="headerlink" title="3D transformations"></a>3D transformations</h3><ul>
-<li>Scale<br>$<br>S(s_x,s_y,s_z) = \begin{bmatrix}<br>s_x &amp; 0 &amp; 0 &amp; 0 \<br>0 &amp; s_y &amp; 0 &amp; 0 \<br>0 &amp; 0 &amp; s_z &amp; 0 \<br>0 &amp; 0 &amp; 0 &amp; 1 \<br>\end{bmatrix}<br>$</li>
-<li>Translate<br>$<br>T(t_x,t_y,t_z) = \begin{bmatrix}<br>1 &amp; 0 &amp; 0 &amp; t_x \<br>0 &amp; 1 &amp; 0 &amp; t_y \<br>0 &amp; 0 &amp; 1 &amp; t_z \<br>0 &amp; 0 &amp; 0 &amp; 1 \<br>\end{bmatrix}<br>$</li>
-<li>Rotate(Around x-, y-, z-axis)<br>$<br>R_x(\theta) = \begin{bmatrix}<br>1 &amp; 0 &amp; 0 &amp; 0 \<br>0 &amp; cos\theta &amp; -sin\theta &amp; 0 \<br>0 &amp; sin\theta &amp; cos\theta &amp; 0 \<br>0 &amp; 0 &amp; 0 &amp; 1 \<br>\end{bmatrix}\<br>$<br>$<br>R_y(\theta) = \begin{bmatrix}<br>cos\theta &amp; 0 &amp; sin\theta &amp; 0 \<br>0 &amp; 1 &amp; 0 &amp; 0 \<br>-sin\theta &amp; 0 &amp; cos\theta &amp; 0 \<br>0 &amp; 0 &amp; 0 &amp; 1 \<br>\end{bmatrix}\<br>$<br>$<br>R_z(\theta) = \begin{bmatrix}<br>cos\theta &amp; -sin\theta &amp; 0 &amp; 0 \<br>sin\theta &amp; cos\theta &amp; 0 &amp; 0 \<br>0 &amp; 0 &amp; 1 &amp; 0 \<br>0 &amp; 0 &amp; 0 &amp; 1 \<br>\end{bmatrix}<br>$</li>
+<h3 id="d-transformations-1">3D transformations</h3>
+<ul>
+<li>Scale $ S(s_x,s_y,s_z) =
+<span class="math display">\[\begin{bmatrix}
+s_x &amp; 0 &amp; 0 &amp; 0 \\
+0 &amp; s_y &amp; 0 &amp; 0 \\
+0 &amp; 0 &amp; s_z &amp; 0 \\
+0 &amp; 0 &amp; 0 &amp; 1 \\
+\end{bmatrix}\]</span>
+$</li>
+<li>Translate $ T(t_x,t_y,t_z) =
+<span class="math display">\[\begin{bmatrix}
+1 &amp; 0 &amp; 0 &amp; t_x \\
+0 &amp; 1 &amp; 0 &amp; t_y \\
+0 &amp; 0 &amp; 1 &amp; t_z \\
+0 &amp; 0 &amp; 0 &amp; 1 \\
+\end{bmatrix}\]</span>
+$</li>
+<li>Rotate(Around x-, y-, z-axis) $ R_x() =
+<span class="math display">\[\begin{bmatrix}
+1 &amp; 0 &amp; 0 &amp; 0 \\
+0 &amp; cos\theta &amp; -sin\theta &amp; 0 \\
+0 &amp; sin\theta &amp; cos\theta &amp; 0 \\
+0 &amp; 0 &amp; 0 &amp; 1 \\
+\end{bmatrix}\]</span>
+\ $ $ R_y() =
+<span class="math display">\[\begin{bmatrix}
+cos\theta &amp; 0 &amp; sin\theta &amp; 0 \\
+0 &amp; 1 &amp; 0 &amp; 0 \\
+-sin\theta &amp; 0 &amp; cos\theta &amp; 0 \\
+0 &amp; 0 &amp; 0 &amp; 1 \\
+\end{bmatrix}\]</span>
+\ $ $ R_z() =
+<span class="math display">\[\begin{bmatrix}
+cos\theta &amp; -sin\theta &amp; 0 &amp; 0 \\
+sin\theta &amp; cos\theta &amp; 0 &amp; 0 \\
+0 &amp; 0 &amp; 1 &amp; 0 \\
+0 &amp; 0 &amp; 0 &amp; 1 \\
+\end{bmatrix}\]</span>
+$</li>
 </ul>
-<h4 id="Rodrigues’-Rotation-Formula『罗德里格斯旋转公式』"><a href="#Rodrigues’-Rotation-Formula『罗德里格斯旋转公式』" class="headerlink" title="Rodrigues’ Rotation Formula『罗德里格斯旋转公式』"></a>Rodrigues’ Rotation Formula『罗德里格斯旋转公式』</h4><p>Rotation by angle $\alpha$ around axis $n$</p>
-<p>$<br>\boldsymbol  {R}(\boldsymbol  {n},\alpha) = cos(\alpha)\boldsymbol  {I} + (1-cos(\alpha))\boldsymbol  {nn}^T + sin(\alpha)N\<br>N = \begin{bmatrix}<br>0 &amp; -n_z &amp; n_y \<br>n_z &amp; 0 &amp; -n_x \<br>-n_y &amp; n_x &amp; 0 \<br>\end{bmatrix}<br>$</p>
-<h3 id="Viewing-transformation『观测变换』"><a href="#Viewing-transformation『观测变换』" class="headerlink" title="Viewing transformation『观测变换』"></a>Viewing transformation『观测变换』</h3><h3 id="View-Camera-transformation『视图变换』"><a href="#View-Camera-transformation『视图变换』" class="headerlink" title="View / Camera transformation『视图变换』"></a>View / Camera transformation『视图变换』</h3><h3 id="Projection-transformation『投影变换』"><a href="#Projection-transformation『投影变换』" class="headerlink" title="Projection transformation『投影变换』"></a>Projection transformation『投影变换』</h3><h4 id="Orthographic-projection『正交投影』"><a href="#Orthographic-projection『正交投影』" class="headerlink" title="Orthographic projection『正交投影』"></a>Orthographic projection『正交投影』</h4><ul>
+<h4 id="rodrigues-rotation-formula罗德里格斯旋转公式">Rodrigues' Rotation Formula『罗德里格斯旋转公式』</h4>
+<p>Rotation by angle <span class="math inline">\(\alpha\)</span> around axis <span class="math inline">\(n\)</span></p>
+$ (,) = cos() + (1-cos())^T + sin()N\ N =
+<span class="math display">\[\begin{bmatrix}
+0 &amp; -n_z &amp; n_y \\
+n_z &amp; 0 &amp; -n_x \\
+-n_y &amp; n_x &amp; 0 \\
+\end{bmatrix}\]</span>
+<p>$</p>
+<h3 id="viewing-transformation观测变换">Viewing transformation『观测变换』</h3>
+<h3 id="view-camera-transformation视图变换">View / Camera transformation『视图变换』</h3>
+<h3 id="projection-transformation投影变换">Projection transformation『投影变换』</h3>
+<h4 id="orthographic-projection正交投影">Orthographic projection『正交投影』</h4>
+<ul>
 <li>相机置于原点，面朝 -z 轴</li>
 <li>丢掉 z 轴</li>
-<li>Translate and scale to $[-1,1]^2$</li>
+<li>Translate and scale to <span class="math inline">\([-1,1]^2\)</span></li>
 </ul>
-<h5 id="In-general"><a href="#In-general" class="headerlink" title="In general"></a>In general</h5><ul>
-<li>We want to map a cuboid $[l,r] \times [b,t] \times [\boldsymbol f,\boldsymbol n]$ to the “canonical” cube$[-1,1]^3$</li>
+<h5 id="in-general">In general</h5>
+<ul>
+<li>We want to map a cuboid <span class="math inline">\([l,r] \times [b,t] \times [\boldsymbol f,\boldsymbol n]\)</span> to the "canonical" cube<span class="math inline">\([-1,1]^3\)</span></li>
 </ul>
-<h6 id="Transformation-matrix"><a href="#Transformation-matrix" class="headerlink" title="Transformation matrix"></a>Transformation matrix</h6><p>Translate(center to origin) -&gt; Scale(length/width/height to 2)</p>
-<p>$<br>M_{ortho} = \begin{bmatrix}<br>\frac{2}{r-l} &amp; 0 &amp; 0 &amp; 0 \<br>0 &amp; \frac{2}{t-b} &amp; 0 &amp; 0 \<br>0 &amp; 0 &amp; \frac{2}{\boldsymbol n-\boldsymbol f} &amp; 0 \<br>0 &amp; 0 &amp; 0 &amp; 1 \<br>\end{bmatrix}<br>·<br>\begin{bmatrix}<br>1 &amp; 0 &amp; 0 &amp; -\frac{r+l}{2} \<br>0 &amp; 1 &amp; 0 &amp; -\frac{t+b}{2} \<br>0 &amp; 0 &amp; 1 &amp; -\frac{\boldsymbol n+\boldsymbol f}{2} \<br>0 &amp; 0 &amp; 0 &amp; 1 \<br>\end{bmatrix}<br>= \begin{bmatrix}<br>\frac{2}{r-l} &amp; 0 &amp; 0 &amp; -\frac{r+l}{r-l} \<br>0 &amp; \frac{2}{t-b} &amp; 0 &amp; -\frac{t+b}{t-b} \<br>0 &amp; 0 &amp; \frac{2}{\boldsymbol n-\boldsymbol f} &amp; -\frac{\boldsymbol n+\boldsymbol f}{\boldsymbol n-\boldsymbol f} \<br>0 &amp; 0 &amp; 0 &amp; 1 \<br>\end{bmatrix}<br>$</p>
-<h4 id="Perspective-projection『透视投影』"><a href="#Perspective-projection『透视投影』" class="headerlink" title="Perspective projection『透视投影』"></a>Perspective projection『透视投影』</h4><ul>
-<li>First “aquish” the frustum into a cuboid $(n \rightarrow n, f \rightarrow f)(M_{persp \rightarrow ortho})$</li>
+<h6 id="transformation-matrix">Transformation matrix</h6>
+<p>Translate(center to origin) -&gt; Scale(length/width/height to 2)</p>
+$ M_{ortho} =
+<span class="math display">\[\begin{bmatrix}
+\frac{2}{r-l} &amp; 0 &amp; 0 &amp; 0 \\
+0 &amp; \frac{2}{t-b} &amp; 0 &amp; 0 \\
+0 &amp; 0 &amp; \frac{2}{\boldsymbol n-\boldsymbol f} &amp; 0 \\
+0 &amp; 0 &amp; 0 &amp; 1 \\
+\end{bmatrix}\]</span>
+·
+<span class="math display">\[\begin{bmatrix}
+1 &amp; 0 &amp; 0 &amp; -\frac{r+l}{2} \\
+0 &amp; 1 &amp; 0 &amp; -\frac{t+b}{2} \\
+0 &amp; 0 &amp; 1 &amp; -\frac{\boldsymbol n+\boldsymbol f}{2} \\
+0 &amp; 0 &amp; 0 &amp; 1 \\
+\end{bmatrix}\]</span>
+=
+<span class="math display">\[\begin{bmatrix}
+\frac{2}{r-l} &amp; 0 &amp; 0 &amp; -\frac{r+l}{r-l} \\
+0 &amp; \frac{2}{t-b} &amp; 0 &amp; -\frac{t+b}{t-b} \\
+0 &amp; 0 &amp; \frac{2}{\boldsymbol n-\boldsymbol f} &amp; -\frac{\boldsymbol n+\boldsymbol f}{\boldsymbol n-\boldsymbol f} \\
+0 &amp; 0 &amp; 0 &amp; 1 \\
+\end{bmatrix}\]</span>
+<p>$</p>
+<h4 id="perspective-projection透视投影">Perspective projection『透视投影』</h4>
+<ul>
+<li>First "aquish" the frustum into a cuboid <span class="math inline">\((n \rightarrow n, f \rightarrow f)(M_{persp \rightarrow ortho})\)</span></li>
 <li>Do orthographic projection</li>
 </ul>
-<ol>
+<ol type="1">
 <li><p>In order to find a transformation</p>
 <ul>
-<li>Find the relationship between transformed points $(x’,y’,z’)$<br>and original points $(x,y,z)$</li>
-<li>$y’ = \frac{n}{z}y\ x’ = \frac{n}{z}x$ —&gt; similar to $y’$</li>
-</ul>
-</li>
-<li>In homogeneous corrdinates</li>
+<li>Find the relationship between transformed points <span class="math inline">\((x&#39;,y&#39;,z&#39;)\)</span> and original points <span class="math inline">\((x,y,z)\)</span></li>
+<li><span class="math inline">\(y&#39; = \frac{n}{z}y\\ x&#39; = \frac{n}{z}x\)</span> --&gt; similar to <span class="math inline">\(y&#39;\)</span></li>
+</ul></li>
+<li><p>In homogeneous corrdinates</p></li>
 </ol>
-<p>$<br>\begin{bmatrix}<br>x \<br>y \<br>z \<br>1 \<br>\end{bmatrix} \xrightarrow{M_{persp \rightarrow ortho}}<br>\begin{bmatrix}<br>\frac{n}{z}x \<br>\frac{n}{z}y \<br>unknown \<br>1 \<br>\end{bmatrix} \xlongequal{mult. by z}<br>\begin{bmatrix}<br>nx \<br>ny \<br>unknown \<br>z \<br>\end{bmatrix}<br>$</p>
-<p>显然，我们可以逆推出 $M_{persp \rightarrow ortho}$ 长这样</p>
-<p>$<br>M_{persp \rightarrow ortho} =<br>\begin{bmatrix} n &amp; 0 &amp; 0 &amp; 0 \<br>0 &amp; n &amp; 0 &amp; 0 \<br>? &amp; ? &amp; ? &amp; ? \<br>0 &amp; 0 &amp; 1 &amp; 0 \<br>\end{bmatrix}<br>$</p>
-<p>近和远处的 $z$ 不会发生变化</p>
+$
+<span class="math display">\[\begin{bmatrix}
+x \\
+y \\
+z \\
+1 \\
+\end{bmatrix} \xrightarrow{M_{persp \rightarrow ortho}}
+\begin{bmatrix}
+\frac{n}{z}x \\
+\frac{n}{z}y \\
+unknown \\
+1 \\
+\end{bmatrix} \xlongequal{mult. by z}
+\begin{bmatrix}
+nx \\
+ny \\
+unknown \\
+z \\
+\end{bmatrix}\]</span>
+<p>$</p>
+<p>显然，我们可以逆推出 <span class="math inline">\(M_{persp \rightarrow ortho}\)</span> 长这样</p>
+$ M_{persp ortho} =
+<span class="math display">\[\begin{bmatrix} n &amp; 0 &amp; 0 &amp; 0 \\
+0 &amp; n &amp; 0 &amp; 0 \\
+? &amp; ? &amp; ? &amp; ? \\
+0 &amp; 0 &amp; 1 &amp; 0 \\
+\end{bmatrix}\]</span>
+<p>$</p>
+<p>近和远处的 <span class="math inline">\(z\)</span> 不会发生变化</p>
 <p>把 z 代换成 n，n 是我们取得特殊定值</p>
-<p>$<br>\begin{bmatrix}<br>x \<br>y \<br>z \<br>1 \<br>\end{bmatrix} =<br>\begin{bmatrix}<br>nx \<br>ny \<br>unknown \<br>z \<br>\end{bmatrix} \xrightarrow{replace\space z\space with\space n}<br>\begin{bmatrix}<br>x \<br>y \<br>n \<br>1 \<br>\end{bmatrix} \rightarrow<br>\begin{bmatrix}<br>nx \<br>ny \<br>n^2 \<br>n \<br>\end{bmatrix}<br>$</p>
+$
+<span class="math display">\[\begin{bmatrix}
+x \\
+y \\
+z \\
+1 \\
+\end{bmatrix}\]</span>
+=
+<span class="math display">\[\begin{bmatrix}
+nx \\
+ny \\
+unknown \\
+z \\
+\end{bmatrix} \xrightarrow{replace\space z\space with\space n}
+\begin{bmatrix}
+x \\
+y \\
+n \\
+1 \\
+\end{bmatrix} \rightarrow
+\begin{bmatrix}
+nx \\
+ny \\
+n^2 \\
+n \\
+\end{bmatrix}\]</span>
+<p>$</p>
 <p>我们现在要求解第三行，且我们知道 x 轴和 y 轴对 z 轴没有影响, 因为最终的结果中没有 x 和 y</p>
-<p>$<br>\begin{bmatrix}<br>0\space 0\space A\space B<br>\end{bmatrix}<br>·<br>\begin{bmatrix}<br>x \<br>y \<br>n \<br>1 \<br>\end{bmatrix} =<br>n^2<br>$</p>
+$
+<span class="math display">\[\begin{bmatrix}
+0\space 0\space A\space B
+\end{bmatrix}\]</span>
+·
+<span class="math display">\[\begin{bmatrix}
+x \\
+y \\
+n \\
+1 \\
+\end{bmatrix}\]</span>
+<p>= n^2 $</p>
 <p>我们可以推出</p>
-<p>$<br>\begin{bmatrix}<br>0 &amp; 0 &amp; A &amp; B<br>\end{bmatrix}<br>·<br>\begin{bmatrix}<br>x \<br>y \<br>n \<br>1 \<br>\end{bmatrix} =<br>n^2  \Rightarrow<br>An + B = n^2<br>$</p>
+$
+<span class="math display">\[\begin{bmatrix}
+0 &amp; 0 &amp; A &amp; B
+\end{bmatrix}\]</span>
+·
+<span class="math display">\[\begin{bmatrix}
+x \\
+y \\
+n \\
+1 \\
+\end{bmatrix}\]</span>
+<p>= n^2  An + B = n^2 $</p>
 <p>我们又知道任何点的 z 坐标在远平面上都不会变化，所以我们可以推出</p>
-<p>$<br>\begin{bmatrix}<br>0 \<br>0 \<br>f \<br>1 \<br>\end{bmatrix} \Rightarrow<br>\begin{bmatrix}<br>0 \<br>0 \<br>f \<br>1 \<br>\end{bmatrix} ==<br>\begin{bmatrix}<br>0 \<br>0 \<br>f^2 \<br>f \<br>\end{bmatrix} \Rightarrow<br>Af + B = f^2<br>$</p>
+$
+<span class="math display">\[\begin{bmatrix}
+0 \\
+0 \\
+f \\
+1 \\
+\end{bmatrix} \Rightarrow
+\begin{bmatrix}
+0 \\
+0 \\
+f \\
+1 \\
+\end{bmatrix}\]</span>
+==
+<span class="math display">\[\begin{bmatrix}
+0 \\
+0 \\
+f^2 \\
+f \\
+\end{bmatrix} \Rightarrow\]</span>
+<p>Af + B = f^2 $</p>
 <p>解得</p>
-<p>$<br>A = n+f \<br>B = -nf<br>$</p>
+<p>$ A = n+f \ B = -nf $</p>
 <p>所以</p>
-<p>$<br>M_{persp \rightarrow ortho} =<br>\begin{bmatrix} n &amp; 0 &amp; 0 &amp; 0 \<br>0 &amp; n &amp; 0 &amp; 0 \<br>0 &amp; 0 &amp; n+f &amp; -nf \<br>0 &amp; 0 &amp; 1 &amp; 0 \<br>\end{bmatrix}<br>$</p>
-<p>$<br>M<em>{persp} = M</em>{ortho} · M_{persp \rightarrow ortho} =<br>\begin{bmatrix}<br>\frac{2}{r-l} &amp; 0 &amp; 0 &amp; -\frac{r+l}{r-l} \<br>0 &amp; \frac{2}{t-b} &amp; 0 &amp; -\frac{t+b}{t-b} \<br>0 &amp; 0 &amp; \frac{2}{\boldsymbol n-\boldsymbol f} &amp; -\frac{\boldsymbol n+\boldsymbol f}{\boldsymbol n-\boldsymbol f} \<br>0 &amp; 0 &amp; 0 &amp; 1 \<br>\end{bmatrix}<br>·<br>\begin{bmatrix} n &amp; 0 &amp; 0 &amp; 0 \<br>0 &amp; n &amp; 0 &amp; 0 \<br>0 &amp; 0 &amp; n+f &amp; -nf \<br>0 &amp; 0 &amp; 1 &amp; 0 \<br>\end{bmatrix} =<br>\begin{bmatrix}<br>\frac{2n}{r-l} &amp; 0 &amp; \frac{r+l}{r-l} &amp; 0 \<br>0 &amp; \frac{2n}{t-b} &amp; \frac{t+b}{t-b} &amp; 0 \<br>0 &amp; 0 &amp; \frac{n+f}{n-f} &amp; \frac{2nf}{n-f} \<br>0 &amp; 0 &amp; 1 &amp; 0 \<br>\end{bmatrix}<br>$</p>
-<h2 id="Rasterization-Triangles-光栅化"><a href="#Rasterization-Triangles-光栅化" class="headerlink" title="Rasterization(Triangles)光栅化"></a>Rasterization(Triangles)光栅化</h2><p>定义 field of view(fovY)垂直的可视角度 和 aspect ratio(w/h)屏幕长宽比<br><img src="垂直可视角度和屏幕长宽比.png" alt="垂直可视角度和屏幕长宽比"><br>n:near, t:top, b:bottom, l:left, r:right</p>
+$ M_{persp ortho} =
+<span class="math display">\[\begin{bmatrix} n &amp; 0 &amp; 0 &amp; 0 \\
+0 &amp; n &amp; 0 &amp; 0 \\
+0 &amp; 0 &amp; n+f &amp; -nf \\
+0 &amp; 0 &amp; 1 &amp; 0 \\
+\end{bmatrix}\]</span>
+<p>$</p>
+$ M_{persp} = M_{ortho} · M_{persp ortho} =
+<span class="math display">\[\begin{bmatrix}
+\frac{2}{r-l} &amp; 0 &amp; 0 &amp; -\frac{r+l}{r-l} \\
+0 &amp; \frac{2}{t-b} &amp; 0 &amp; -\frac{t+b}{t-b} \\
+0 &amp; 0 &amp; \frac{2}{\boldsymbol n-\boldsymbol f} &amp; -\frac{\boldsymbol n+\boldsymbol f}{\boldsymbol n-\boldsymbol f} \\
+0 &amp; 0 &amp; 0 &amp; 1 \\
+\end{bmatrix}\]</span>
+·
+<span class="math display">\[\begin{bmatrix} n &amp; 0 &amp; 0 &amp; 0 \\
+0 &amp; n &amp; 0 &amp; 0 \\
+0 &amp; 0 &amp; n+f &amp; -nf \\
+0 &amp; 0 &amp; 1 &amp; 0 \\
+\end{bmatrix}\]</span>
+=
+<span class="math display">\[\begin{bmatrix}
+\frac{2n}{r-l} &amp; 0 &amp; \frac{r+l}{r-l} &amp; 0 \\
+0 &amp; \frac{2n}{t-b} &amp; \frac{t+b}{t-b} &amp; 0 \\
+0 &amp; 0 &amp; \frac{n+f}{n-f} &amp; \frac{2nf}{n-f} \\
+0 &amp; 0 &amp; 1 &amp; 0 \\
+\end{bmatrix}\]</span>
+<p>$</p>
+<h2 id="rasterizationtriangles光栅化">Rasterization(Triangles)光栅化</h2>
+<p>定义 field of view(fovY)垂直的可视角度 和 aspect ratio(w/h)屏幕长宽比 <img src="垂直可视角度和屏幕长宽比.png" alt="垂直可视角度和屏幕长宽比" /> n:near, t:top, b:bottom, l:left, r:right</p>
 <p>视口变换</p>
-<script type="math/tex; mode=display">
+<p><span class="math display">\[
 \begin{bmatrix}
 x \\
 y \\
@@ -547,10 +804,10 @@ z \\
 1 \\
 \end{bmatrix} =
 \begin{bmatrix}
-\frac{w}{2} & 0 & 0 & \frac{w}{2} \\
-0 & \frac{h}{2} & 0 & \frac{h}{2} \\
-0 & 0 & 1 & 0 \\
-0 & 0 & 0 & 1 \\
+\frac{w}{2} &amp; 0 &amp; 0 &amp; \frac{w}{2} \\
+0 &amp; \frac{h}{2} &amp; 0 &amp; \frac{h}{2} \\
+0 &amp; 0 &amp; 1 &amp; 0 \\
+0 &amp; 0 &amp; 0 &amp; 1 \\
 \end{bmatrix}
 ·
 \begin{bmatrix}
@@ -558,120 +815,173 @@ x \\
 y \\
 z \\
 1 \\
-\end{bmatrix}</script><h3 id="Sample-『采样』"><a href="#Sample-『采样』" class="headerlink" title="Sample 『采样』"></a>Sample 『采样』</h3><ul>
+\end{bmatrix}
+\]</span></p>
+<h3 id="sample-采样">Sample 『采样』</h3>
+<ul>
 <li>Sample if center of pixel is inside triangle</li>
 </ul>
 <figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="built_in">int</span> <span class="title">Inside</span>(<span class="params">tri,x,y</span>)</span> =&gt; Point(x,y) <span class="keyword">in</span> tri ? <span class="number">1</span> : <span class="number">0</span>; </span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> (<span class="built_in">int</span> y = <span class="number">0</span>; y &lt; h; y++)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="built_in">int</span> x = <span class="number">0</span>; x &lt; w; x++)</span><br><span class="line">    &#123;</span><br><span class="line">        image[x][y] = Inside(tri,x + <span class="number">0.5f</span>,y + <span class="number">0.5f</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">做叉积判断点 Q 是否在 tri 内</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">P0</span></span><br><span class="line"><span class="comment">|\</span></span><br><span class="line"><span class="comment">| \    *Q</span></span><br><span class="line"><span class="comment">|  \</span></span><br><span class="line"><span class="comment">|___\P2</span></span><br><span class="line"><span class="comment">P1</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure>
-<p>采样率低 =&gt; 走样 =&gt; 锯齿…</p>
-<h3 id="Anti-aliasing『反走样-抗锯齿』"><a href="#Anti-aliasing『反走样-抗锯齿』" class="headerlink" title="Anti-aliasing『反走样/抗锯齿』"></a>Anti-aliasing『反走样/抗锯齿』</h3><p>采样之前做一个滤波(filtering)</p>
+<p>采样率低 =&gt; 走样 =&gt; 锯齿...</p>
+<h3 id="anti-aliasing反走样抗锯齿">Anti-aliasing『反走样/抗锯齿』</h3>
+<p>采样之前做一个滤波(filtering)</p>
 <ul>
 <li>Frequency『频率』</li>
 <li>Frequency domain『频域』</li>
 </ul>
-<h4 id="数字信号处理相关的前置知识"><a href="#数字信号处理相关的前置知识" class="headerlink" title="数字信号处理相关的前置知识"></a>数字信号处理相关的前置知识</h4><p>傅里叶变换 =&gt; 把函数从时域转换到频域<br><img src="时域到频域.png" alt="时域到频域"></p>
+<h4 id="数字信号处理相关的前置知识">数字信号处理相关的前置知识</h4>
+<p>傅里叶变换 =&gt; 把函数从时域转换到频域 <img src="时域到频域.png" alt="时域到频域" /></p>
 <ul>
 <li>Low-pass filter『低通滤波器』</li>
 <li>High-pass filter『高通滤波器』</li>
 <li>Band-pass filter『带通滤波器』</li>
 <li>Band-stop filter『带阻滤波器』</li>
 <li>Gaussian filter『高斯滤波器』</li>
-<li>Box filter『盒子滤波器』<br>…</li>
+<li>Box filter『盒子滤波器』 ...</li>
 </ul>
 <p>Filtering = Convolution『卷积』= Average『平均』= Blurring『模糊』</p>
 <p>时域卷积 = 频域乘积</p>
-<p><img src="时域图到频谱图.png" alt="时域图到频谱图"></p>
+<figure>
+<img src="时域图到频谱图.png" alt="时域图到频谱图" /><figcaption aria-hidden="true">时域图到频谱图</figcaption>
+</figure>
 <p>采样是重复原始信号的频谱</p>
 <ul>
-<li>采样定理:<br>在进行模拟/数字信号的转换过程中，当采样频率fs.max大于信号中最高频率fmax的2倍时(fs.max&gt;2fmax)，采样之后的数字信号完整地保留了原始信号中的信息，一般实际应用中保证采样频率为信号最高频率的2.56～4倍；采样定理又称奈奎斯特定理。</li>
+<li>采样定理: 在进行模拟/数字信号的转换过程中，当采样频率fs.max大于信号中最高频率fmax的2倍时(fs.max&gt;2fmax)，采样之后的数字信号完整地保留了原始信号中的信息，一般实际应用中保证采样频率为信号最高频率的2.56～4倍；采样定理又称奈奎斯特定理。</li>
 </ul>
 <p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/74736706">采样定理，频谱混叠和傅里叶变换 深入理解</a></p>
-<p>这篇文章很好地解释了为什么”对于一个连续的信号采样，采样后的频谱相当于将采样前的频谱进行延拓”<br><a target="_blank" rel="noopener" href="https://www.projectrhea.org/rhea/index.php/2015_Fall_ECE_438_Boutin_A_visual_explanation_of_aliasing_and_repetition_with_the_DTFT_Erik_Swan">A visual explanation of aliasing and repetition with the DTFT</a></p>
+<p>这篇文章很好地解释了为什么"对于一个连续的信号采样，采样后的频谱相当于将采样前的频谱进行延拓" <a target="_blank" rel="noopener" href="https://www.projectrhea.org/rhea/index.php/2015_Fall_ECE_438_Boutin_A_visual_explanation_of_aliasing_and_repetition_with_the_DTFT_Erik_Swan">A visual explanation of aliasing and repetition with the DTFT</a></p>
 <blockquote>
 <p>时域采样得到的离散信号并不只代表这个时域信号，有无数多个频率不同的信号的采样结果是一样的，也就导致了频域上的周期延拓</p>
 </blockquote>
-<p>有无数个高频分量可以匹配相同的离散数据，因此离散信号的频域包含所有这些频率。<br><img src="连续信号采样频谱拓展的解释.gif" alt="连续信号采样频谱拓展的解释"></p>
+<p>有无数个高频分量可以匹配相同的离散数据，因此离散信号的频域包含所有这些频率。 <img src="连续信号采样频谱拓展的解释.gif" alt="连续信号采样频谱拓展的解释" /></p>
 <p>当延拓的图形重合的时候，我们就认定这时候发生了走样。</p>
-<p>要反走样，最直接的办法就是增加采样率，在现实中的意义就是“换一个更好的分辨率更好的显示器”（让图形之间离得更远）<br>从算法/软件角度来说，我们也可以采用之前的在采样前添加滤波的方法。我们可以给图像添加一个低通滤波，把高频的信息去掉。（让图形更瘦）</p>
-<h4 id="Antialiasing-By-Supersampling『超采样』-MSAA"><a href="#Antialiasing-By-Supersampling『超采样』-MSAA" class="headerlink" title="Antialiasing By Supersampling『超采样』(MSAA)"></a>Antialiasing By Supersampling『超采样』(MSAA)</h4><p>将一个像素近似认为更多的像素 =&gt; 给一个像素内部增加更多的采样点<br>=&gt; 工业界的做法</p>
-<h4 id="Fast-Approximate-Antialiasing『快速近似反走样-抗锯齿』-FXAA"><a href="#Fast-Approximate-Antialiasing『快速近似反走样-抗锯齿』-FXAA" class="headerlink" title="Fast Approximate Antialiasing『快速近似反走样/抗锯齿』(FXAA)"></a>Fast Approximate Antialiasing『快速近似反走样/抗锯齿』(FXAA)</h4><p>图像的后期处理 =&gt; 通过图像匹配的办法把存在锯齿的边界找到，并且更换成没有锯齿的边界 =&gt; 效率高</p>
-<h4 id="Temporal-Antialiasing『时域反走样-抗锯齿』-TAA"><a href="#Temporal-Antialiasing『时域反走样-抗锯齿』-TAA" class="headerlink" title="Temporal Antialiasing『时域反走样/抗锯齿』(TAA)"></a>Temporal Antialiasing『时域反走样/抗锯齿』(TAA)</h4><p>静态场景中 =&gt; 复用上一帧感知的结果 =&gt; 相当于把 MSAA 对应的样本分布在了时间上，并且在当前帧没有引入任何额外操作</p>
-<h3 id="Z-buffering『深度缓冲』"><a href="#Z-buffering『深度缓冲』" class="headerlink" title="Z-buffering『深度缓冲』"></a>Z-buffering『深度缓冲』</h3><h4 id="Painter’s-Algorithm『画家算法』"><a href="#Painter’s-Algorithm『画家算法』" class="headerlink" title="Painter’s Algorithm『画家算法』"></a>Painter’s Algorithm『画家算法』</h4><h5 id="基本思想"><a href="#基本思想" class="headerlink" title="基本思想"></a>基本思想</h5><p>先将画面中的物体按其距离观察点的远近进行排序，结果存放在一张线形表中。距观察点远者称其优先级高，放在表头,距观察点近者称其优先级低，放在表尾，这张表称为深度优先级表。</p>
+<p>要反走样，最直接的办法就是增加采样率，在现实中的意义就是“换一个更好的分辨率更好的显示器”（让图形之间离得更远） 从算法/软件角度来说，我们也可以采用之前的在采样前添加滤波的方法。我们可以给图像添加一个低通滤波，把高频的信息去掉。（让图形更瘦）</p>
+<h4 id="antialiasing-by-supersampling超采样msaa">Antialiasing By Supersampling『超采样』(MSAA)</h4>
+<p>将一个像素近似认为更多的像素 =&gt; 给一个像素内部增加更多的采样点 =&gt; 工业界的做法</p>
+<h4 id="fast-approximate-antialiasing快速近似反走样抗锯齿fxaa">Fast Approximate Antialiasing『快速近似反走样/抗锯齿』(FXAA)</h4>
+<p>图像的后期处理 =&gt; 通过图像匹配的办法把存在锯齿的边界找到，并且更换成没有锯齿的边界 =&gt; 效率高</p>
+<h4 id="temporal-antialiasing时域反走样抗锯齿taa">Temporal Antialiasing『时域反走样/抗锯齿』(TAA)</h4>
+<p>静态场景中 =&gt; 复用上一帧感知的结果 =&gt; 相当于把 MSAA 对应的样本分布在了时间上，并且在当前帧没有引入任何额外操作</p>
+<h3 id="z-buffering深度缓冲">Z-buffering『深度缓冲』</h3>
+<h4 id="painters-algorithm画家算法">Painter's Algorithm『画家算法』</h4>
+<h5 id="基本思想">基本思想</h5>
+<p>先将画面中的物体按其距离观察点的远近进行排序，结果存放在一张线形表中。距观察点远者称其优先级高，放在表头,距观察点近者称其优先级低，放在表尾，这张表称为深度优先级表。</p>
 <p>然后按照从表头到表尾的顺序逐个绘制物体。由于距观察者近的物体在表尾最后画出，它覆盖了远处的物体，最终在屏幕上产生了正确的遮挡关系。</p>
-<h5 id="缺陷"><a href="#缺陷" class="headerlink" title="缺陷"></a>缺陷</h5><p><img src="画家算法的缺陷.png" alt="画家算法的缺陷"></p>
-<h4 id="Z-Buffer"><a href="#Z-Buffer" class="headerlink" title="Z-Buffer"></a>Z-Buffer</h4><ul>
+<h5 id="缺陷">缺陷</h5>
+<figure>
+<img src="画家算法的缺陷.png" alt="画家算法的缺陷" /><figcaption aria-hidden="true">画家算法的缺陷</figcaption>
+</figure>
+<h4 id="z-buffer">Z-Buffer</h4>
+<ul>
 <li>frame buffer 存贮当前看到的场景</li>
 <li>depth buffer 存储每个像素所看到的几何物体最浅的深度的信息</li>
 </ul>
-<p><img src="深度缓存.png" alt="深度缓存"></p>
+<figure>
+<img src="深度缓存.png" alt="深度缓存" /><figcaption aria-hidden="true">深度缓存</figcaption>
+</figure>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Initialize depth buffer to +∞</span><br><span class="line"></span><br><span class="line">During rasterization:</span><br><span class="line">  <span class="keyword">for</span>(each triangle T)</span><br><span class="line">    <span class="keyword">for</span>(each sample (x,y,z) in T)</span><br><span class="line">      <span class="keyword">if</span>(z &lt; zbuffer[x,y])<span class="comment">// 如果该像素的深度小于此坐标深度缓存记录的深度</span></span><br><span class="line">        zbuffer[x,y] = z;<span class="comment">//更新深度</span></span><br><span class="line">        framebuffer[x,y] = color;<span class="comment">//更新 rgb</span></span><br></pre></td></tr></table></figure>
 <p>处理不了透明物体</p>
-<h3 id="Shading『着色』"><a href="#Shading『着色』" class="headerlink" title="Shading『着色』"></a>Shading『着色』</h3><p>The process of applying a material to an object.</p>
-<h4 id="Blinn–Phong-reflection-model『布林-冯反射模型』"><a href="#Blinn–Phong-reflection-model『布林-冯反射模型』" class="headerlink" title="Blinn–Phong reflection model『布林-冯反射模型』"></a>Blinn–Phong reflection model『布林-冯反射模型』</h4><p>经验模型</p>
+<h3 id="shading着色">Shading『着色』</h3>
+<p>The process of applying a material to an object.</p>
+<h4 id="blinnphong-reflection-model布林-冯反射模型">Blinn–Phong reflection model『布林-冯反射模型』</h4>
+<p>经验模型</p>
 <ul>
 <li>Ambient『环境光』</li>
 <li>Diffuse『漫反射』</li>
 <li>Specular『镜面反射/高光』</li>
 </ul>
-<p>Compute light reflected toward camera at a specific <strong>shading point</strong><br>Inputs:</p>
+<p>Compute light reflected toward camera at a specific <strong>shading point</strong> Inputs:</p>
 <ul>
 <li>Viewer direction，观察方向，使用v表示</li>
 <li>Surface normal，法线方向，使用n表示</li>
 <li>Light direction，光线方向，使用l(小写的L)表示</li>
 </ul>
-<p><img src="shading_point.png" alt="shading_point"></p>
+<figure>
+<img src="shading_point.png" alt="shading_point" /><figcaption aria-hidden="true">shading_point</figcaption>
+</figure>
 <p>Shading is Local =&gt; 着色不考虑其他物体的影响，只考虑着色点自身，故而只有明暗，没有阴影</p>
-<h5 id="Diffuse-Reflection"><a href="#Diffuse-Reflection" class="headerlink" title="Diffuse Reflection"></a>Diffuse Reflection</h5><p>从接收角度看：<br>In general, light per unit area is proportional to the cosine of the angle between the light direction and the surface normal =&gt; $\cos\theta=l\cdot n$</p>
-<p>从输出角度看<br><img src="LightFalloff.png" alt="LightFalloff"><br>光的能量会在传播中被“稀释”，一个单位面积上接收到的光的能量和光线传播的距离的平方成反比 =&gt; $I/r^2$ =&gt; 球！</p>
+<h5 id="diffuse-reflection">Diffuse Reflection</h5>
+<p>从接收角度看： In general, light per unit area is proportional to the cosine of the angle between the light direction and the surface normal =&gt; <span class="math inline">\(\cos\theta=l\cdot n\)</span></p>
+<p>从输出角度看 <img src="LightFalloff.png" alt="LightFalloff" /> 光的能量会在传播中被“稀释”，一个单位面积上接收到的光的能量和光线传播的距离的平方成反比 =&gt; <span class="math inline">\(I/r^2\)</span> =&gt; 球！</p>
 <p>综合来看</p>
-<script type="math/tex; mode=display">
-L_d = k_d(I/r^2)max(0,\vec{n}\cdot\vec{l})</script><p>$L_d$ is diffusely<br>$k_d$ is diffuse coefficient(color)<br>$I/r^2$ is energy arrived at the shading point<br>$max(0,\vec{n}\cdot\vec{l})$ is energy recevied by the shading point</p>
+<p><span class="math display">\[
+L_d = k_d(I/r^2)max(0,\vec{n}\cdot\vec{l})
+\]</span></p>
+<p><span class="math inline">\(L_d\)</span> is diffusely <span class="math inline">\(k_d\)</span> is diffuse coefficient(color) <span class="math inline">\(I/r^2\)</span> is energy arrived at the shading point <span class="math inline">\(max(0,\vec{n}\cdot\vec{l})\)</span> is energy recevied by the shading point</p>
 <p>观察方向对漫反射像完全没有影响 =&gt; 因为反射是完全随机的，因此可以认为漫反射光在任何反射方向上的分布都是一样的</p>
-<h5 id="Specular-highlights"><a href="#Specular-highlights" class="headerlink" title="Specular highlights"></a>Specular highlights</h5><p><img src="Specular_Term0.png" alt="Specular_Term0"><br>观察方向接近反射方向的时候才能观察到高光像<br><img src="Specular_Term.png" alt="Specular_Term"></p>
+<h5 id="specular-highlights">Specular highlights</h5>
+<p><img src="Specular_Term0.png" alt="Specular_Term0" /> 观察方向接近反射方向的时候才能观察到高光像 <img src="Specular_Term.png" alt="Specular_Term" /></p>
 <p>v close to mirror direction(观察方向接近反射方向) &lt;=&gt; half vector near normal(半程向量接近法线向量)</p>
-<script type="math/tex; mode=display">
-\vec{h} = bisector(\vec{v},\vec{l}) = \frac{\vec{l}+\vec{v}}{||\vec{l}+\vec{v}||}</script><script type="math/tex; mode=display">
+<p><span class="math display">\[
+\vec{h} = bisector(\vec{v},\vec{l}) = \frac{\vec{l}+\vec{v}}{||\vec{l}+\vec{v}||}
+\]</span></p>
+<p><span class="math display">\[
 \begin{alignat}{2}
 L_s = k_s(I/r^2)max(0, \cos\alpha)^p
 \\ = k_s(I/r^2)max(0,\vec{n}\cdot\vec{h})^p
-\end{alignat}</script><p>$\alpha$ is the angle between $\vec{h}$ and $\vec{n}$<br>$p$ is the shininess coefficient =&gt; Increasing p narrows the reflection lobe 『增大 p 可以缩小反射波瓣』 =&gt; 取值范围(100,200)</p>
-<h5 id="Ambient-lighting"><a href="#Ambient-lighting" class="headerlink" title="Ambient lighting"></a>Ambient lighting</h5><script type="math/tex; mode=display">
-L_a = k_a I_a</script><p>环境光可以被简单的视为一个常数，尤其是在 Blinn–Phong model 中，但实际上他比这复杂得多<br>$L_a$ is reflected ambient light<br>$k_a$ is ambient coefficient</p>
-<p><img src="Ambient.png" alt="Ambient"></p>
-<h5 id="将所有的项都加起来"><a href="#将所有的项都加起来" class="headerlink" title="将所有的项都加起来"></a>将所有的项都加起来</h5><script type="math/tex; mode=display">
+\end{alignat}
+\]</span></p>
+<p><span class="math inline">\(\alpha\)</span> is the angle between <span class="math inline">\(\vec{h}\)</span> and <span class="math inline">\(\vec{n}\)</span> <span class="math inline">\(p\)</span> is the shininess coefficient =&gt; Increasing p narrows the reflection lobe 『增大 p 可以缩小反射波瓣』 =&gt; 取值范围(100,200)</p>
+<h5 id="ambient-lighting">Ambient lighting</h5>
+<p><span class="math display">\[
+L_a = k_a I_a
+\]</span></p>
+<p>环境光可以被简单的视为一个常数，尤其是在 Blinn–Phong model 中，但实际上他比这复杂得多 <span class="math inline">\(L_a\)</span> is reflected ambient light <span class="math inline">\(k_a\)</span> is ambient coefficient</p>
+<figure>
+<img src="Ambient.png" alt="Ambient" /><figcaption aria-hidden="true">Ambient</figcaption>
+</figure>
+<h5 id="将所有的项都加起来">将所有的项都加起来</h5>
+<p><span class="math display">\[
 \begin{alignat}{2}
-L & = L_a + L_d + L_s \\
-& = k_a I_a + k_d(I/r^2)max(0,\vec{n}\cdot\vec{l}) + k_s(I/r^2)max(0,\vec{n}\cdot\vec{h})^p
-\end{alignat}</script><p>参考：<br><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/442023993">Blinn-Phong光照模型从定义到实现</a></p>
-<h4 id="Shading-Frequency『着色频率』"><a href="#Shading-Frequency『着色频率』" class="headerlink" title="Shading Frequency『着色频率』"></a>Shading Frequency『着色频率』</h4><ul>
+L &amp; = L_a + L_d + L_s \\
+&amp; = k_a I_a + k_d(I/r^2)max(0,\vec{n}\cdot\vec{l}) + k_s(I/r^2)max(0,\vec{n}\cdot\vec{h})^p
+\end{alignat}
+\]</span></p>
+<p>参考： <a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/442023993">Blinn-Phong光照模型从定义到实现</a></p>
+<h4 id="shading-frequency着色频率">Shading Frequency『着色频率』</h4>
+<ul>
 <li>每个平面做一次shading =&gt; Flat shading</li>
 <li>每个顶点做一次shading =&gt; Gouraud shading</li>
 <li>每个像素做一次shading =&gt; Phong shading</li>
 </ul>
-<h5 id="顶点法线"><a href="#顶点法线" class="headerlink" title="顶点法线"></a>顶点法线</h5><p>下图展示了一个简单的求法<br><img src="顶点法线.png" alt="顶点法线"><br>把目标顶点所关联的面的法线向量求和取平均，即可得到目标顶点的法线向量</p>
-<script type="math/tex; mode=display">
-N_v = \frac{\sum_{i=1}^n N_i}{||\sum_{i=1}^n N_i||}</script><p>如果对三角形面进行加权，可以得到更精确的计算结果</p>
-<h5 id="像素法线"><a href="#像素法线" class="headerlink" title="像素法线"></a>像素法线</h5><p>已经得知了顶点法线后，问题可以转化为如何得到三角形面内部的一个平滑过渡的法线(假设三角形面大于至少一个像素) =&gt; 重心坐标 + 归一化</p>
-<h4 id="Graphics-Real-time-Rendering-Pipeline『图形管线』"><a href="#Graphics-Real-time-Rendering-Pipeline『图形管线』" class="headerlink" title="Graphics (Real-time Rendering) Pipeline『图形管线』"></a>Graphics (Real-time Rendering) Pipeline『图形管线』</h4><p><img src="GraphicsPipeline.png" alt="GraphicsPipeline"></p>
-<p><a href="/http://shadertoy.com/view/ld3Gz2">shader toy</a><br>GPU 高度并行化处理</p>
-<h4 id="Texture-Mapping『纹理映射』"><a href="#Texture-Mapping『纹理映射』" class="headerlink" title="Texture Mapping『纹理映射』"></a>Texture Mapping『纹理映射』</h4><p>在纹理上定义一个坐标系(u,v)(就是我们常说的 UV)，然后把纹理坐标映射到纹理上 =&gt; u 和 v 的取值范围是[0,1]</p>
-<p>纹理要设计好在上下左右重复的时候无缝衔接 =&gt; tiled =&gt; method eg.  Wang tiling</p>
-<h4 id="Interpolation『插值』"><a href="#Interpolation『插值』" class="headerlink" title="Interpolation『插值』"></a>Interpolation『插值』</h4><h5 id="Barycentric-Coordinates『重心坐标』"><a href="#Barycentric-Coordinates『重心坐标』" class="headerlink" title="Barycentric Coordinates『重心坐标』"></a>Barycentric Coordinates『重心坐标』</h5><p><img src="image/GAMES101Notes/三角形里的重心坐标.png" alt="三角形里的重心坐标" title="三角形里的重心坐标"></p>
-<p>如果 $\alpha,\beta,\gamma$ 的和为1，那么点一定和三角形在同一平面，如果三者的值都大于0，那么点一定在三角形内。</p>
+<h5 id="顶点法线">顶点法线</h5>
+<p>下图展示了一个简单的求法 <img src="顶点法线.png" alt="顶点法线" /> 把目标顶点所关联的面的法线向量求和取平均，即可得到目标顶点的法线向量</p>
+<p><span class="math display">\[
+N_v = \frac{\sum_{i=1}^n N_i}{||\sum_{i=1}^n N_i||}
+\]</span></p>
+<p>如果对三角形面进行加权，可以得到更精确的计算结果</p>
+<h5 id="像素法线">像素法线</h5>
+<p>已经得知了顶点法线后，问题可以转化为如何得到三角形面内部的一个平滑过渡的法线(假设三角形面大于至少一个像素) =&gt; 重心坐标 + 归一化</p>
+<h4 id="graphics-real-time-rendering-pipeline图形管线">Graphics (Real-time Rendering) Pipeline『图形管线』</h4>
+<figure>
+<img src="GraphicsPipeline.png" alt="GraphicsPipeline" /><figcaption aria-hidden="true">GraphicsPipeline</figcaption>
+</figure>
+<p><a href="/http://shadertoy.com/view/ld3Gz2">shader toy</a> GPU 高度并行化处理</p>
+<h4 id="texture-mapping纹理映射">Texture Mapping『纹理映射』</h4>
+<p>在纹理上定义一个坐标系(u,v)(就是我们常说的 UV)，然后把纹理坐标映射到纹理上 =&gt; u 和 v 的取值范围是[0,1]</p>
+<p>纹理要设计好在上下左右重复的时候无缝衔接 =&gt; tiled =&gt; method eg. Wang tiling</p>
+<h4 id="interpolation插值">Interpolation『插值』</h4>
+<h5 id="barycentric-coordinates重心坐标">Barycentric Coordinates『重心坐标』</h5>
+<figure>
+<img src="image/GAMES101Notes/三角形里的重心坐标.png" title="三角形里的重心坐标" alt="三角形里的重心坐标" /><figcaption aria-hidden="true">三角形里的重心坐标</figcaption>
+</figure>
+<p>如果 <span class="math inline">\(\alpha,\beta,\gamma\)</span> 的和为1，那么点一定和三角形在同一平面，如果三者的值都大于0，那么点一定在三角形内。</p>
 <p>原理的数学证明：</p>
-<p>设笛卡尔坐标系下某一平面内三点$A,B,C,P$.</p>
-<p>向量$\vec{OP}$ 可以表示为 $\vec{OC}+m\vec{CB}+n\vec{BA}=(1-m)\vec{OC}+(m-n)\vec{OB}+n\vec{OA}$</p>
+<p>设笛卡尔坐标系下某一平面内三点<span class="math inline">\(A,B,C,P\)</span>.</p>
+<p>向量<span class="math inline">\(\vec{OP}\)</span> 可以表示为 <span class="math inline">\(\vec{OC}+m\vec{CB}+n\vec{BA}=(1-m)\vec{OC}+(m-n)\vec{OB}+n\vec{OA}\)</span></p>
 <p>故</p>
-<p>$\alpha=n\\beta=m-n\\gamma=1-m$</p>
-<p>显然，$\alpha+\beta+\gamma=1$</p>
-<p>在平面$ABCP$内，向量$\vec{OP}$ 仍然可以表示为 $\vec{OC}+m\vec{CB}+n\vec{BA}=(1-m)\vec{OC}+(m-n)\vec{OB}+n\vec{OA}$</p>
+<p><span class="math inline">\(\alpha=n\\\beta=m-n\\\gamma=1-m\)</span></p>
+<p>显然，<span class="math inline">\(\alpha+\beta+\gamma=1\)</span></p>
+<p>在平面<span class="math inline">\(ABCP\)</span>内，向量<span class="math inline">\(\vec{OP}\)</span> 仍然可以表示为 <span class="math inline">\(\vec{OC}+m\vec{CB}+n\vec{BA}=(1-m)\vec{OC}+(m-n)\vec{OB}+n\vec{OA}\)</span></p>
 <p>要让 P 在 ABC 内，显然要使 m 的取值范围取 (0,1)，n 的取值范围取 (0,m)</p>
-<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ol>
+<h2 id="参考资料">参考资料</h2>
+<ol type="1">
 <li><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1X7411F744">闫令祺-GAMES101</a></li>
 <li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/74736706">采样定理，频谱混叠和傅里叶变换 深入理解</a></li>
 <li><a target="_blank" rel="noopener" href="https://www.projectrhea.org/rhea/index.php/2015_Fall_ECE_438_Boutin_A_visual_explanation_of_aliasing_and_repetition_with_the_DTFT_Erik_Swan">A visual explanation of aliasing and repetition with the DTFT</a></li>
 <li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/442023993">Blinn-Phong光照模型从定义到实现</a></li>
 <li><a href="/http://shadertoy.com/view/ld3Gz2">shader toy</a></li>
-<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_38065509/category_9873936.html">剑 来!&#39;s 计算机图形学笔记</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_38065509/category_9873936.html">剑 来!'s 计算机图形学笔记</a></li>
 <li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/144360079">计算机图形学补充1：重心坐标(barycentric coordinates)详解及其作用 - 知乎 (zhihu.com)</a></li>
 </ol>
 
@@ -794,7 +1104,7 @@ N_v = \frac{\sum_{i=1}^n N_i}{||\sum_{i=1}^n N_i||}</script><p>如果对三角�
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Leture-3-Transform"><span class="nav-number">1.</span> <span class="nav-text">Leture 3 Transform</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Scale"><span class="nav-number">1.1.</span> <span class="nav-text">Scale</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Reflection-Matrix"><span class="nav-number">1.2.</span> <span class="nav-text">Reflection Matrix</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Shear-Matrix"><span class="nav-number">1.3.</span> <span class="nav-text">Shear Matrix</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Rotate-abount-origin-0-0-CCW-by-default-%E3%80%8E%E7%BB%95%E5%8E%9F%E7%82%B9%EF%BC%8C%E9%80%86%E6%97%B6%E9%92%88%E3%80%8F"><span class="nav-number">1.4.</span> <span class="nav-text">Rotate(abount origin$(0,0)$,CCW by default)『绕原点，逆时针』</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Linear-Transform-Matrices-of-the-same-dimension-%E3%80%8E%E7%9B%B8%E5%90%8C%E3%80%8F"><span class="nav-number">1.5.</span> <span class="nav-text">Linear Transform &#x3D; Matrices(of the same dimension)『相同』</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Translation"><span class="nav-number">1.6.</span> <span class="nav-text">Translation</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Homogeneous-Coordinates%E3%80%8E%E9%BD%90%E6%AC%A1%E5%9D%90%E6%A0%87%E3%80%8F"><span class="nav-number">1.7.</span> <span class="nav-text">Homogeneous Coordinates『齐次坐标』</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2D-transformations"><span class="nav-number">1.8.</span> <span class="nav-text">2D transformations</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#scale"><span class="nav-number">1.8.1.</span> <span class="nav-text">scale</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#rotate"><span class="nav-number">1.8.2.</span> <span class="nav-text">rotate</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#shear"><span class="nav-number">1.8.3.</span> <span class="nav-text">shear</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#translate"><span class="nav-number">1.8.4.</span> <span class="nav-text">translate</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Inverse-transform"><span class="nav-number">1.9.</span> <span class="nav-text">Inverse transform</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Lecture-4-Transformation-Cont"><span class="nav-number">2.</span> <span class="nav-text">Lecture 4 Transformation Cont</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3D-transformations"><span class="nav-number">2.1.</span> <span class="nav-text">3D transformations</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Rodrigues%E2%80%99-Rotation-Formula%E3%80%8E%E7%BD%97%E5%BE%B7%E9%87%8C%E6%A0%BC%E6%96%AF%E6%97%8B%E8%BD%AC%E5%85%AC%E5%BC%8F%E3%80%8F"><span class="nav-number">2.1.1.</span> <span class="nav-text">Rodrigues’ Rotation Formula『罗德里格斯旋转公式』</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Viewing-transformation%E3%80%8E%E8%A7%82%E6%B5%8B%E5%8F%98%E6%8D%A2%E3%80%8F"><span class="nav-number">2.2.</span> <span class="nav-text">Viewing transformation『观测变换』</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#View-Camera-transformation%E3%80%8E%E8%A7%86%E5%9B%BE%E5%8F%98%E6%8D%A2%E3%80%8F"><span class="nav-number">2.3.</span> <span class="nav-text">View &#x2F; Camera transformation『视图变换』</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Projection-transformation%E3%80%8E%E6%8A%95%E5%BD%B1%E5%8F%98%E6%8D%A2%E3%80%8F"><span class="nav-number">2.4.</span> <span class="nav-text">Projection transformation『投影变换』</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Orthographic-projection%E3%80%8E%E6%AD%A3%E4%BA%A4%E6%8A%95%E5%BD%B1%E3%80%8F"><span class="nav-number">2.4.1.</span> <span class="nav-text">Orthographic projection『正交投影』</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#In-general"><span class="nav-number">2.4.1.1.</span> <span class="nav-text">In general</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#Transformation-matrix"><span class="nav-number">2.4.1.1.1.</span> <span class="nav-text">Transformation matrix</span></a></li></ol></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Perspective-projection%E3%80%8E%E9%80%8F%E8%A7%86%E6%8A%95%E5%BD%B1%E3%80%8F"><span class="nav-number">2.4.2.</span> <span class="nav-text">Perspective projection『透视投影』</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Rasterization-Triangles-%E5%85%89%E6%A0%85%E5%8C%96"><span class="nav-number">3.</span> <span class="nav-text">Rasterization(Triangles)光栅化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Sample-%E3%80%8E%E9%87%87%E6%A0%B7%E3%80%8F"><span class="nav-number">3.1.</span> <span class="nav-text">Sample 『采样』</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Anti-aliasing%E3%80%8E%E5%8F%8D%E8%B5%B0%E6%A0%B7-%E6%8A%97%E9%94%AF%E9%BD%BF%E3%80%8F"><span class="nav-number">3.2.</span> <span class="nav-text">Anti-aliasing『反走样&#x2F;抗锯齿』</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%B0%E5%AD%97%E4%BF%A1%E5%8F%B7%E5%A4%84%E7%90%86%E7%9B%B8%E5%85%B3%E7%9A%84%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86"><span class="nav-number">3.2.1.</span> <span class="nav-text">数字信号处理相关的前置知识</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Antialiasing-By-Supersampling%E3%80%8E%E8%B6%85%E9%87%87%E6%A0%B7%E3%80%8F-MSAA"><span class="nav-number">3.2.2.</span> <span class="nav-text">Antialiasing By Supersampling『超采样』(MSAA)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Fast-Approximate-Antialiasing%E3%80%8E%E5%BF%AB%E9%80%9F%E8%BF%91%E4%BC%BC%E5%8F%8D%E8%B5%B0%E6%A0%B7-%E6%8A%97%E9%94%AF%E9%BD%BF%E3%80%8F-FXAA"><span class="nav-number">3.2.3.</span> <span class="nav-text">Fast Approximate Antialiasing『快速近似反走样&#x2F;抗锯齿』(FXAA)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Temporal-Antialiasing%E3%80%8E%E6%97%B6%E5%9F%9F%E5%8F%8D%E8%B5%B0%E6%A0%B7-%E6%8A%97%E9%94%AF%E9%BD%BF%E3%80%8F-TAA"><span class="nav-number">3.2.4.</span> <span class="nav-text">Temporal Antialiasing『时域反走样&#x2F;抗锯齿』(TAA)</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Z-buffering%E3%80%8E%E6%B7%B1%E5%BA%A6%E7%BC%93%E5%86%B2%E3%80%8F"><span class="nav-number">3.3.</span> <span class="nav-text">Z-buffering『深度缓冲』</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Painter%E2%80%99s-Algorithm%E3%80%8E%E7%94%BB%E5%AE%B6%E7%AE%97%E6%B3%95%E3%80%8F"><span class="nav-number">3.3.1.</span> <span class="nav-text">Painter’s Algorithm『画家算法』</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E6%80%9D%E6%83%B3"><span class="nav-number">3.3.1.1.</span> <span class="nav-text">基本思想</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%BC%BA%E9%99%B7"><span class="nav-number">3.3.1.2.</span> <span class="nav-text">缺陷</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Z-Buffer"><span class="nav-number">3.3.2.</span> <span class="nav-text">Z-Buffer</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Shading%E3%80%8E%E7%9D%80%E8%89%B2%E3%80%8F"><span class="nav-number">3.4.</span> <span class="nav-text">Shading『着色』</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Blinn%E2%80%93Phong-reflection-model%E3%80%8E%E5%B8%83%E6%9E%97-%E5%86%AF%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B%E3%80%8F"><span class="nav-number">3.4.1.</span> <span class="nav-text">Blinn–Phong reflection model『布林-冯反射模型』</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Diffuse-Reflection"><span class="nav-number">3.4.1.1.</span> <span class="nav-text">Diffuse Reflection</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Specular-highlights"><span class="nav-number">3.4.1.2.</span> <span class="nav-text">Specular highlights</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Ambient-lighting"><span class="nav-number">3.4.1.3.</span> <span class="nav-text">Ambient lighting</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%B0%86%E6%89%80%E6%9C%89%E7%9A%84%E9%A1%B9%E9%83%BD%E5%8A%A0%E8%B5%B7%E6%9D%A5"><span class="nav-number">3.4.1.4.</span> <span class="nav-text">将所有的项都加起来</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Shading-Frequency%E3%80%8E%E7%9D%80%E8%89%B2%E9%A2%91%E7%8E%87%E3%80%8F"><span class="nav-number">3.4.2.</span> <span class="nav-text">Shading Frequency『着色频率』</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%A1%B6%E7%82%B9%E6%B3%95%E7%BA%BF"><span class="nav-number">3.4.2.1.</span> <span class="nav-text">顶点法线</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%83%8F%E7%B4%A0%E6%B3%95%E7%BA%BF"><span class="nav-number">3.4.2.2.</span> <span class="nav-text">像素法线</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Graphics-Real-time-Rendering-Pipeline%E3%80%8E%E5%9B%BE%E5%BD%A2%E7%AE%A1%E7%BA%BF%E3%80%8F"><span class="nav-number">3.4.3.</span> <span class="nav-text">Graphics (Real-time Rendering) Pipeline『图形管线』</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Texture-Mapping%E3%80%8E%E7%BA%B9%E7%90%86%E6%98%A0%E5%B0%84%E3%80%8F"><span class="nav-number">3.4.4.</span> <span class="nav-text">Texture Mapping『纹理映射』</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Interpolation%E3%80%8E%E6%8F%92%E5%80%BC%E3%80%8F"><span class="nav-number">3.4.5.</span> <span class="nav-text">Interpolation『插值』</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Barycentric-Coordinates%E3%80%8E%E9%87%8D%E5%BF%83%E5%9D%90%E6%A0%87%E3%80%8F"><span class="nav-number">3.4.5.1.</span> <span class="nav-text">Barycentric Coordinates『重心坐标』</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">4.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#leture-3-transform"><span class="nav-number">1.</span> <span class="nav-text">Leture 3 Transform</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#scale"><span class="nav-number">1.1.</span> <span class="nav-text">Scale</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#reflection-matrix"><span class="nav-number">1.2.</span> <span class="nav-text">Reflection Matrix</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#shear-matrix"><span class="nav-number">1.3.</span> <span class="nav-text">Shear Matrix</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#rotateabount-origin00ccw-by-default%E7%BB%95%E5%8E%9F%E7%82%B9%E9%80%86%E6%97%B6%E9%92%88"><span class="nav-number">1.4.</span> <span class="nav-text">Rotate(abount origin\((0,0)\),CCW by default)『绕原点，逆时针』</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#linear-transform-matricesof-the-same-dimension%E7%9B%B8%E5%90%8C"><span class="nav-number">1.5.</span> <span class="nav-text">Linear Transform &#x3D; Matrices(of the same dimension)『相同』</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#translation"><span class="nav-number">1.6.</span> <span class="nav-text">Translation</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#homogeneous-coordinates%E9%BD%90%E6%AC%A1%E5%9D%90%E6%A0%87"><span class="nav-number">1.7.</span> <span class="nav-text">Homogeneous Coordinates『齐次坐标』</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#d-transformations"><span class="nav-number">1.8.</span> <span class="nav-text">2D transformations</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#scale-1"><span class="nav-number">1.8.1.</span> <span class="nav-text">scale</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#rotate"><span class="nav-number">1.8.2.</span> <span class="nav-text">rotate</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#shear"><span class="nav-number">1.8.3.</span> <span class="nav-text">shear</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#translate"><span class="nav-number">1.8.4.</span> <span class="nav-text">translate</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#inverse-transform"><span class="nav-number">1.9.</span> <span class="nav-text">Inverse transform</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lecture-4-transformation-cont"><span class="nav-number">2.</span> <span class="nav-text">Lecture 4 Transformation Cont</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#d-transformations-1"><span class="nav-number">2.1.</span> <span class="nav-text">3D transformations</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#rodrigues-rotation-formula%E7%BD%97%E5%BE%B7%E9%87%8C%E6%A0%BC%E6%96%AF%E6%97%8B%E8%BD%AC%E5%85%AC%E5%BC%8F"><span class="nav-number">2.1.1.</span> <span class="nav-text">Rodrigues&#39; Rotation Formula『罗德里格斯旋转公式』</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#viewing-transformation%E8%A7%82%E6%B5%8B%E5%8F%98%E6%8D%A2"><span class="nav-number">2.2.</span> <span class="nav-text">Viewing transformation『观测变换』</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#view-camera-transformation%E8%A7%86%E5%9B%BE%E5%8F%98%E6%8D%A2"><span class="nav-number">2.3.</span> <span class="nav-text">View &#x2F; Camera transformation『视图变换』</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#projection-transformation%E6%8A%95%E5%BD%B1%E5%8F%98%E6%8D%A2"><span class="nav-number">2.4.</span> <span class="nav-text">Projection transformation『投影变换』</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#orthographic-projection%E6%AD%A3%E4%BA%A4%E6%8A%95%E5%BD%B1"><span class="nav-number">2.4.1.</span> <span class="nav-text">Orthographic projection『正交投影』</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#in-general"><span class="nav-number">2.4.1.1.</span> <span class="nav-text">In general</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#transformation-matrix"><span class="nav-number">2.4.1.1.1.</span> <span class="nav-text">Transformation matrix</span></a></li></ol></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#perspective-projection%E9%80%8F%E8%A7%86%E6%8A%95%E5%BD%B1"><span class="nav-number">2.4.2.</span> <span class="nav-text">Perspective projection『透视投影』</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#rasterizationtriangles%E5%85%89%E6%A0%85%E5%8C%96"><span class="nav-number">3.</span> <span class="nav-text">Rasterization(Triangles)光栅化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#sample-%E9%87%87%E6%A0%B7"><span class="nav-number">3.1.</span> <span class="nav-text">Sample 『采样』</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#anti-aliasing%E5%8F%8D%E8%B5%B0%E6%A0%B7%E6%8A%97%E9%94%AF%E9%BD%BF"><span class="nav-number">3.2.</span> <span class="nav-text">Anti-aliasing『反走样&#x2F;抗锯齿』</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%B0%E5%AD%97%E4%BF%A1%E5%8F%B7%E5%A4%84%E7%90%86%E7%9B%B8%E5%85%B3%E7%9A%84%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86"><span class="nav-number">3.2.1.</span> <span class="nav-text">数字信号处理相关的前置知识</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#antialiasing-by-supersampling%E8%B6%85%E9%87%87%E6%A0%B7msaa"><span class="nav-number">3.2.2.</span> <span class="nav-text">Antialiasing By Supersampling『超采样』(MSAA)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#fast-approximate-antialiasing%E5%BF%AB%E9%80%9F%E8%BF%91%E4%BC%BC%E5%8F%8D%E8%B5%B0%E6%A0%B7%E6%8A%97%E9%94%AF%E9%BD%BFfxaa"><span class="nav-number">3.2.3.</span> <span class="nav-text">Fast Approximate Antialiasing『快速近似反走样&#x2F;抗锯齿』(FXAA)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#temporal-antialiasing%E6%97%B6%E5%9F%9F%E5%8F%8D%E8%B5%B0%E6%A0%B7%E6%8A%97%E9%94%AF%E9%BD%BFtaa"><span class="nav-number">3.2.4.</span> <span class="nav-text">Temporal Antialiasing『时域反走样&#x2F;抗锯齿』(TAA)</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#z-buffering%E6%B7%B1%E5%BA%A6%E7%BC%93%E5%86%B2"><span class="nav-number">3.3.</span> <span class="nav-text">Z-buffering『深度缓冲』</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#painters-algorithm%E7%94%BB%E5%AE%B6%E7%AE%97%E6%B3%95"><span class="nav-number">3.3.1.</span> <span class="nav-text">Painter&#39;s Algorithm『画家算法』</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E6%80%9D%E6%83%B3"><span class="nav-number">3.3.1.1.</span> <span class="nav-text">基本思想</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%BC%BA%E9%99%B7"><span class="nav-number">3.3.1.2.</span> <span class="nav-text">缺陷</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#z-buffer"><span class="nav-number">3.3.2.</span> <span class="nav-text">Z-Buffer</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#shading%E7%9D%80%E8%89%B2"><span class="nav-number">3.4.</span> <span class="nav-text">Shading『着色』</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#blinnphong-reflection-model%E5%B8%83%E6%9E%97-%E5%86%AF%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B"><span class="nav-number">3.4.1.</span> <span class="nav-text">Blinn–Phong reflection model『布林-冯反射模型』</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#diffuse-reflection"><span class="nav-number">3.4.1.1.</span> <span class="nav-text">Diffuse Reflection</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#specular-highlights"><span class="nav-number">3.4.1.2.</span> <span class="nav-text">Specular highlights</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#ambient-lighting"><span class="nav-number">3.4.1.3.</span> <span class="nav-text">Ambient lighting</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%B0%86%E6%89%80%E6%9C%89%E7%9A%84%E9%A1%B9%E9%83%BD%E5%8A%A0%E8%B5%B7%E6%9D%A5"><span class="nav-number">3.4.1.4.</span> <span class="nav-text">将所有的项都加起来</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#shading-frequency%E7%9D%80%E8%89%B2%E9%A2%91%E7%8E%87"><span class="nav-number">3.4.2.</span> <span class="nav-text">Shading Frequency『着色频率』</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%A1%B6%E7%82%B9%E6%B3%95%E7%BA%BF"><span class="nav-number">3.4.2.1.</span> <span class="nav-text">顶点法线</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%83%8F%E7%B4%A0%E6%B3%95%E7%BA%BF"><span class="nav-number">3.4.2.2.</span> <span class="nav-text">像素法线</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#graphics-real-time-rendering-pipeline%E5%9B%BE%E5%BD%A2%E7%AE%A1%E7%BA%BF"><span class="nav-number">3.4.3.</span> <span class="nav-text">Graphics (Real-time Rendering) Pipeline『图形管线』</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#texture-mapping%E7%BA%B9%E7%90%86%E6%98%A0%E5%B0%84"><span class="nav-number">3.4.4.</span> <span class="nav-text">Texture Mapping『纹理映射』</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#interpolation%E6%8F%92%E5%80%BC"><span class="nav-number">3.4.5.</span> <span class="nav-text">Interpolation『插值』</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#barycentric-coordinates%E9%87%8D%E5%BF%83%E5%9D%90%E6%A0%87"><span class="nav-number">3.4.5.1.</span> <span class="nav-text">Barycentric Coordinates『重心坐标』</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">4.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -859,16 +1169,16 @@ N_v = \frac{\sum_{i=1}^n N_i}{||\sum_{i=1}^n N_i||}</script><p>如果对三角�
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">109k</span>
+    <span title="站点总字数">111k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">1:39</span>
+    <span title="站点阅读时长">1:41</span>
 </div>
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共43.9k字</span>
+  <span class="post-count">博客全站共44.3k字</span>
 </div>
 
     <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
@@ -977,65 +1287,6 @@ $(document).ready(function() {
 
 
   
-
-  
-      
-
-<script>
-  if (typeof MathJax === 'undefined') {
-    window.MathJax = {
-      loader: {
-        source: {
-          '[tex]/amsCd': '[tex]/amscd',
-          '[tex]/AMScd': '[tex]/amscd'
-        }
-      },
-      tex: {
-        // inlineMath: {'[+]': [['$', '$']]},
-        inlineMath: [['$', '$'], ['\\(', '\\)']],
-        tags: 'none'
-        svg: {
-          fontCache: 'global'
-        }
-      },
-      options: {
-        renderActions: {
-          findScript: [10, doc => {
-            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
-              const display = !!node.type.match(/; *mode=display/);
-              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
-              const text = document.createTextNode('');
-              node.parentNode.replaceChild(text, node);
-              math.start = {node: text, delim: '', n: 0};
-              math.end = {node: text, delim: '', n: 0};
-              doc.math.push(math);
-            });
-          }, '', false],
-          insertedScript: [200, () => {
-            document.querySelectorAll('mjx-container').forEach(node => {
-              let target = node.parentNode;
-              if (target.nodeName.toLowerCase() === 'li') {
-                target.parentNode.classList.add('has-jax');
-              }
-            });
-          }, '', false]
-        }
-      }
-    };
-    (function () {
-      var script = document.createElement('script');
-      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
-      script.defer = true;
-      document.head.appendChild(script);
-    })();
-  } else {
-    MathJax.startup.document.state(0);
-    MathJax.texReset();
-    MathJax.typeset();
-  }
-</script>
-
-    
 
   
 

@@ -21,12 +21,12 @@
   </script>
 
     <script src="//code.jquery.com/jquery-2.0.3.min.js"></script>
-  <meta name="description" content="如果给你一个需求    你需要设计出一群不同种类的可怖的怪物,让他们在英雄前进的道路上阻挡他们  你会则表明怎么做呢?或许当你刚接触游戏开发的时候,你会这样做">
+  <meta name="description" content="如果给你一个需求 &gt;你需要设计出一群不同种类的可怖的怪物,让他们在英雄前进的道路上阻挡他们 你会则表明怎么做呢? 或许当你刚接触游戏开发的时候,你会这样做">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Game Programming Patterns_Prototype原型模式">
 <meta property="og:url" content="https://rdququ.top/posts/cb3ccb51/index.html">
 <meta property="og:site_name" content="蛐蛐的软件开发世界">
-<meta property="og:description" content="如果给你一个需求    你需要设计出一群不同种类的可怖的怪物,让他们在英雄前进的道路上阻挡他们  你会则表明怎么做呢?或许当你刚接触游戏开发的时候,你会这样做">
+<meta property="og:description" content="如果给你一个需求 &gt;你需要设计出一群不同种类的可怖的怪物,让他们在英雄前进的道路上阻挡他们 你会则表明怎么做呢? 或许当你刚接触游戏开发的时候,你会这样做">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://rdququ.top/posts/cb3ccb51/image.png">
 <meta property="og:image" content="https://rdququ.top/posts/cb3ccb51/image-1.png">
@@ -306,22 +306,23 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>如果给你一个需求  </p>
-<blockquote>
-<p>你需要设计出一群不同种类的可怖的怪物,让他们在英雄前进的道路上阻挡他们</p>
-</blockquote>
-<p>你会则表明怎么做呢?<br>或许当你刚接触游戏开发的时候,你会这样做</p>
+        <p>如果给你一个需求<br />
+&gt;你需要设计出一群不同种类的可怖的怪物,让他们在英雄前进的道路上阻挡他们</p>
+<p>你会则表明怎么做呢? 或许当你刚接触游戏开发的时候,你会这样做</p>
 <span id="more"></span>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Monster</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="comment">// 代码……</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Ghost</span> : <span class="keyword">public</span> Monster &#123;&#125;;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Demon</span> : <span class="keyword">public</span> Monster &#123;&#125;;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Sorcerer</span> : <span class="keyword">public</span> Monster &#123;&#125;;</span><br></pre></td></tr></table></figure>
 <p>每一种怪物都有自己的类.为了让这些家伙降临到这个世界,或许你还会给他们精心设计独属于他们自己的生产者类(spawner).事实上,这是一种相当暴力的解决方案,每个怪物都有自己的生产者类,这构成了一种平行的类的结构.</p>
-<p><img src="image.png" alt="Alt text"></p>
+<figure>
+<img src="image.png" alt="Alt text" /><figcaption aria-hidden="true">Alt text</figcaption>
+</figure>
 <blockquote>
 <p>图上这个带尾巴的小三角形是继承的意思</p>
 </blockquote>
 <p>下面是该方案一种实现</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Spawner</span></span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">  <span class="keyword">virtual</span> ~<span class="built_in">Spawner</span>() &#123;&#125;</span><br><span class="line">  <span class="function"><span class="keyword">virtual</span> Monster* <span class="title">spawnMonster</span><span class="params">()</span> </span>= <span class="number">0</span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">GhostSpawner</span> : <span class="keyword">public</span> Spawner</span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">  <span class="function"><span class="keyword">virtual</span> Monster* <span class="title">spawnMonster</span><span class="params">()</span></span></span><br><span class="line"><span class="function">  </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">Ghost</span>();</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">DemonSpawner</span> : <span class="keyword">public</span> Spawner</span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">  <span class="function"><span class="keyword">virtual</span> Monster* <span class="title">spawnMonster</span><span class="params">()</span></span></span><br><span class="line"><span class="function">  </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">Demon</span>();</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">//  You get the idea...</span></span><br></pre></td></tr></table></figure>
-<p>如果你和你的学长/前辈一起共事,那么作为经验丰富的代码世界的造物主,他肯定会想方设法阻止你 <code>&quot;这种代码很难维护.&quot;&quot;如果有策划设计了一千种怪物,那么你要专门为这个项目撰写一本字典吗?&quot;</code>显然,以这种方法创世,第七天肯定没法放假.</p>
-<h2 id="一个更好的方法"><a href="#一个更好的方法" class="headerlink" title="一个更好的方法"></a>一个更好的方法</h2><p>前人给出了一个比上面的实现更具性价比的解决方案 <code>设计模式</code>.</p>
+<p>如果你和你的学长/前辈一起共事,那么作为经验丰富的代码世界的造物主,他肯定会想方设法阻止你 <code>"这种代码很难维护.""如果有策划设计了一千种怪物,那么你要专门为这个项目撰写一本字典吗?"</code>显然,以这种方法创世,第七天肯定没法放假.</p>
+<h2 id="一个更好的方法">一个更好的方法</h2>
+<p>前人给出了一个比上面的实现更具性价比的解决方案 <code>设计模式</code>.</p>
 <blockquote>
 <p>关键思路是<code>一个对象可以产出与它自己相近的对象</code>。 如果你有一个恶灵，你可以制造更多恶灵。 如果你有一个恶魔，你可以制造其他恶魔。 任何怪物都可以被视为<code>原型</code>怪物，产出其他版本的自己。</p>
 </blockquote>
@@ -332,7 +333,9 @@
 <p>现在,我们不再需要再给每个怪物都添加上他们自己的生产者类了,我们大可以写一个<code>Spawner</code>类,它可以接受一个<code>Monster</code>对象,并且使用<code>clone</code>方法来产生新的怪物.</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Spawner</span></span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">  <span class="built_in">Spawner</span>(Monster* prototype)</span><br><span class="line">  : <span class="built_in">prototype_</span>(prototype)</span><br><span class="line">  &#123;&#125;</span><br><span class="line"></span><br><span class="line">  <span class="function">Monster* <span class="title">spawnMonster</span><span class="params">()</span></span></span><br><span class="line"><span class="function">  </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> prototype_-&gt;<span class="built_in">clone</span>();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">  Monster* prototype_;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 <p><strong>重要的是</strong>,或者说他和抽离内部实现的接口思想有很大不同的一点是,他内部是存有<code>template</code>的,模板是怎样的,克隆出来的怪物就是怎样的.</p>
-<p><img src="image-1.png" alt="Alt text"></p>
+<figure>
+<img src="image-1.png" alt="Alt text" /><figcaption aria-hidden="true">Alt text</figcaption>
+</figure>
 <p>书上举了一个很直观的例子</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Monster* ghostPrototype = <span class="keyword">new</span> <span class="built_in">Ghost</span>(<span class="number">15</span>, <span class="number">3</span>);</span><br><span class="line">Spawner* ghostSpawner = <span class="keyword">new</span> <span class="built_in">Spawner</span>(ghostPrototype);</span><br></pre></td></tr></table></figure>
 <p>这段代码创建了一个恶灵的原型实例,然后创建了这个实例的生产者. 巧妙的是,我们只需要更改这个模板鬼魂的状态,就可以创建出各种各样的鬼魂.</p>
@@ -343,19 +346,22 @@
 <p>做深层拷贝还是浅层拷贝呢？换言之，如果恶魔拿着叉子，克隆恶魔也要克隆叉子吗？</p>
 </blockquote>
 <p>就说这种方法的前提就很难达成,在现代的游戏引擎上工作,还有谁会给每个怪物都设计一个自己的类?</p>
-<h2 id="生产函数"><a href="#生产函数" class="headerlink" title="生产函数"></a>生产函数</h2><p>哪怕我们必须要为每个怪物都添加上一个独立的类,那么给给每个怪物都添加上一个分离的生产者类也并非上上之选,我们可以使用一个更加简单的方法,那就是使用一个生产函数.</p>
+<h2 id="生产函数">生产函数</h2>
+<p>哪怕我们必须要为每个怪物都添加上一个独立的类,那么给给每个怪物都添加上一个分离的生产者类也并非上上之选,我们可以使用一个更加简单的方法,那就是使用一个生产函数.</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">Monster* <span class="title">spawnGhost</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">Ghost</span>();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>下面给出新方法的实现,可以看看这和上面的方法有什么区别?</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> Monster* (*SpawnCallback)();</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Spawner</span></span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">  <span class="built_in">Spawner</span>(SpawnCallback spawn)</span><br><span class="line">  : <span class="built_in">spawn_</span>(spawn)</span><br><span class="line">  &#123;&#125;</span><br><span class="line"></span><br><span class="line">  <span class="function">Monster* <span class="title">spawnMonster</span><span class="params">()</span></span></span><br><span class="line"><span class="function">  </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">spawn_</span>();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">  SpawnCallback spawn_;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 <p>很显然,函数指针嘛,生产者类不需要再存储一个怪物对象了,它只需要储存一个函数指针就可以做到和之前一样的事情了.后面是构筑生产者的代码:</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Spawner* ghostSpawner = <span class="keyword">new</span> <span class="built_in">Spawner</span>(spawnGhost);</span><br></pre></td></tr></table></figure>
-<h2 id="模板"><a href="#模板" class="headerlink" title="模板"></a>模板</h2><p>模板没什么好说的,这是一个C++程序员必须掌握的一个编程方法.在另一些语言中其思想被推广为泛型<strong>T</strong></p>
+<h2 id="模板">模板</h2>
+<p>模板没什么好说的,这是一个C++程序员必须掌握的一个编程方法.在另一些语言中其思想被推广为泛型<strong>T</strong></p>
 <p>模板和许多高级语言中的继承或者接口不一样,这些机制大多是运行时才确定的(比如成员函数只有在运行时才知道调用哪个),所以被叫做<strong>运行时多态</strong>,而模板则是一种<strong>编译时多态</strong>,编译器在编译的时候就知道调用哪个函数了.代价是目标代码会多一点.</p>
 <p>那么事情就很清楚了,如果我们把生产者类当作模板中的<code>T</code>(类型参数),我们就能实现这样一段代码</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Spawner</span></span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">  <span class="keyword">virtual</span> ~<span class="built_in">Spawner</span>() &#123;&#125;</span><br><span class="line">  <span class="function"><span class="keyword">virtual</span> Monster* <span class="title">spawnMonster</span><span class="params">()</span> </span>= <span class="number">0</span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">T</span>&gt;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">SpawnerFor</span> : <span class="keyword">public</span> Spawner</span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">  <span class="function"><span class="keyword">virtual</span> Monster* <span class="title">spawnMonster</span><span class="params">()</span> </span>&#123; <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">T</span>(); &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 <p>我们可以这样使用它</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Spawner* ghostSpawner = <span class="keyword">new</span> <span class="built_in">SpawnerFor</span>&lt;Ghost&gt;();</span><br></pre></td></tr></table></figure>
-<h2 id="第一公民类型"><a href="#第一公民类型" class="headerlink" title="第一公民类型"></a>第一公民类型</h2><p>在C++中，类型不是第一公民,所以我们需要进行一些小改动,不过在此之前,我们需要讨论一下什么是第一公民/第二公民</p>
+<h2 id="第一公民类型">第一公民类型</h2>
+<p>在C++中，类型不是第一公民,所以我们需要进行一些小改动,不过在此之前,我们需要讨论一下什么是第一公民/第二公民</p>
 <p>第一公民类型是指可以被当作参数传递,可以被当作返回值返回,可以被当作容器的元素的类型的类型.比如说,在C++中,函数不是第一公民类型,所以我们不能把函数当作参数传递给另一个函数,也不能把函数当作返回值返回,也不能把函数当作容器的元素的类型.</p>
 <p>我们熟悉的 char, int, float等都是第一公民类型,不能满足的上述条件的,就是第二公民了.</p>
 
@@ -545,16 +551,16 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">109k</span>
+    <span title="站点总字数">111k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">1:39</span>
+    <span title="站点阅读时长">1:41</span>
 </div>
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共43.9k字</span>
+  <span class="post-count">博客全站共44.3k字</span>
 </div>
 
     <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
@@ -663,65 +669,6 @@ $(document).ready(function() {
 
 
   
-
-  
-      
-
-<script>
-  if (typeof MathJax === 'undefined') {
-    window.MathJax = {
-      loader: {
-        source: {
-          '[tex]/amsCd': '[tex]/amscd',
-          '[tex]/AMScd': '[tex]/amscd'
-        }
-      },
-      tex: {
-        // inlineMath: {'[+]': [['$', '$']]},
-        inlineMath: [['$', '$'], ['\\(', '\\)']],
-        tags: 'none'
-        svg: {
-          fontCache: 'global'
-        }
-      },
-      options: {
-        renderActions: {
-          findScript: [10, doc => {
-            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
-              const display = !!node.type.match(/; *mode=display/);
-              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
-              const text = document.createTextNode('');
-              node.parentNode.replaceChild(text, node);
-              math.start = {node: text, delim: '', n: 0};
-              math.end = {node: text, delim: '', n: 0};
-              doc.math.push(math);
-            });
-          }, '', false],
-          insertedScript: [200, () => {
-            document.querySelectorAll('mjx-container').forEach(node => {
-              let target = node.parentNode;
-              if (target.nodeName.toLowerCase() === 'li') {
-                target.parentNode.classList.add('has-jax');
-              }
-            });
-          }, '', false]
-        }
-      }
-    };
-    (function () {
-      var script = document.createElement('script');
-      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
-      script.defer = true;
-      document.head.appendChild(script);
-    })();
-  } else {
-    MathJax.startup.document.state(0);
-    MathJax.texReset();
-    MathJax.typeset();
-  }
-</script>
-
-    
 
   
 

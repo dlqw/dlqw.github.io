@@ -288,7 +288,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>435</span>
+              <span>437</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -307,11 +307,17 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>QFramework是凉鞋大大开发的一款开箱即用的 Unity 开发框架，其内置了 Res Kit、UI Kit、Audio 以及常用的工具库<br> <span id="more"></span><br>Qframework 官方地址如下 <a target="_blank" rel="noopener" href="https://qframework.cn/qf">https://qframework.cn/qf</a><br>Qframework 官方教程如下 <a target="_blank" rel="noopener" href="https://www.gamepixedu.com/my/course/50">https://www.gamepixedu.com/my/course/50</a>  </p>
-<h2 id="Unity如何导入Qframework"><a href="#Unity如何导入Qframework" class="headerlink" title="Unity如何导入Qframework"></a>Unity如何导入Qframework</h2><p>主体包地址： <a target="_blank" rel="noopener" href="https://qframework.cn/qf/package/detail/17e600f8-c6fa-4fdf-a77e-843e28627e2f">https://qframework.cn/qf/package/detail/17e600f8-c6fa-4fdf-a77e-843e28627e2f</a><br>下载获取Unitypackage,导入项目中即可<br>这个包里面是由三部分组成的 QFramework.cs,Toolkits 和教程示例文件<br>如果只关心 QFramework 的架构实现，那么不需要导入 Toolkits 内的内容<br>在Unity中按下 CTRL+E 可以快捷唤出 QFramework 设置 </p>
-<hr>
-<p>首发于2023-08-11 </p>
-<p>地址 ：<a href="https://rdququ.top/">https://rdququ.top/</a></p>
+        <p>QFramework是凉鞋大大开发的一款开箱即用的 Unity 开发框架，其内置了 Res Kit、UI Kit、Audio 以及常用的工具库<br />
+<span id="more"></span> Qframework 官方地址如下 https://qframework.cn/qf<br />
+Qframework 官方教程如下 https://www.gamepixedu.com/my/course/50<br />
+## Unity如何导入Qframework 主体包地址： https://qframework.cn/qf/package/detail/17e600f8-c6fa-4fdf-a77e-843e28627e2f<br />
+下载获取Unitypackage,导入项目中即可<br />
+这个包里面是由三部分组成的 QFramework.cs,Toolkits 和教程示例文件<br />
+如果只关心 QFramework 的架构实现，那么不需要导入 Toolkits 内的内容<br />
+在Unity中按下 CTRL+E 可以快捷唤出 QFramework 设置</p>
+<hr />
+<p>首发于2023-08-11</p>
+<p>地址 ：https://rdququ.top/</p>
 
     </div>
 
@@ -434,7 +440,6 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Unity%E5%A6%82%E4%BD%95%E5%AF%BC%E5%85%A5Qframework"><span class="nav-number">1.</span> <span class="nav-text">Unity如何导入Qframework</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -499,16 +504,16 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">109k</span>
+    <span title="站点总字数">111k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">1:39</span>
+    <span title="站点阅读时长">1:41</span>
 </div>
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共43.9k字</span>
+  <span class="post-count">博客全站共44.3k字</span>
 </div>
 
     <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
@@ -617,65 +622,6 @@ $(document).ready(function() {
 
 
   
-
-  
-      
-
-<script>
-  if (typeof MathJax === 'undefined') {
-    window.MathJax = {
-      loader: {
-        source: {
-          '[tex]/amsCd': '[tex]/amscd',
-          '[tex]/AMScd': '[tex]/amscd'
-        }
-      },
-      tex: {
-        // inlineMath: {'[+]': [['$', '$']]},
-        inlineMath: [['$', '$'], ['\\(', '\\)']],
-        tags: 'none'
-        svg: {
-          fontCache: 'global'
-        }
-      },
-      options: {
-        renderActions: {
-          findScript: [10, doc => {
-            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
-              const display = !!node.type.match(/; *mode=display/);
-              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
-              const text = document.createTextNode('');
-              node.parentNode.replaceChild(text, node);
-              math.start = {node: text, delim: '', n: 0};
-              math.end = {node: text, delim: '', n: 0};
-              doc.math.push(math);
-            });
-          }, '', false],
-          insertedScript: [200, () => {
-            document.querySelectorAll('mjx-container').forEach(node => {
-              let target = node.parentNode;
-              if (target.nodeName.toLowerCase() === 'li') {
-                target.parentNode.classList.add('has-jax');
-              }
-            });
-          }, '', false]
-        }
-      }
-    };
-    (function () {
-      var script = document.createElement('script');
-      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
-      script.defer = true;
-      document.head.appendChild(script);
-    })();
-  } else {
-    MathJax.startup.document.state(0);
-    MathJax.texReset();
-    MathJax.typeset();
-  }
-</script>
-
-    
 
   
 
