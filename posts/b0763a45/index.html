@@ -306,15 +306,15 @@
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">FATAL Something&#x27;s wrong. Maybe you can find the solution here: https://hexo.io/docs/troubleshooting.html</span><br><span class="line">TypeError: Cannot read properties of undefined (reading &#x27;count&#x27;)</span><br><span class="line">    at module.exports (H:\Blog\node_modules\hexo-baidu-url-submit\lib\generator.js:4:41)</span><br><span class="line">    at Hexo.tryCatcher (H:\Blog\node_modules\bluebird\js\release\util.js:16:23)</span><br><span class="line">    at Hexo.&lt;anonymous&gt; (H:\Blog\node_modules\bluebird\js\release\method.js:15:34)</span><br><span class="line">    at H:\Blog\node_modules\hexo\lib\hexo\index.js:407:22</span><br><span class="line">    at tryCatcher (H:\Blog\node_modules\bluebird\js\release\util.js:16:23)</span><br><span class="line">    at MappingPromiseArray._promiseFulfilled (H:\Blog\node_modules\bluebird\js\release\map.js:68:38)</span><br><span class="line">    at PromiseArray._iterate (H:\Blog\node_modules\bluebird\js\release\promise_array.js:115:31)</span><br><span class="line">    at MappingPromiseArray.init (H:\Blog\node_modules\bluebird\js\release\promise_array.js:79:10)</span><br><span class="line">    at MappingPromiseArray._asyncInit (H:\Blog\node_modules\bluebird\js\release\map.js:37:10)</span><br><span class="line">    at _drainQueueStep (H:\Blog\node_modules\bluebird\js\release\async.js:97:12)</span><br><span class="line">    at _drainQueue (H:\Blog\node_modules\bluebird\js\release\async.js:86:9)</span><br><span class="line">    at Async._drainQueues (H:\Blog\node_modules\bluebird\js\release\async.js:102:5)</span><br><span class="line">    at Async.drainQueues [as _onImmediate] (H:\Blog\node_modules\bluebird\js\release\async.js:15:14)</span><br><span class="line">    at process.processImmediate (node:internal/timers:476:21)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 <p>一眼就看到里面显眼的</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(H:\Blog\node_modules\hexo-baidu-url-submit\lib\generator.js:4:41)</span><br></pre></td></tr></table></figure>
-<p>于是上网去搜，果然发现了和博主一样的倒霉蛋<br>
-链接在这里<a target="_blank" rel="noopener" href="https://github.com/hexojs/hexo/issues/2402">https://github.com/hexojs/hexo/issues/2402</a><br>
-看来确实是百度推送的插件有问题<br>
+<p>于是上网去搜，果然发现了和博主一样的倒霉蛋<br />
+链接在这里<a target="_blank" rel="noopener" href="https://github.com/hexojs/hexo/issues/2402">https://github.com/hexojs/hexo/issues/2402</a><br />
+看来确实是百度推送的插件有问题<br />
 于是博主一通操作</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm remove hexo-baidu-url-submit</span><br></pre></td></tr></table></figure>
 <p>问题解决。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo g --debug</span><br></pre></td></tr></table></figure>
 <p>你定位问题的好帮手</p>
-<hr>
+<hr />
 <p>首发于2023-08-06</p>
 <p>地址 ：<a href="https://rdququ.top/">https://rdququ.top/</a></p>
 

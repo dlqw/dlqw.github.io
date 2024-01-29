@@ -312,7 +312,7 @@
 <p><code>UnityEngine.Object</code>继承自<code>system.Object</code>，是<code>Unity</code>所涉及所有物体的基类。</p>
 <p>但是他们也有区别，不得不谈的就是<code>销毁</code>和<code>空判断</code>。</p>
 <blockquote>
-<p>这是最常见的问题，在UnityEngine中我们销毁一个对象时，使用“==”操作符与null比较结果为true，但是可以发现，我们还是可以引用这个变量，这主要是由于UnityEngine的==操作符在销毁后即将Object置位null，但是对象本身需要被GC后才能达到真正意义上的销毁，也就是System.Object中的null；</p>
+<p>这是最常见的问题，在UnityEngine中我们销毁一个对象时，使用“<mark>”操作符与null比较结果为true，但是可以发现，我们还是可以引用这个变量，这主要是由于UnityEngine的</mark>操作符在销毁后即将Object置位null，但是对象本身需要被GC后才能达到真正意义上的销毁，也就是System.Object中的null；</p>
 </blockquote>
 <blockquote>
 <p>这里涉及到了托管的问题，如果不了解也不要紧，我可以告诉你从 UnityEngine.Object 继承的对象，包括托管和非托管两部分，当调用 Destroy 时，销毁的只是非托管部分，托管部分只能通过 C# 的垃圾回收器进行回收。</p>
@@ -331,7 +331,7 @@
 <p>可以发现<code>CompareBaseObjects</code>方法的实现也是绕不开的，我们来看看</p>
 <figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="built_in">bool</span> <span class="title">CompareBaseObjects</span>(<span class="params">Object lhs, Object rhs</span>)</span></span><br><span class="line">    &#123;</span><br><span class="line">      <span class="built_in">bool</span> flag1 = (<span class="built_in">object</span>) lhs == <span class="literal">null</span>;</span><br><span class="line">      <span class="built_in">bool</span> flag2 = (<span class="built_in">object</span>) rhs == <span class="literal">null</span>;</span><br><span class="line">      <span class="keyword">if</span> (flag2 &amp; flag1)</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">      <span class="keyword">if</span> (flag2)</span><br><span class="line">        <span class="keyword">return</span> !Object.IsNativeObjectAlive(lhs);</span><br><span class="line">      <span class="keyword">return</span> flag1 ? !Object.IsNativeObjectAlive(rhs) : lhs.m_InstanceID == rhs.m_InstanceID;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
 <p>看到这里，其实我们已经对之前的问题有了回答了</p>
-<p><code>UnityEngine.Object</code>中的布尔类型重载和<code>==</code>运算符重载，他们都是通过<code>CompareBaseObjects</code>来实现的<br>
+<p><code>UnityEngine.Object</code>中的布尔类型重载和<code>==</code>运算符重载，他们都是通过<code>CompareBaseObjects</code>来实现的<br />
 他们俩本质上都是采用了 <code>Unity</code> 层面上的检查。</p>
 <p>对于这点，我们也可以证明</p>
 <p>请看方法<code>IsNativeObjectAlive</code></p>
@@ -339,9 +339,9 @@
 <p><code>Unity</code> 先调用<code>o.GetCachedPtr()</code> 方法检查目标对象的本机指针是否还存在, 要知道 <code>IntPtr</code> 并非 <code>Unity</code> 自己鼓捣出来的玩意， 他是<code>.NET Framework</code>和 <code>.NET Core</code>中的一个特殊的结构体，用于表示目标对象的本地指针. 如果本地指针不存在，那么就会调用<code>Object.DoesObjectWithInstanceIDExist</code>方法，这个方法会检查目标对象的实例ID是否存在,如果存在具有给定实例ID的对象，则返回 true.</p>
 <p>通过这种方法实现的空判断,实质上开销是特别大的,有些人会使用<code>System.Object.ReferenceEquals</code>,比如这样</p>
 <figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(System.Object.ReferenceEquals(gameobject, <span class="literal">null</span>))</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// TODO something</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>这样做,在性能上确实是有很大提升的,但是读到这里的朋友估计已经猜到我要讲什么了.<br>
+<p>这样做,在性能上确实是有很大提升的,但是读到这里的朋友估计已经猜到我要讲什么了.<br />
 在执行<code>destroy</code>方法后,目标对象实质上并没有被回收,他只是被打上了一个<code>'tag'</code>的标签,而变量仍然在指向着堆对象.为什么<code>==</code>可以呢,因为<code>Unity</code>已经把他重载了.</p>
-<hr>
+<hr />
 
     </div>
 
