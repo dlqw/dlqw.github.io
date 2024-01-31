@@ -288,29 +288,29 @@
       
         <p>2D 渲染基础</p>
 <span id="more"></span>
-<h2 id="像素缓冲区和垂直同步"><a class="markdownIt-Anchor" href="#像素缓冲区和垂直同步"></a> 像素缓冲区和垂直同步</h2>
-<h3 id="crt-显示器基础"><a class="markdownIt-Anchor" href="#crt-显示器基础"></a> CRT 显示器基础</h3>
+<h2 id="像素缓冲区和垂直同步">像素缓冲区和垂直同步</h2>
+<h3 id="crt-显示器基础">CRT 显示器基础</h3>
 <p>现在大家用的比较多的是液晶显示器(LCD), 在早先年，大家用的 CRT 显示器比较多，也就是阴极管射线显示器。LCD 通过控制是否透光来控制亮和暗，当色彩不变时，液晶也保持不变，这样就无须考虑刷新率的问题。对于画面稳定、无闪烁感的液晶显示器，刷新率不高但图像也很稳定。不过对于我们今天要谈的游戏来说，缺点就很明显了，其相应速度不够，画面有时候会有重影。</p>
 <p>当然，我们这节课的主题是 2D 游戏渲染基础，和大家聊显示器主要也是让大家更好的了解我们渲染操作生成后呈现的载体。</p>
 <p>其实 LCD 和 CRT 显示器在刷新上的原理是差不多的，当然我们前面也说了，在早点年，CRT 显示器是当时的主流，综合考虑，也是为了让大家了解 2D 渲染这项技术在诞生之初的显示设备的环境，我打算从 CRT 显示器的角度带大家聊聊显示器的工作原理。</p>
-<p>大家高中信息课应该教过，在 CRT 显示器内部，绘制图形是通过电子枪发射电子流完成的。这样讲可能比较抽象。其实，在显示器内部有一层荧光板，荧光板上面有一些荧光粉末，红绿蓝三种颜色的荧光粉末，单色的荧光粉末会聚集起来形成一个小小的荧光单元。红绿蓝三种单元各出一个聚集在一起就是一个像素点，密密麻麻的像素点就充斥在荧光板上了。<br />
+<p>大家高中信息课应该教过，在 CRT 显示器内部，绘制图形是通过电子枪发射电子流完成的。这样讲可能比较抽象。其实，在显示器内部有一层荧光板，荧光板上面有一些荧光粉末，红绿蓝三种颜色的荧光粉末，单色的荧光粉末会聚集起来形成一个小小的荧光单元。红绿蓝三种单元各出一个聚集在一起就是一个像素点，密密麻麻的像素点就充斥在荧光板上了。<br>
 电子枪则会一口气发射三注电子流，很好理解，这些电子流依次打在了 RGB 三色上，由于电子流的强度不一样，每个像素点的红绿蓝三色的光也不一样，通过空间混色法，每个像素点就会呈现出不同的颜色。</p>
 <p>当然，电子流的能量是有限的，这些荧光粉很快就会熄灭，所以电子枪需要不断的发射电子流，这样才能保证荧光粉不断的发光，显示器才能一直显示图像。这就是刷新了。</p>
 <p>不过要想让画面动起来，而不是显示器上某个像素点一直再发不同的光，然而其他地方却一片黑，我们的电子流就要去射击不同的像素点，让整个显示器都呈现出画面。我们管这叫扫描。当然这里也运用到了人眼的视觉残留效应，想必大家很清楚。</p>
 <p>当然扫描也不是乱扫的，是有章法有规则的，请看下图。</p>
-<p><img src="CRT%E6%98%BE%E7%A4%BA%E5%99%A8%E6%89%AB%E6%8F%8F.png" alt="CRT显示器扫描" /></p>
+<p><img src="CRT%E6%98%BE%E7%A4%BA%E5%99%A8%E6%89%AB%E6%8F%8F.png" alt="CRT显示器扫描"></p>
 <p>这张图大家肯定超级熟悉吧。电子枪从左上角向右扫，然后再从右向左扫，直到扫完整个屏幕。欸，我估计聪明的小伙伴已经发现了，这个扫描线不是绝对水平的，而是略微带一点倾斜。这也是为了让扫描线能扫过整个屏幕而不是只在一条横线上来回扫。从左向右扫的每条扫描线都略微下坡，其实这个下坡的度数是可以算出来的，其斜率大约为 -1/水平分辨率, 非常好算，我就不带大家算一遍了。</p>
-<h4 id="消隐期-blank"><a class="markdownIt-Anchor" href="#消隐期-blank"></a> 消隐期 BLANK</h4>
+<h4 id="消隐期-blank">消隐期 BLANK</h4>
 <p>其实，在 CRT 显示器中，从右向左的这一条扫描线往往不会真实的扫描，而是消隐，大家可以理解为电子枪在这段时间不喷了，画面上一片漆黑。这个时间段我们称为<strong>行消隐期(HBLANK)</strong>，也可以叫做水平回扫。</p>
 <p>啥是行？电子束既要作水平方向的运动，又要作垂直方向的运动。前者形成一行的扫描，称为行扫描，后者形成一幅画面的扫描，称为场扫描。</p>
 <p>当电子流从左上角扫到右下角后，屏幕就完成了一帧的渲染，不过这时候电子枪指着右下角啊，难道说下一帧是从右下角原路返回右上角吗？听起来好像效率挺高的，不过我们实际上不会这么干。而是让电子枪直接从右下角跳到右上角，然后再从右上角开始扫描。电子枪从右下角移动到左上角的的过程，我们称作<strong>场消隐期(VBLANK)</strong>，也可以叫做垂直回扫。同样的，这段时间内，画面上也是一片漆黑的。</p>
-<h4 id="垂直同步"><a class="markdownIt-Anchor" href="#垂直同步"></a> 垂直同步</h4>
+<h4 id="垂直同步">垂直同步</h4>
 <p>前面我们已经谈过了画面撕裂的原理，是渲染帧数超过刷新率，在显示器才显示到一半时就粗暴的给他塞了新的画面进去。 那后来人是怎么解决这个问题的呢？很简单，就是在显示器刷新的时候，我们不提交渲染，直到等显示器刷新完了。这样就不会出现画面撕裂的问题了。这个技术就是<strong>垂直同步(VSYNC)</strong>。</p>
 <p>简单来说就是渲染循环受到真实刷新率的支配嘛。让游戏渲染的输出频率对标设备的刷新率，游戏的主循环又会和渲染循环相互制约，游戏的帧率也就被限制在了设备的刷新率上。当然这也会造成输入延迟，这一点不理解的同学可以去听我上一节的课，讲的很清楚。</p>
-<p>下面来点<strong>套话</strong><br />
+<p>下面来点<strong>套话</strong><br>
 为了同步显示屏的显示过程和控制器，控制器会产生一系列的定时信号。当电子枪换行进行扫描时，控制器会发出一个<strong>水平同步信号 HSync</strong>；而当一帧画面绘制完成后，电子枪回复到原位，准备画下一帧前，控制器会发出一个<strong>垂直同步信号 VSync</strong>。</p>
 <p>VSYNC信号有效时，表示一帧数据的开始。</p>
-<h3 id="像素缓冲区"><a class="markdownIt-Anchor" href="#像素缓冲区"></a> 像素缓冲区</h3>
+<h3 id="像素缓冲区">像素缓冲区</h3>
 <p>缓冲区是一个很好理解的概念，图像从我们的 GPU 到屏幕上并不是实时的一步到位的。在 GPU 内存上有一系列的缓冲区用来暂存渲染数据。</p>
 <p>我们在屏幕上展示出来的图像实际上是存储来 GPU 内存里面的。现代的硬件也足够支撑高分辨率的图像存在内存中，然而，这并不意味着我们就可以高枕无忧了。游戏循环仍然要像我们之前反复强调的那样考虑到 CRT(或者其他什么) 的电子枪。请试想，当 CRT 喷枪才在屏幕中喷到一半的时候，缓冲区就写入了新的数据，等这帧渲染完成后，显示器就会显示出一半新的画面，一半旧的画面，这就是我们前面说的画面撕裂。更糟糕的是，新数据提交的时候，上一帧还没开始绘制，那么就不是说屏幕中同时存在新的和旧的画面了，而是直接丢失了上一帧的画面。</p>
 <p>为了解决这个问题，早期的开发者想出了一种现在我们已经很难接受的办法，那就是等到场消隐期再开始渲染，但这样的做法带来的弊端也很明显，游戏循环被完全锁死在了显示器的刷新率上了。</p>
@@ -318,40 +318,40 @@
 <p>为了完全消灭画面撕裂，缓冲区的交换必须在场消隐期进行，这就是我们之前一直说的<strong>垂直同步</strong>。</p>
 <p>当然，这种技术的前提有两个，一个是交换缓冲区的速度足够快，在绝大多数场景下，这一点是不会变的，然而第二点则是等待 VBLANK。首先你得把游戏里面垂直同步的开关打开，缓冲区的交换才会等待垂直同步。有一些玩家为了追求极致的帧率和更低的输入延迟会关闭垂直同步，然而他们的屏幕刷新率又远低于游戏帧率，那么画面撕裂仍然会存在，缓冲区的存在只是一定程度的减缓了这种现象。</p>
 <p>当然，有双缓冲区也有三缓冲区，甚至更多，为了画面的稳定和帧率的平滑，他们放弃了较短的输入延迟。</p>
-<h2 id="精灵-sprite"><a class="markdownIt-Anchor" href="#精灵-sprite"></a> 精灵 Sprite</h2>
-<h3 id="为什么是精灵-sprite"><a class="markdownIt-Anchor" href="#为什么是精灵-sprite"></a> 为什么是『精灵 · Sprite』？</h3>
+<h2 id="精灵-sprite">精灵 Sprite</h2>
+<h3 id="为什么是-精灵-sprite-？">为什么是『精灵 · Sprite』？</h3>
 <p>Sprite 是 德州仪器(TI)的工程师 Daniel Hillis 在 1970 年代后期创造的一个术语，也有一种说法，该词汇来自于 TI 的经理 David Ackley。</p>
 <p>在计算机图形学和游戏开发领域，Sprite 指的是集成到更大场景中的独立悬浮于帧缓冲之上的的二维位图(Textrue2D)，其更多的用来表示游戏角色或者其他动态对象。</p>
 <p>想象一下，你有一张图片作为游戏的背景——还有另外一张图片漂浮在这个作为背景的图片上，在游戏更新的过程中，后者会移动，旋转，缩放，甚至是可交互的，就像神话中的『幽灵』或者说『精灵』。</p>
-<h3 id="画家算法"><a class="markdownIt-Anchor" href="#画家算法"></a> 画家算法</h3>
-<h4 id="基本思想"><a class="markdownIt-Anchor" href="#基本思想"></a> 基本思想</h4>
+<h3 id="画家算法">画家算法</h3>
+<h4 id="基本思想">基本思想</h4>
 <p>先将画面中的物体按其距离观察点的远近进行排序，结果存放在一张线形表中。距观察点远者称其优先级高，放在表头,距观察点近者称其优先级低，放在表尾，这张表称为深度优先级表。</p>
 <p>然后按照从表头到表尾的顺序逐个绘制物体。由于距观察者近的物体在表尾最后画出，它覆盖了远处的物体，最终在屏幕上产生了正确的遮挡关系。</p>
-<h3 id="精灵动画"><a class="markdownIt-Anchor" href="#精灵动画"></a> 精灵动画</h3>
+<h3 id="精灵动画">精灵动画</h3>
 <p>就像所有动画一样，精灵动画也是运用的人眼的视觉残留效应，那么当然，一组精灵动画就需要一组精灵图片，为了让你的游戏人物的行动看起来足够流畅，一秒完成的动作至少也需要24张图片，一个简单攻击动作的精灵图量往往在8张以上。</p>
-<h3 id="精灵表单"><a class="markdownIt-Anchor" href="#精灵表单"></a> 精灵表单</h3>
-<p>为了保证精灵完全对其，我们通常要求美术绘制的角色起码得是同一个尺寸，在过去，这个尺寸往往是 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mn>2</mn><mi>n</mi></msup></mrow><annotation encoding="application/x-tex">2^n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.664392em;vertical-align:0em;"></span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.664392em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">n</span></span></span></span></span></span></span></span></span></span></span> 次方，这也是许多库内部规定好的。当然，我们现在已经不追 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mn>2</mn><mi>n</mi></msup></mrow><annotation encoding="application/x-tex">2^n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.664392em;vertical-align:0em;"></span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.664392em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">n</span></span></span></span></span></span></span></span></span></span></span> 次方了，但是仍然需要一个角色一系列的动画帧保持相同的大小，并且，别的角色也最好按照设定保持类似的比例。</p>
+<h3 id="精灵表单">精灵表单</h3>
+<p>为了保证精灵完全对其，我们通常要求美术绘制的角色起码得是同一个尺寸，在过去，这个尺寸往往是 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mn>2</mn><mi>n</mi></msup></mrow><annotation encoding="application/x-tex">2^n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.664392em;vertical-align:0em;"></span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.664392em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">n</span></span></span></span></span></span></span></span></span></span></span> 次方，这也是许多库内部规定好的。当然，我们现在已经不追 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mn>2</mn><mi>n</mi></msup></mrow><annotation encoding="application/x-tex">2^n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.664392em;vertical-align:0em;"></span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.664392em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">n</span></span></span></span></span></span></span></span></span></span></span> 次方了，但是仍然需要一个角色一系列的动画帧保持相同的大小，并且，别的角色也最好按照设定保持类似的比例。</p>
 <p>许多美术给图喜欢一张一张的给，那么这其实是让每张图片都成为以一个单独的纹理，并且图片中也会存在大量的留白，虽然现代引擎对这一类资源做过优化，但是不管是对内存，还是对程序员（有些美术给图之后往往就甩手不管图片的裁剪了）的头发来说，这都是一件很痛苦的事情。</p>
-<p>一个更好的做法是将所有的动画帧放在一张图片上，这张图片，我们叫做精灵表单，这张表单上的图片，我们希望间距足够小，并且成行成列的对齐，这样不仅能节省不少内存空间，还可以让处理素材更加快捷。<br />
-<img src="AttackCombo.png" alt="AttackCombo" /><br />
+<p>一个更好的做法是将所有的动画帧放在一张图片上，这张图片，我们叫做精灵表单，这张表单上的图片，我们希望间距足够小，并且成行成列的对齐，这样不仅能节省不少内存空间，还可以让处理素材更加快捷。<br>
+<img src="AttackCombo.png" alt="AttackCombo"><br>
 下面我提供一个打包的小工具，大家可以试试。 <a target="_blank" rel="noopener" href="https://www.codeandweb.com/texturepacker">TexturePacker</a></p>
 <p>当然，游戏引擎对图片的大小，长和宽都是有限制的。最好不要把所有图片都塞进一张精灵表里。</p>
-<h2 id="滚屏"><a class="markdownIt-Anchor" href="#滚屏"></a> 滚屏</h2>
+<h2 id="滚屏">滚屏</h2>
 <p>在以前简单的 2D 游戏中，比如俄罗斯方块一类，游戏中所有元素都可以在一张固定大小的小小屏幕中展现出来，但随着玩法的更新迭代，游戏的世界也越来越大，再也不是一张固定大小的图片能承载的下的了。屏幕的大小没有办法改变，但实际上可显示的图片是可与改变的，想象一下，你面前有一张巨大的画布，你用一个木框去框住一小部分，这时候你再扯动，这时候这张远超木框大小的画布的全部内容就都可以再一个小小的屏幕中全部展现出来。</p>
-<h3 id="单轴滚屏"><a class="markdownIt-Anchor" href="#单轴滚屏"></a> 单轴滚屏</h3>
+<h3 id="单轴滚屏">单轴滚屏</h3>
 <p>单轴滚动顾名思义，就是屏幕在单个轴上滚动，其实现原理也特别简单。你可以按照屏幕大小绘制出一连串的图片，在游戏进行时只需要同时绘制出两张图片就可以。图片绘制的时机你可以采用时间计算，也可以采用Trigger或者射线检测，当你给你的每张图片都加上ID，你就可以非常自由的控制下一张改出现那一张图片了。又或者你的玩家吃到什么道具，同样可以很方便的影响到下一张图片的绘制。</p>
-<h3 id="无限滚屏"><a class="markdownIt-Anchor" href="#无限滚屏"></a> 无限滚屏</h3>
+<h3 id="无限滚屏">无限滚屏</h3>
 <p>无限滚屏的原理其实和上面的单轴没有任何区别，只是说上面的图片出现顺序可能是写在策划表里的，而无限滚动是做一个循环或者随机打散组成序列。</p>
-<h3 id="平行滚屏"><a class="markdownIt-Anchor" href="#平行滚屏"></a> 平行滚屏</h3>
+<h3 id="平行滚屏">平行滚屏</h3>
 <p>当然，制作过 2D 横版卷轴游戏的同学可能会知道，我们的背景实质上是分层的，远景，中景，近景，他们的移动都是有不同的速率的。</p>
 <p>这会让你的游戏看起来更加真实，美术绝赞。</p>
-<h3 id="四向滚屏"><a class="markdownIt-Anchor" href="#四向滚屏"></a> 四向滚屏</h3>
-<p>四向滚屏的数学运算确实比单轴滚屏难了一个维度，但其实解决方案也是很多的。你可以选定一个坐标原点，以你的图片的长宽为x,y轴的单位长度构建一个坐标系，后面就是简单的数学问题了。一个很简单的很符合直觉的解决方案是，渲染你的角色所在的矩阵四角的图片。实际上就是你的角色所在的矩阵的四个点为中心渲染出图片。<br />
+<h3 id="四向滚屏">四向滚屏</h3>
+<p>四向滚屏的数学运算确实比单轴滚屏难了一个维度，但其实解决方案也是很多的。你可以选定一个坐标原点，以你的图片的长宽为x,y轴的单位长度构建一个坐标系，后面就是简单的数学问题了。一个很简单的很符合直觉的解决方案是，渲染你的角色所在的矩阵四角的图片。实际上就是你的角色所在的矩阵的四个点为中心渲染出图片。<br>
 很简单的算法吧，一句话就可以描述。</p>
-<h2 id="瓦片地图"><a class="markdownIt-Anchor" href="#瓦片地图"></a> 瓦片地图</h2>
+<h2 id="瓦片地图">瓦片地图</h2>
 <p>素材复用在现代游戏中是很重要的一环，相信大家都没法接受每一关都需要重新绘制一遍，尤其是对于游戏地图来说，很多花草竹石在每个场景中也都大同小异。</p>
 <p>瓦片地图把游戏世界划分成等分的网格（可以是等六边形也可以是平行四边形或者其他什么形状），每个方块都有其对应的精灵。一般来说游戏引擎都会提供一个瓦片地图的编辑器，一张画布，上面来绘制你的地图，一个调色板，上面是你将采用的精灵。</p>
-<h2 id="参考资料"><a class="markdownIt-Anchor" href="#参考资料"></a> 参考资料</h2>
+<h2 id="参考资料">参考资料</h2>
 <ol>
 <li>
 <p><a target="_blank" rel="noopener" href="https://vibaike.com/130533/">光栅扫描</a></p>
@@ -483,7 +483,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%83%8F%E7%B4%A0%E7%BC%93%E5%86%B2%E5%8C%BA%E5%92%8C%E5%9E%82%E7%9B%B4%E5%90%8C%E6%AD%A5"><span class="nav-number">1.</span> <span class="nav-text"> 像素缓冲区和垂直同步</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#crt-%E6%98%BE%E7%A4%BA%E5%99%A8%E5%9F%BA%E7%A1%80"><span class="nav-number">1.1.</span> <span class="nav-text"> CRT 显示器基础</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B6%88%E9%9A%90%E6%9C%9F-blank"><span class="nav-number">1.1.1.</span> <span class="nav-text"> 消隐期 BLANK</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9E%82%E7%9B%B4%E5%90%8C%E6%AD%A5"><span class="nav-number">1.1.2.</span> <span class="nav-text"> 垂直同步</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%83%8F%E7%B4%A0%E7%BC%93%E5%86%B2%E5%8C%BA"><span class="nav-number">1.2.</span> <span class="nav-text"> 像素缓冲区</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B2%BE%E7%81%B5-sprite"><span class="nav-number">2.</span> <span class="nav-text"> 精灵 Sprite</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E6%98%AF%E7%B2%BE%E7%81%B5-sprite"><span class="nav-number">2.1.</span> <span class="nav-text"> 为什么是『精灵 · Sprite』？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%BB%E5%AE%B6%E7%AE%97%E6%B3%95"><span class="nav-number">2.2.</span> <span class="nav-text"> 画家算法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E6%80%9D%E6%83%B3"><span class="nav-number">2.2.1.</span> <span class="nav-text"> 基本思想</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B2%BE%E7%81%B5%E5%8A%A8%E7%94%BB"><span class="nav-number">2.3.</span> <span class="nav-text"> 精灵动画</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B2%BE%E7%81%B5%E8%A1%A8%E5%8D%95"><span class="nav-number">2.4.</span> <span class="nav-text"> 精灵表单</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%BB%9A%E5%B1%8F"><span class="nav-number">3.</span> <span class="nav-text"> 滚屏</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8D%95%E8%BD%B4%E6%BB%9A%E5%B1%8F"><span class="nav-number">3.1.</span> <span class="nav-text"> 单轴滚屏</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%97%A0%E9%99%90%E6%BB%9A%E5%B1%8F"><span class="nav-number">3.2.</span> <span class="nav-text"> 无限滚屏</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B9%B3%E8%A1%8C%E6%BB%9A%E5%B1%8F"><span class="nav-number">3.3.</span> <span class="nav-text"> 平行滚屏</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%9B%E5%90%91%E6%BB%9A%E5%B1%8F"><span class="nav-number">3.4.</span> <span class="nav-text"> 四向滚屏</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%93%A6%E7%89%87%E5%9C%B0%E5%9B%BE"><span class="nav-number">4.</span> <span class="nav-text"> 瓦片地图</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">5.</span> <span class="nav-text"> 参考资料</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%83%8F%E7%B4%A0%E7%BC%93%E5%86%B2%E5%8C%BA%E5%92%8C%E5%9E%82%E7%9B%B4%E5%90%8C%E6%AD%A5"><span class="nav-number">1.</span> <span class="nav-text">像素缓冲区和垂直同步</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#crt-%E6%98%BE%E7%A4%BA%E5%99%A8%E5%9F%BA%E7%A1%80"><span class="nav-number">1.1.</span> <span class="nav-text">CRT 显示器基础</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B6%88%E9%9A%90%E6%9C%9F-blank"><span class="nav-number">1.1.1.</span> <span class="nav-text">消隐期 BLANK</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9E%82%E7%9B%B4%E5%90%8C%E6%AD%A5"><span class="nav-number">1.1.2.</span> <span class="nav-text">垂直同步</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%83%8F%E7%B4%A0%E7%BC%93%E5%86%B2%E5%8C%BA"><span class="nav-number">1.2.</span> <span class="nav-text">像素缓冲区</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B2%BE%E7%81%B5-sprite"><span class="nav-number">2.</span> <span class="nav-text">精灵 Sprite</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E6%98%AF-%E7%B2%BE%E7%81%B5-sprite-%EF%BC%9F"><span class="nav-number">2.1.</span> <span class="nav-text">为什么是『精灵 · Sprite』？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%BB%E5%AE%B6%E7%AE%97%E6%B3%95"><span class="nav-number">2.2.</span> <span class="nav-text">画家算法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E6%80%9D%E6%83%B3"><span class="nav-number">2.2.1.</span> <span class="nav-text">基本思想</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B2%BE%E7%81%B5%E5%8A%A8%E7%94%BB"><span class="nav-number">2.3.</span> <span class="nav-text">精灵动画</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B2%BE%E7%81%B5%E8%A1%A8%E5%8D%95"><span class="nav-number">2.4.</span> <span class="nav-text">精灵表单</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%BB%9A%E5%B1%8F"><span class="nav-number">3.</span> <span class="nav-text">滚屏</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8D%95%E8%BD%B4%E6%BB%9A%E5%B1%8F"><span class="nav-number">3.1.</span> <span class="nav-text">单轴滚屏</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%97%A0%E9%99%90%E6%BB%9A%E5%B1%8F"><span class="nav-number">3.2.</span> <span class="nav-text">无限滚屏</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B9%B3%E8%A1%8C%E6%BB%9A%E5%B1%8F"><span class="nav-number">3.3.</span> <span class="nav-text">平行滚屏</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%9B%E5%90%91%E6%BB%9A%E5%B1%8F"><span class="nav-number">3.4.</span> <span class="nav-text">四向滚屏</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%93%A6%E7%89%87%E5%9C%B0%E5%9B%BE"><span class="nav-number">4.</span> <span class="nav-text">瓦片地图</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">5.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -499,7 +499,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">38</span>
+          <span class="site-state-item-count">39</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -548,16 +548,16 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">130k</span>
+    <span title="站点总字数">131k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">1:58</span>
+    <span title="站点阅读时长">1:59</span>
 </div>
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共49.1k字</span>
+  <span class="post-count">博客全站共49.7k字</span>
 </div>
 
     <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>

@@ -214,6 +214,107 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://rdququ.top/posts/d5175d0d/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="蛐蛐">
+      <meta itemprop="description" content="正在学习unity中">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="蛐蛐的软件开发世界">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/posts/d5175d0d/" class="post-title-link" itemprop="url">lightprobe初步认识</a>
+        </h2>
+
+        <div class="post-meta">
+        
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2024-01-31 14:52:25 / 修改时间：16:00:40" itemprop="dateCreated datePublished" datetime="2024-01-31T14:52:25+08:00">2024-01-31</time>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>826</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <blockquote>
+<p>Unity 的预计算实时 GI 或者烘焙 GI 只对静态的物体起作用，对于可移动的物体，需要用一种新的技术来解决光照问题。</p>
+<p>为了让动态物体（如动态场景元素或角色）能够获得静态物体反弹的光线，需要将这些光照信息记录下来，并且在运行时能快速读取和使用。</p>
+<p>通过在场景中放置采样点捕捉各个方向的光线来实现动态物体接收间接光的功能。这些采样点记录的光照信息被编码成可以在游戏过程中快速计算值。在 Unity 中，我们将这些采样点称为“光照探针”</p>
+</blockquote>
+<ul>
+<li>让动态物体从场景接受间接光</li>
+<li>使用该技术的动态物体不会产生反射光 =&gt; 使用于较小的物体</li>
+</ul>
+<h2 id="工作原理">工作原理</h2>
+<p>通过 3D 空间中的 Probe 对入射光进行采样并将这些信息通过<strong>球谐函数</strong>编码处理后保存成文件。</p>
+<h3 id="球谐函数">球谐函数</h3>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/351289217">简单介绍球谐函数（Spherical Harmonics）</a></p>
+<p>球面基函数的一种</p>
+<p>SH 系数 =&gt; 只记录基函数系数</p>
+<p>如 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>r</mi><mo>=</mo><mn>0.5</mn><mo>+</mo><mn>0.1</mn><mi>cos</mi><mo>⁡</mo><mi>θ</mi><mo>+</mo><mn>0.07</mn><mi>sin</mi><mo>⁡</mo><mi>θ</mi><mo>+</mo><mn>0.05</mn><mi>cos</mi><mo>⁡</mo><mi>θ</mi><mi>sin</mi><mo>⁡</mo><mi>θ</mi><mo>+</mo><mn>0.3</mn><mo stretchy="false">(</mo><mn>2</mn><msup><mo><mi>cos</mi><mo>⁡</mo></mo><mn>2</mn></msup><mi>θ</mi><mo>−</mo><mn>1</mn><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">r =  0.5 + 0.1\cos \theta + 0.07\sin \theta + 0.05\cos \theta\sin \theta + 0.3(2\cos^2 \theta - 1)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.72777em;vertical-align:-0.08333em;"></span><span class="mord">0</span><span class="mord">.</span><span class="mord">5</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.77777em;vertical-align:-0.08333em;"></span><span class="mord">0</span><span class="mord">.</span><span class="mord">1</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mop">cos</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">θ</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.77777em;vertical-align:-0.08333em;"></span><span class="mord">0</span><span class="mord">.</span><span class="mord">0</span><span class="mord">7</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mop">sin</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">θ</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.77777em;vertical-align:-0.08333em;"></span><span class="mord">0</span><span class="mord">.</span><span class="mord">0</span><span class="mord">5</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mop">cos</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">θ</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mop">sin</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">θ</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1.064108em;vertical-align:-0.25em;"></span><span class="mord">0</span><span class="mord">.</span><span class="mord">3</span><span class="mopen">(</span><span class="mord">2</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mop"><span class="mop">cos</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141079999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">θ</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">1</span><span class="mclose">)</span></span></span></span></p>
+<p>可以只记参数，压缩为 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>0.5</mn><mo separator="true">,</mo><mn>0.1</mn><mo separator="true">,</mo><mn>0.07</mn><mo separator="true">,</mo><mn>0.3</mn></mrow><annotation encoding="application/x-tex">0.5,0.1,0.07,0.3</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8388800000000001em;vertical-align:-0.19444em;"></span><span class="mord">0</span><span class="mord">.</span><span class="mord">5</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord">0</span><span class="mord">.</span><span class="mord">1</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord">0</span><span class="mord">.</span><span class="mord">0</span><span class="mord">7</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord">0</span><span class="mord">.</span><span class="mord">3</span></span></span></span></p>
+<h3 id="球谐函数参考资料">球谐函数参考资料</h3>
+<ol>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/50208005">球谐光照与 PRT 学习笔记（三）：球谐函数 - 知乎 (zhihu.com)</a></li>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/649881002">球谐函数学习笔记 - 知乎 (zhihu.com)</a></li>
+<li><a target="_blank" rel="noopener" href="https://mathworld.wolfram.com/SphericalHarmonic.html">Spherical Harmonic – from Wolfram MathWorld</a></li>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/572840876">大二学生都会的球谐函数 - 知乎 (zhihu.com)</a></li>
+</ol>
+<h2 id="unity-中的-lightprobes">Unity 中的 LightProbes</h2>
+<p>存储数据： 1. Probe Position 2. SH 系数 3. 四面体曲面细分</p>
+<h3 id="曲面细分">曲面细分</h3>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/144400261">计算机图形学十一：曲面细分(subdivision)与曲面简化(Smplication) </a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://rdququ.top/posts/b5da1af9/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -268,7 +369,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h2 id="涉事代码"><a class="markdownIt-Anchor" href="#涉事代码"></a> 涉事代码</h2>
+          <h2 id="涉事代码">涉事代码</h2>
 <figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Update</span>()</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> (Input.GetMouseButtonDown(<span class="number">0</span>))</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">var</span> pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);</span><br><span class="line">        Debug.Log(pos);</span><br><span class="line">        <span class="keyword">var</span> posInt = tileMap.WorldToCell(pos) + <span class="keyword">new</span> Vector3Int(<span class="number">0</span>,<span class="number">0</span>,<span class="number">10</span>);</span><br><span class="line">        Debug.Log(posInt);</span><br><span class="line">        tileMap.SetColor(posInt,Color.red);<span class="comment">// BUG</span></span><br><span class="line">        Debug.Log(tileMap.HasTile(posInt)+<span class="string">&quot;  &quot;</span>+tileMap.GetSprite(posInt)+<span class="string">&quot;  &quot;</span>+tileMap.GetColor(posInt));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
           <!--noindex-->
             <div class="post-button">
@@ -431,7 +532,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h2 id="重温面向对象"><a class="markdownIt-Anchor" href="#重温面向对象"></a> 重温面向对象</h2>
+          <h2 id="重温面向对象">重温面向对象</h2>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/posts/1e29cb18/#more" rel="contents">
@@ -512,7 +613,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h2 id="前置知识"><a class="markdownIt-Anchor" href="#前置知识"></a> 前置知识</h2>
+          <h2 id="前置知识">前置知识</h2>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/posts/223f372/#more" rel="contents">
@@ -599,7 +700,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h2 id="unity-底层的内存分配"><a class="markdownIt-Anchor" href="#unity-底层的内存分配"></a> Unity 底层的内存分配</h2>
+          <h2 id="unity-底层的内存分配">Unity 底层的内存分配</h2>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/posts/e44777a7/#more" rel="contents">
@@ -860,7 +961,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h2 id="关键词"><a class="markdownIt-Anchor" href="#关键词"></a> 关键词</h2>
+          <h2 id="关键词">关键词</h2>
 <ul>
 <li>.NET mono 虚拟机</li>
 <li>IL2CPP</li>
@@ -951,105 +1052,18 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h2 id="坐标系"><a class="markdownIt-Anchor" href="#坐标系"></a> 坐标系</h2>
+          <h2 id="坐标系">坐标系</h2>
 <ul>
 <li>笛卡尔坐标系</li>
-<li>圆柱坐标系<br />
-垂直“高度与” <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>h</mi></mrow><annotation encoding="application/x-tex">h</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathnormal">h</span></span></span></span> 、从垂直轴发出的辐射轴 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>r</mi></mrow><annotation encoding="application/x-tex">r</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">r</span></span></span></span> 、偏航角(yaw) <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>θ</mi></mrow><annotation encoding="application/x-tex">\theta</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">θ</span></span></span></span></li>
-<li>球坐标系<br />
-俯仰角(pitch) <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ϕ</mi></mrow><annotation encoding="application/x-tex">\phi</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="mord mathnormal">ϕ</span></span></span></span> 、偏航角(yaw) <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>θ</mi></mrow><annotation encoding="application/x-tex">\theta</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">θ</span></span></span></span> 、半径长度 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>r</mi></mrow><annotation encoding="application/x-tex">r</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">r</span></span></span></span><br />
+<li>圆柱坐标系<br>
+垂直“高度与” <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>h</mi></mrow><annotation encoding="application/x-tex">h</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathdefault">h</span></span></span></span> 、从垂直轴发出的辐射轴 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>r</mi></mrow><annotation encoding="application/x-tex">r</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">r</span></span></span></span> 、偏航角(yaw) <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>θ</mi></mrow><annotation encoding="application/x-tex">\theta</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">θ</span></span></span></span></li>
+<li>球坐标系<br>
+俯仰角(pitch) <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ϕ</mi></mrow><annotation encoding="application/x-tex">\phi</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="mord mathdefault">ϕ</span></span></span></span> 、偏航角(yaw) <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>θ</mi></mrow><annotation encoding="application/x-tex">\theta</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">θ</span></span></span></span> 、半径长度 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>r</mi></mrow><annotation encoding="application/x-tex">r</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">r</span></span></span></span><br>
 eg. 经纬线</li>
 </ul>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/posts/90745bbc/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://rdququ.top/posts/b15b4e49/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="蛐蛐">
-      <meta itemprop="description" content="正在学习unity中">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="蛐蛐的软件开发世界">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/posts/b15b4e49/" class="post-title-link" itemprop="url">引擎开发实战学习笔记</a>
-        </h2>
-
-        <div class="post-meta">
-        
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2023-11-14 15:26:04" itemprop="dateCreated datePublished" datetime="2023-11-14T15:26:04+08:00">2023-11-14</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-11-15 22:37:01" itemprop="dateModified" datetime="2023-11-15T22:37:01+08:00">2023-11-15</time>
-              </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>19</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>记录</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/posts/b15b4e49/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -1140,7 +1154,7 @@ eg. 经纬线</li>
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">38</span>
+          <span class="site-state-item-count">39</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1189,16 +1203,16 @@ eg. 经纬线</li>
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">130k</span>
+    <span title="站点总字数">131k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">1:58</span>
+    <span title="站点阅读时长">1:59</span>
 </div>
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共49.1k字</span>
+  <span class="post-count">博客全站共49.7k字</span>
 </div>
 
     <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
