@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"rdququ.top","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"manual","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+    <script src="//code.jquery.com/jquery-2.0.3.min.js"></script>
+  <meta name="description" content="初步认识 UniTask UniTask Provides an efficient allocation free async&#x2F;await integration for Unity. 也就是说 UniTask 为 Unity 提供高效的无 GC async&#x2F;await 集成。  我们已经有了 C# Task, 为什么还要 UniTask 呢？ JavaScript 不支持多线程，因此其支持的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="UniTask 授课">
+<meta property="og:url" content="https://rdququ.top/posts/a3c30c4/index.html">
+<meta property="og:site_name" content="蛐蛐的软件开发世界">
+<meta property="og:description" content="初步认识 UniTask UniTask Provides an efficient allocation free async&#x2F;await integration for Unity. 也就是说 UniTask 为 Unity 提供高效的无 GC async&#x2F;await 集成。  我们已经有了 C# Task, 为什么还要 UniTask 呢？ JavaScript 不支持多线程，因此其支持的">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2024-03-06T15:42:43.000Z">
+<meta property="article:modified_time" content="2024-03-11T08:11:32.231Z">
+<meta property="article:author" content="蛐蛐">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://rdququ.top/posts/a3c30c4/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  
+  
+    <script src="/js/cursor/text.js"></script>
+  
+
+  <title>UniTask 授课 | 蛐蛐的软件开发世界</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+  <script src="https://cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome/css/font-awesome.min.css"/>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><link rel="alternate" href="/rss2.xml" title="蛐蛐的软件开发世界" type="application/rss+xml">
+<link href="https://cdn.bootcss.com/KaTeX/0.11.1/katex.min.css" rel="stylesheet" /></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+    <a target="_blank" rel="noopener" href="https://github.com/dlqw" class="github-corner" aria-label="View source on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">蛐蛐的软件开发世界</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+        <li class="menu-item menu-item-links">
+
+    <a href="/links/" rel="section"><i class="fa fa-link fa-fw"></i>友链</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+      <script src="https://dlqw.github.io/live2d/autoload.js"></script>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://rdququ.top/posts/a3c30c4/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="蛐蛐">
+      <meta itemprop="description" content="正在学习unity中">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="蛐蛐的软件开发世界">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          UniTask 授课
+        </h1>
+
+        <div class="post-meta">
+        
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-03-06 23:42:43" itemprop="dateCreated datePublished" datetime="2024-03-06T23:42:43+08:00">2024-03-06</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-03-11 16:11:32" itemprop="dateModified" datetime="2024-03-11T16:11:32+08:00">2024-03-11</time>
+              </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>16k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>14 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="初步认识-unitask"><a class="markdownIt-Anchor" href="#初步认识-unitask"></a> 初步认识 UniTask</h2>
+<p>UniTask Provides an efficient allocation free async/await integration for Unity.</p>
+<p>也就是说 UniTask 为 Unity 提供高效的无 GC async/await 集成。</p>
+<h3 id="我们已经有了-c-task-为什么还要-unitask-呢"><a class="markdownIt-Anchor" href="#我们已经有了-c-task-为什么还要-unitask-呢"></a> 我们已经有了 C# Task, 为什么还要 UniTask 呢？</h3>
+<p>JavaScript 不支持多线程，因此其支持的 WebGL 平台也是单线程的。</p>
+<p>Unity 的主循环也是单线程的，一旦该线程死锁，一切跑在主循环上的 GO 等都会无法正常工作，而你在别的线程也无法操作主循环中的 GO。</p>
+<p>在这些环境中，多线程的 Task 自然没法大展拳脚。</p>
+<p>而 UniTask 不使用线程和 SynchronizationContext/ExecutionContext，完全跑在 PlayerLoop 上。</p>
+<h3 id="安装-unitask"><a class="markdownIt-Anchor" href="#安装-unitask"></a> 安装 UniTask</h3>
+<ol>
+<li>Release: <a target="_blank" rel="noopener" href="https://github.com/Cysharp/UniTask">Cysharp/UniTask: Provides an efficient allocation free async/await integration for Unity. (github.com)</a></li>
+<li>UPM Package: <a target="_blank" rel="noopener" href="https://github.com/Cysharp/UniTask?tab=readme-ov-file#upm-package">Cysharp/UniTask：为 Unity 提供高效的免费分配异步/等待集成。 — Cysharp/UniTask: Provides an efficient allocation free async/await integration for Unity. (github.com)</a></li>
+</ol>
+<h2 id="基础-level-0"><a class="markdownIt-Anchor" href="#基础-level-0"></a> 基础 Level 0</h2>
+<h3 id="引入延时操作"><a class="markdownIt-Anchor" href="#引入延时操作"></a> 引入——延时操作</h3>
+<p>情景：实现攻击 CD。</p>
+<p>Update 写法</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="built_in">float</span> attackCooldown = <span class="number">2f</span>;</span><br><span class="line"><span class="keyword">public</span> <span class="built_in">float</span> currentAttackCooldown = <span class="number">0f</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Update</span>()</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> (currentAttackCooldown &gt; <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        currentAttackCooldown -= Time.deltaTime;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">    &#123;</span><br><span class="line">        currentAttackCooldown = <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (Input.GetKeyDown(KeyCode.Space) &amp;&amp; currentAttackCooldown == <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        Attack();</span><br><span class="line">        currentAttackCooldown = attackCooldown;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">Attack</span>()</span></span><br><span class="line">&#123;</span><br><span class="line">    Debug.Log(<span class="string">&quot;Attack&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>协程写法</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="built_in">float</span> attackCooldown = <span class="number">2f</span>;</span><br><span class="line"><span class="keyword">public</span> <span class="built_in">bool</span> canAttack = <span class="literal">true</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Update</span>()</span></span><br><span class="line">&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (Input.GetKeyDown(KeyCode.Space) &amp;&amp; canAttack)</span><br><span class="line">    &#123;</span><br><span class="line">        StartCoroutine(Attack());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> IEnumerator <span class="title">Attack</span>()</span></span><br><span class="line">&#123;</span><br><span class="line">    canAttack = <span class="literal">false</span>;</span><br><span class="line">    Debug.Log(<span class="string">&quot;Attack&quot;</span>);</span><br><span class="line">    <span class="function"><span class="keyword">yield</span> <span class="keyword">return</span> <span class="keyword">new</span> <span class="title">WaitForSeconds</span>(<span class="params">attackCooldown</span>)</span>;</span><br><span class="line">    canAttack = <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>UniTask 写法</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="built_in">float</span> attackCooldown = <span class="number">2f</span>;</span><br><span class="line"><span class="keyword">public</span> <span class="built_in">bool</span> canAttack = <span class="literal">true</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Update</span>()</span></span><br><span class="line">&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (Input.GetKeyDown(KeyCode.Space) &amp;&amp; canAttack)</span><br><span class="line">    &#123;</span><br><span class="line">        Attack().Forget();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">async</span> UniTaskVoid <span class="title">Attack</span>()</span></span><br><span class="line">&#123;</span><br><span class="line">    canAttack = <span class="literal">false</span>;</span><br><span class="line">    Debug.Log(<span class="string">&quot;Attack&quot;</span>);</span><br><span class="line">    <span class="keyword">await</span> UniTask.Delay((<span class="built_in">int</span>)(attackCooldown * <span class="number">1000</span>));</span><br><span class="line">    canAttack = <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>像正常方法一样调用，方便且酷。</p>
+<blockquote>
+<p>UniTask 比 coroutine  好在哪？不需要绑定 monobehaviour, 可用 try - catch, 可以有返回值。</p>
+</blockquote>
+<h4 id="认识异步对象"><a class="markdownIt-Anchor" href="#认识异步对象"></a> 认识异步对象</h4>
+<p>比起上面的传统方法，我们发现使用 UniTask 编写的代码里多出了几个我们不认识的标识符/语法：async/await/UniTaskVoid/.Forget()。我们一个一个来看</p>
+<h5 id="async"><a class="markdownIt-Anchor" href="#async"></a> async</h5>
+<blockquote>
+<p>使用 <code>async</code> 修饰符可将方法、<a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/dotnet/csharp/language-reference/operators/lambda-expressions">lambda 表达式</a> 或 <a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/dotnet/csharp/language-reference/operators/delegate-operator">匿名方法</a>指定为异步。 如果对方法或表达式使用此修饰符，则其称为异步方法 。</p>
+</blockquote>
+<p>也就是说，使用 async 修饰的方法，是异步方法，<strong>可能</strong>是异步执行的。</p>
+<h5 id="await"><a class="markdownIt-Anchor" href="#await"></a> await</h5>
+<blockquote>
+<p>await 运算符暂停对其所属的 <a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/dotnet/csharp/language-reference/keywords/async">async</a> 方法的求值，直到其操作数表示的异步操作完成。 异步操作完成后，<code>await</code> 运算符将返回操作的结果（如果有）。当 <code>await</code> 运算符应用到表示已完成操作的操作数时，它将立即返回操作的结果，而不会暂停其所属的方法。 当 <code>await</code> 运算符暂停其所属的异步方法时，控件将返回到方法的调用方。</p>
+</blockquote>
+<p>什么意思呢？我们更改的之前的代码，添加了一些输出以便于你理解。</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Update</span>()</span></span><br><span class="line">&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (Input.GetKeyDown(KeyCode.Space) &amp;&amp; canAttack)</span><br><span class="line">    &#123;</span><br><span class="line">        Attack().Forget();</span><br><span class="line">        Debug.Log(<span class="string">&quot;Attack Finished&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">async</span> UniTaskVoid <span class="title">Attack</span>()</span></span><br><span class="line">&#123;</span><br><span class="line">    canAttack = <span class="literal">false</span>;</span><br><span class="line">    Debug.Log(<span class="string">&quot;Attack&quot;</span>);</span><br><span class="line">    <span class="keyword">await</span> UniTask.Delay((<span class="built_in">int</span>)(attackCooldown * <span class="number">1000</span>));</span><br><span class="line">    Debug.Log(<span class="string">&quot;Attack Cooldown Finished&quot;</span>);</span><br><span class="line">    canAttack = <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>output</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[<span class="meta">21:39:03:878</span>] Attack</span><br><span class="line">[<span class="meta">21:39:03:882</span>] Attack Finished</span><br><span class="line">[<span class="meta">21:39:05:879</span>] Attack Cooldown Finished</span><br></pre></td></tr></table></figure>
+<p>显然代码运行到 <code>[21:39:05:879] Attack Cooldown Finisheds</code> 停了两秒，并从异步方法执行返回至异步方法调用的上下文，并输出了“Attack Finish”,在 2s 后“Attack Cooldown Finished”如期而至。</p>
+<h5 id="方法返回了什么"><a class="markdownIt-Anchor" href="#方法返回了什么"></a> 方法返回了什么？</h5>
+<p>一个 struct，他代表一个异步任务。</p>
+<p><code>UniTaskVoid</code> 是 <code>UniTask</code> 的轻量版本，适用于完全无需 await 的场景，这时仍然需要 <code>.Forgot()</code> 消除警告。当我们在返回值为 <code>UniTaskVoid</code> 的方法调用前加上 await，会发生报错。</p>
+<p><code>UniTask</code> 可以被等待，但是他不会返回任何值。</p>
+<p><code>UniTask&lt;T&gt;</code> 可以返回值，通过 C# 元组，你可以轻松返回多个值。</p>
+<h5 id="forget"><a class="markdownIt-Anchor" href="#forget"></a> .Forget()</h5>
+<p><code>.Forget()</code> 方法可以让你同步执行异步方法，一般我们称其为“Fire and Forget”。虽然执行了这个异步方法，但我们并不准备等待他，而是向后执行。下面这段代码的执行效果和使用 UniTaskVoid 的原方法效果相同。</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Update</span>()</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> (Input.GetKeyDown(KeyCode.Space) &amp;&amp; canAttack)</span><br><span class="line">    &#123;</span><br><span class="line">        Attack().Forget();</span><br><span class="line">        Debug.Log(<span class="string">&quot;Attack Finished&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">async</span> UniTask <span class="title">Attack</span>()</span></span><br><span class="line">&#123;</span><br><span class="line">    canAttack = <span class="literal">false</span>;</span><br><span class="line">    Debug.Log(<span class="string">&quot;Attack&quot;</span>);</span><br><span class="line">    <span class="keyword">await</span> UniTask.Delay((<span class="built_in">int</span>)(attackCooldown * <span class="number">1000</span>));</span><br><span class="line">    Debug.Log(<span class="string">&quot;Attack Cooldown Finished&quot;</span>);</span><br><span class="line">    canAttack = <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="延时常用的-api"><a class="markdownIt-Anchor" href="#延时常用的-api"></a> 延时常用的 API</h4>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//int millisecondsDelay 也可换为 TimeSpan</span></span><br><span class="line"><span class="comment">//ignoreTimeScale 表示是否无视时间流速</span></span><br><span class="line"><span class="comment">//PlayerLoopTiming 表示在 PlayerLoop 的哪一个阶段处理延时操作</span></span><br><span class="line"><span class="comment">//CancellationToken 用于指定一个取消token，以便在合适的时候取消延时操作</span></span><br><span class="line"><span class="comment">//cancelImmediately 顾名思义，是用来调控取消操作是被否立即执行的布尔值。详细解释请看这个老哥的博文：https://qiita.com/Euglenach/items/6623d96d5b93ff52e816</span></span><br><span class="line"><span class="keyword">await</span> UniTask.Delay(<span class="built_in">int</span> millisecondsDelay, <span class="built_in">bool</span> ignoreTimeScale = <span class="literal">false</span>, PlayerLoopTiming delayTiming = PlayerLoopTiming.Update, CancellationToken cancellationToken = <span class="literal">default</span>(CancellationToken), <span class="built_in">bool</span> cancelImmediately = <span class="literal">false</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">await</span> UniTask.DelayFrame(<span class="built_in">int</span> delayFrameCount, PlayerLoopTiming delayTiming = PlayerLoopTiming.Update, CancellationToken cancellationToken = <span class="literal">default</span>(CancellationToken), <span class="built_in">bool</span> cancelImmediately = <span class="literal">false</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 官方文档这样注释：Similar as UniTask.Yield but guaranteed run on next frame.</span></span><br><span class="line"><span class="keyword">await</span> UniTask.NextFrame(PlayerLoopTiming timing, CancellationToken cancellationToken, <span class="built_in">bool</span> cancelImmediately = <span class="literal">false</span>);</span><br><span class="line"></span><br><span class="line">当然，还有</span><br><span class="line"><span class="keyword">await</span> UniTask.WaitForEndOfFrame();</span><br><span class="line"><span class="keyword">await</span> UniTask.WaitForFixedUpdate();</span><br><span class="line"><span class="keyword">await</span> UniTask.WaitForSeconds();</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<p><strong>UniTask.Yield()&amp;UniTask.NexFrame()&amp;yield return null 的辨析</strong></p>
+<p><code>yield return null</code> and <code>UniTask.Yield</code> are similar but different. <code>yield return null</code> always returns next frame but <code>UniTask.Yield</code> returns next called. That is, call <code>UniTask.Yield(PlayerLoopTiming.Update)</code> on <code>PreUpdate</code>, it returns same frame. <code>UniTask.NextFrame()</code> guarantees return next frame, you can expect this to behave exactly the same as <code>yield return null</code>.</p>
+<p>也就是说 <code>UniTask.Yield</code> 的调用依据是下一次调用(Call), 如果你再本帧的 <code>PreUpdate</code> 阶段调用了 <code>UniTask.Yield(PlayerLoopTiming.Update)</code> 那么他就是在本帧的 <code>Update</code> 阶段被调用，<code>UniTask.NextFrame()</code>则能确保一定是在下一帧被调用。</p>
+<p>如果你对 Unity Script 生命周期和执行顺序还不够了解，请看：<a target="_blank" rel="noopener" href="https://docs.unity.cn/cn/2020.3/Manual/ExecutionOrder.html">事件函数的执行顺序 - Unity 手册</a></p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="built_in">enum</span> PlayerLoopTiming</span><br><span class="line">&#123;</span><br><span class="line">    Initialization = <span class="number">0</span>,</span><br><span class="line">    LastInitialization = <span class="number">1</span>,</span><br><span class="line"></span><br><span class="line">    EarlyUpdate = <span class="number">2</span>,</span><br><span class="line">    LastEarlyUpdate = <span class="number">3</span>,</span><br><span class="line"></span><br><span class="line">    FixedUpdate = <span class="number">4</span>,</span><br><span class="line">    LastFixedUpdate = <span class="number">5</span>,</span><br><span class="line"></span><br><span class="line">    PreUpdate = <span class="number">6</span>,</span><br><span class="line">    LastPreUpdate = <span class="number">7</span>,</span><br><span class="line"></span><br><span class="line">    Update = <span class="number">8</span>,</span><br><span class="line">    LastUpdate = <span class="number">9</span>,</span><br><span class="line"></span><br><span class="line">    PreLateUpdate = <span class="number">10</span>,</span><br><span class="line">    LastPreLateUpdate = <span class="number">11</span>,</span><br><span class="line"></span><br><span class="line">    PostLateUpdate = <span class="number">12</span>,</span><br><span class="line">    LastPostLateUpdate = <span class="number">13</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">if</span> UNITY_2020_2_OR_NEWER</span></span><br><span class="line">    TimeUpdate = <span class="number">14</span>,</span><br><span class="line">    LastTimeUpdate = <span class="number">15</span>,</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="wait-操作"><a class="markdownIt-Anchor" href="#wait-操作"></a> Wait 操作</h3>
+<h4 id="waituntil"><a class="markdownIt-Anchor" href="#waituntil"></a> WaitUntil</h4>
+<p>我们的需求有时不仅仅是等待一段时间这么简单，以多人游戏中当所有人都按下确认后游戏开始为例，不使用 UniTask,你会怎么实现？下面的程序模拟了这一情景。</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//GameRoom</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">GameRoom</span> : <span class="title">MonoBehaviour</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">public</span> List&lt;Player&gt; players;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> TextMeshProUGUI textMeshProUGUI;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Update</span>()</span></span><br><span class="line">    &#123;</span><br><span class="line">        WaitForPlayers();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">WaitForPlayers</span>()</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span> (players.All(player =&gt; player.isReady))</span><br><span class="line">        &#123;</span><br><span class="line">            textMeshProUGUI.text = <span class="string">&quot;All players are ready, starting game...&quot;</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//Player</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">Player</span> : <span class="title">MonoBehaviour</span></span><br><span class="line">&#123;</span><br><span class="line">   <span class="keyword">public</span> Button button;</span><br><span class="line"></span><br><span class="line">   <span class="keyword">public</span> <span class="built_in">bool</span> isReady = <span class="literal">false</span>;</span><br><span class="line"></span><br><span class="line">   <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">Start</span>()</span></span><br><span class="line">   &#123;</span><br><span class="line">      button.onClick.AddListener(() =&gt;</span><br><span class="line">      &#123;</span><br><span class="line">         isReady = <span class="literal">true</span>;</span><br><span class="line">      &#125;);</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在 <code>GameRoom</code> 里，我们不得不在 <code>Update</code> 里处理我们的逻辑，当这样的需求大量出现，<code>Update</code> 里的东西会变得越来越让人糟心。如果使用 UniTask, 这样的逻辑可以写的更简约。</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">GameRoom</span> : <span class="title">MonoBehaviour</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">public</span> List&lt;Player&gt; players;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> TextMeshProUGUI textMeshProUGUI;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">Start</span>()</span></span><br><span class="line">    &#123;</span><br><span class="line">        WaitForPlayers().Forget();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">async</span> UniTaskVoid <span class="title">WaitForPlayers</span>()</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">await</span> UniTask.WaitUntil(() =&gt; players.All(player =&gt; player.isReady));</span><br><span class="line">        textMeshProUGUI.text = <span class="string">&quot;All players are ready!&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们甚至完全’抛弃’了 <code>Update</code>，至少他不再需要我们关心。</p>
+<h4 id="waitwhile"><a class="markdownIt-Anchor" href="#waitwhile"></a> WaitWhile</h4>
+<p><code>WaitWhile(Func&lt;bool&gt; predicate)</code> 你需要传入一个 <code>Func&lt;bool&gt;</code> 委托，当其返回值为 true 时, 程序将会在此等待。</p>
+<p>我们以玩家受伤死亡这个情景为例。</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">Player</span> : <span class="title">MonoBehaviour</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">float</span> health = <span class="number">10</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Start</span>()</span></span><br><span class="line">    &#123;</span><br><span class="line">        Die().Forget();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Update</span>()</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span> (Input.GetKeyDown(KeyCode.Space))</span><br><span class="line">        &#123;</span><br><span class="line">            health -= <span class="number">3</span>;</span><br><span class="line">            Debug.Log(<span class="string">&quot;Player health: &quot;</span> + health);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">async</span> UniTaskVoid <span class="title">Die</span>()</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">await</span> UniTask.WaitWhile(() =&gt; health &gt; <span class="number">0</span>);</span><br><span class="line">        Debug.Log(<span class="string">&quot;Player is dead!&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>output:</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[<span class="meta">16:48:10:022</span>] Player health: <span class="number">7</span></span><br><span class="line">[<span class="meta">16:48:10:768</span>] Player health: <span class="number">4</span></span><br><span class="line">[<span class="meta">16:48:11:421</span>] Player health: <span class="number">1</span></span><br><span class="line">[<span class="meta">16:48:12:089</span>] Player health: <span class="number">-2</span></span><br><span class="line">[<span class="meta">16:48:12:094</span>] Player <span class="keyword">is</span> dead!</span><br></pre></td></tr></table></figure>
+<h4 id="waituntilvaluechanged"><a class="markdownIt-Anchor" href="#waituntilvaluechanged"></a> WaitUntilValueChanged</h4>
+<p><code>WaitUntilValueChanged&lt;T, U&gt;(T target, Func&lt;T, U&gt; monitorFunction) where T : class</code> 需要你传入一个类，和一个 <code>Func&lt;T,TResult&gt;</code>。当返回值 <code>U</code> 发生变化时, 程序会继续执行。凭借这个方法，我们可以实现一个简单的数据绑定。</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">Player</span> : <span class="title">MonoBehaviour</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">float</span> health = <span class="number">10</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Start</span>()</span></span><br><span class="line">    &#123;</span><br><span class="line">        BindValueChange(<span class="keyword">this</span>, a =&gt; a.health, OnHealthChanged).Forget();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Update</span>()</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span> (Input.GetKeyDown(KeyCode.Space))</span><br><span class="line">        &#123;</span><br><span class="line">            health -= <span class="number">3</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">async</span> UniTaskVoid <span class="title">BindValueChange</span>&lt;<span class="title">T</span>, <span class="title">U</span>&gt;(<span class="params">T target, Func&lt;T, U&gt; getValue, Action action</span>) <span class="keyword">where</span> T : <span class="keyword">class</span></span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">await</span> UniTask.WaitUntilValueChanged(target, getValue, cancellationToken: <span class="keyword">this</span>.GetCancellationTokenOnDestroy());</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">this</span>.GetCancellationTokenOnDestroy().IsCancellationRequested) <span class="keyword">return</span>;</span><br><span class="line">        action();</span><br><span class="line">        BindValueChange(target, getValue, action).Forget();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">OnHealthChanged</span>()</span></span><br><span class="line">    &#123;</span><br><span class="line">        Debug.Log(<span class="string">&quot;Health changed!&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>现在每当 <code>Player</code> 类的成员变量 <code>health</code> 的值发生变化，传入的委托 <code>OnHealthChanged</code> 就会被调用，当该 GO 被销毁时，生成的 cancellationToken 就会阻断递归并取消当前的异步方法。</p>
+<h3 id="条件并发"><a class="markdownIt-Anchor" href="#条件并发"></a> 条件并发</h3>
+<h4 id="whenall"><a class="markdownIt-Anchor" href="#whenall"></a> WhenAll</h4>
+<p><code>UniTask.WhenAll(params UniTask[] tasks)</code> 需要你传入多个 <code>UniTask</code>。你也可以传入不多于 15 个 <code>UniTask&lt;T&gt;</code>，他会返回一个元组。当所有传入 <code>UniTask</code> 都完成后，程序正常执行。</p>
+<p>设想你在负责网络资源拉取，比如当用户点击按钮去拉取网络图片，你需要在所有图片拉取结束后告知用户加载完成，并且这些图片拉取的速度是不一样的，为了不让画面感到违和，你需要让这些图片同时显示。你会怎么完成这个需求呢？写一大堆 bool 在 <code>Update</code> 里循环判断？让我们来看看用 UniTask 如何优雅实现。</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">Test</span> : <span class="title">MonoBehaviour</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">public</span> Button button;</span><br><span class="line">    <span class="keyword">public</span> Image image;</span><br><span class="line">    <span class="keyword">public</span> Image image2;</span><br><span class="line">    <span class="keyword">public</span> TextMeshProUGUI textMeshProUGUI;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">Start</span>()</span></span><br><span class="line">    &#123;</span><br><span class="line">        button.onClick.AddListener(() =&gt; &#123; GetImages().Forget(); &#125;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">async</span> UniTaskVoid <span class="title">GetImages</span>()</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">string</span> url1 = <span class="string">&quot;https://img.moegirl.org.cn/common/thumb/9/93/Yamada_ryo_goods.jpg/375px-Yamada_ryo_goods.jpg&quot;</span>;</span><br><span class="line">        <span class="built_in">string</span> url2 = <span class="string">&quot;https://games-cn.org/wp-content/uploads/2024/02/-01-1-scaled-520x245-c.jpg&quot;</span>;</span><br><span class="line">        <span class="keyword">var</span> result = <span class="keyword">await</span> UniTask.WhenAll(</span><br><span class="line">            GetImage(url1),</span><br><span class="line">            GetImage(url2));</span><br><span class="line">        <span class="keyword">if</span> (result.Item1.Item1)</span><br><span class="line">        &#123;</span><br><span class="line">            image.sprite = Sprite.Create(result.Item1.Item2,</span><br><span class="line">                <span class="keyword">new</span> Rect(<span class="number">0</span>, <span class="number">0</span>, result.Item1.Item2.width, result.Item1.Item2.height), <span class="keyword">new</span> Vector2(<span class="number">0.5f</span>, <span class="number">0.5f</span>));</span><br><span class="line">            textMeshProUGUI.text += url1 + <span class="string">&quot; loaded success!\n&quot;</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">        &#123;</span><br><span class="line">            textMeshProUGUI.text += url1 + <span class="string">&quot; loaded failed!\n&quot;</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (result.Item2.Item1)</span><br><span class="line">        &#123;</span><br><span class="line">            image2.sprite = Sprite.Create(result.Item2.Item2,</span><br><span class="line">                <span class="keyword">new</span> Rect(<span class="number">0</span>, <span class="number">0</span>, result.Item2.Item2.width, result.Item2.Item2.height), <span class="keyword">new</span> Vector2(<span class="number">0.5f</span>, <span class="number">0.5f</span>));</span><br><span class="line">            textMeshProUGUI.text += url2 + <span class="string">&quot; loaded success!\n&quot;</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">        &#123;</span><br><span class="line">            textMeshProUGUI.text += url2 + <span class="string">&quot; loaded failed!\n&quot;</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">async</span> UniTask&lt;(<span class="built_in">bool</span>, Texture2D)&gt; GetImage(<span class="built_in">string</span> url)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">var</span> www = UnityWebRequestTexture.GetTexture(url);</span><br><span class="line">        <span class="keyword">await</span> www.SendWebRequest();</span><br><span class="line">        <span class="keyword">return</span> (www.result == UnityWebRequest.Result.Success, ((DownloadHandlerTexture)www.downloadHandler).texture);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="whenany"><a class="markdownIt-Anchor" href="#whenany"></a> WhenAny</h4>
+<p><code>WhenAny</code> 和 <code>WhenAll</code> 类似，只不过从所有任务都完成变成了只要有一个完成就回到调用方法的上下文。其返回值的第一个是率先完成的任务的 Id。我们稍微修改下之前的代码。</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">Test</span> : <span class="title">MonoBehaviour</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">public</span> Button button;</span><br><span class="line">    <span class="keyword">public</span> Image image;</span><br><span class="line">    <span class="keyword">public</span> Image image2;</span><br><span class="line">    <span class="keyword">public</span> TextMeshProUGUI textMeshProUGUI;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">Start</span>()</span></span><br><span class="line">    &#123;</span><br><span class="line">        button.onClick.AddListener(() =&gt; &#123; GetImages().Forget(); &#125;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">async</span> UniTaskVoid <span class="title">GetImages</span>()</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">string</span> url1 = <span class="string">&quot;https://img.moegirl.org.cn/common/thumb/9/93/Yamada_ryo_goods.jpg/375px-Yamada_ryo_goods.jpg&quot;</span>;</span><br><span class="line">        <span class="built_in">string</span> url2 = <span class="string">&quot;https://games-cn.org/wp-content/uploads/2024/02/-01-1-scaled-520x245-c.jpg&quot;</span>;</span><br><span class="line">        <span class="comment">// string url2 = &quot;https://img.moegirl.org.cn/common/thumb/9/93/Yamada_ryo_goods.jpg/375px-Yamada_ryo_goods.jpg&quot;;</span></span><br><span class="line">        <span class="keyword">var</span> task1 = GetImage(url1);</span><br><span class="line">        <span class="keyword">var</span> task2 = GetImage(url2);</span><br><span class="line">        <span class="keyword">var</span> result = <span class="keyword">await</span> UniTask.WhenAny(task1, task2);</span><br><span class="line">        Debug.Log(result.winArgumentIndex <span class="keyword">switch</span></span><br><span class="line">        &#123;</span><br><span class="line">            <span class="number">0</span> =&gt; url1,</span><br><span class="line">            <span class="number">1</span> =&gt; url2,</span><br><span class="line">            _ =&gt; <span class="keyword">throw</span> <span class="keyword">new</span> ArgumentOutOfRangeException()</span><br><span class="line">        &#125; + <span class="string">&quot; finished first&quot;</span>);</span><br><span class="line">        <span class="keyword">if</span> (result.result1.Item1)</span><br><span class="line">        &#123;</span><br><span class="line">            image.sprite = Sprite.Create(result.result1.Item2,</span><br><span class="line">                <span class="keyword">new</span> Rect(<span class="number">0</span>, <span class="number">0</span>, result.result1.Item2.width, result.result1.Item2.height), <span class="keyword">new</span> Vector2(<span class="number">0.5f</span>, <span class="number">0.5f</span>));</span><br><span class="line">            image.rectTransform.sizeDelta =</span><br><span class="line">                <span class="keyword">new</span> Vector2(result.result1.Item2.width, result.result1.Item2.height);</span><br><span class="line">            Debug.Log(<span class="string">&quot;image1 loaded&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">        &#123;</span><br><span class="line">            textMeshProUGUI.text = <span class="string">&quot;\nFailed to load image from &quot;</span> + url1;</span><br><span class="line">            Debug.Log(<span class="string">&quot;image1 failed to load&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (result.result2.Item1)</span><br><span class="line">        &#123;</span><br><span class="line">            image2.sprite = Sprite.Create(result.result2.Item2,</span><br><span class="line">                <span class="keyword">new</span> Rect(<span class="number">0</span>, <span class="number">0</span>, result.result2.Item2.width, result.result2.Item2.height), <span class="keyword">new</span> Vector2(<span class="number">0.5f</span>, <span class="number">0.5f</span>));</span><br><span class="line">            image2.rectTransform.sizeDelta =</span><br><span class="line">                <span class="keyword">new</span> Vector2(result.result2.Item2.width, result.result2.Item2.height);</span><br><span class="line">            Debug.Log(<span class="string">&quot;image2 loaded&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">        &#123;</span><br><span class="line">            textMeshProUGUI.text += <span class="string">&quot;\nFailed to load image from &quot;</span> + url2;</span><br><span class="line">            Debug.Log(<span class="string">&quot;image2 failed to load&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">async</span> UniTask&lt;(<span class="built_in">bool</span>, Texture2D)&gt; GetImage(<span class="built_in">string</span> url)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">var</span> www = UnityWebRequestTexture.GetTexture(url);</span><br><span class="line">        <span class="keyword">await</span> www.SendWebRequest();</span><br><span class="line">        <span class="keyword">if</span> (www.result != UnityWebRequest.Result.Success) Debug.Log(<span class="string">&quot;error: &quot;</span> + www.error);</span><br><span class="line">        <span class="keyword">else</span> Debug.Log(<span class="string">&quot;success&quot;</span>);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> (www.result == UnityWebRequest.Result.Success,</span><br><span class="line">            ((DownloadHandlerTexture)www.downloadHandler).texture);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以看到，只有一张图片加载了出来，这是为什么呢？<strong>这是一个随堂问题。</strong></p>
+<p>通过观察日志我们可以发现，未能成功加载出来的图片其实也成功获取了图片，但是在任务组返回的时候，他还没有成功获取，所以传回去的是初始值。</p>
+<p><code>WhenAny</code> 的返回值中，被正常赋值的只有率先完成的异步任务的返回值，这是值得我们谨记在心的。</p>
+<h3 id="取消和异常处理"><a class="markdownIt-Anchor" href="#取消和异常处理"></a> 取消和异常处理</h3>
+<h4 id="超时处理"><a class="markdownIt-Anchor" href="#超时处理"></a> 超时处理</h4>
+<p>超时处理一直是网络请求中的重难点，同时，在游戏逻辑中，这个任务更加常见，对于他的处理方法需要我们牢牢掌握。我们回到之前获取网络图片的案例，看看这里存在的超时任务需求和解决方案。</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">Test</span> : <span class="title">MonoBehaviour</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">public</span> Button button;</span><br><span class="line">    <span class="keyword">public</span> Image image;</span><br><span class="line">    <span class="keyword">public</span> Image image2;</span><br><span class="line">    <span class="keyword">public</span> TextMeshProUGUI textMeshProUGUI;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">Start</span>()</span></span><br><span class="line">    &#123;</span><br><span class="line">        button.onClick.AddListener(() =&gt; &#123; GetImages().Forget(); &#125;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">async</span> UniTaskVoid <span class="title">GetImages</span>()</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">string</span> url1 = <span class="string">&quot;https://img.moegirl.org.cn/common/thumb/9/93/Yamada_ryo_goods.jpg/375px-Yamada_ryo_goods.jpg&quot;</span>;</span><br><span class="line">        <span class="built_in">string</span> url2 = <span class="string">&quot;https://i.pximg.net/c/240x480/img-master/img/2024/03/09/00/00/53/116740385_p0_master1200.jpg&quot;</span>;</span><br><span class="line">        <span class="keyword">var</span> task1 = GetImage(url1, <span class="number">10f</span>);</span><br><span class="line">        <span class="keyword">var</span> task2 = GetImage(url2, <span class="number">10f</span>);</span><br><span class="line">        <span class="keyword">var</span> result = <span class="keyword">await</span> UniTask.WhenAll(task1, task2);</span><br><span class="line">        <span class="keyword">if</span> (result.Item1.Item1)</span><br><span class="line">        &#123;</span><br><span class="line">            image.sprite = Sprite.Create(result.Item1.Item2,</span><br><span class="line">                <span class="keyword">new</span> Rect(<span class="number">0</span>, <span class="number">0</span>, result.Item1.Item2.width, result.Item1.Item2.height), Vector2.zero);</span><br><span class="line">            image.rectTransform.sizeDelta = <span class="keyword">new</span> Vector2(result.Item1.Item2.width, result.Item1.Item2.height);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">        &#123;</span><br><span class="line">            textMeshProUGUI.text = <span class="string">&quot;Image 1 failed to load.\n&quot;</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (result.Item2.Item1)</span><br><span class="line">        &#123;</span><br><span class="line">            image2.sprite = Sprite.Create(result.Item2.Item2,</span><br><span class="line">                <span class="keyword">new</span> Rect(<span class="number">0</span>, <span class="number">0</span>, result.Item2.Item2.width, result.Item2.Item2.height), Vector2.zero);</span><br><span class="line">            image2.rectTransform.sizeDelta = <span class="keyword">new</span> Vector2(result.Item2.Item2.width, result.Item2.Item2.height);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">        &#123;</span><br><span class="line">            textMeshProUGUI.text += <span class="string">&quot;Image 2 failed to load.\n&quot;</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">async</span> UniTask&lt;(<span class="built_in">bool</span>, Texture2D)&gt; GetImage(<span class="built_in">string</span> url, <span class="built_in">float</span> timeout)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">var</span> cts = <span class="keyword">new</span> CancellationTokenSource();</span><br><span class="line">        cts.CancelAfterSlim(TimeSpan.FromSeconds(timeout));</span><br><span class="line"></span><br><span class="line">        <span class="keyword">var</span> www = UnityWebRequestTexture.GetTexture(url);</span><br><span class="line">        <span class="keyword">var</span> result = <span class="keyword">await</span> www.SendWebRequest().WithCancellation(cts.Token).SuppressCancellationThrow();</span><br><span class="line">        <span class="keyword">if</span> (!result.IsCanceled)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">return</span> (<span class="literal">true</span>, ((DownloadHandlerTexture)www.downloadHandler).texture);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> (<span class="literal">false</span>, <span class="literal">null</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在 10s 后，我们发现，来自 pixiv 的图片在规定时间内未能成功加载。按道理来说，如果你不做超时操作，这个任务会永远卡死在这里，因为我们可能永远无法拉取到这张图片，但其实 UniTask 内部对该操作同样有超时判断，当你不做超时判断时，在默认时间到达后，程序会抛出一个 timeout error。</p>
+<h4 id="取消"><a class="markdownIt-Anchor" href="#取消"></a> 取消</h4>
+<p>不仅仅是超时——比如说你在制作一款 RTS 游戏，你希望能给玩家提供一个取消建造单位操作的功能，无论是手动取消还是因为资源不够自动取消。我们来试一试。</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">CancelExampleRTS</span> : <span class="title">MonoBehaviour</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">public</span> CancellationTokenSource cancellationTokenSource;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">async</span> <span class="keyword">void</span> <span class="title">OnClickTrainTroop</span>()</span></span><br><span class="line">    &#123;</span><br><span class="line">        cancellationTokenSource = <span class="keyword">new</span> CancellationTokenSource();</span><br><span class="line">        <span class="keyword">var</span> isCanceled = <span class="keyword">await</span> TrainTroopAsync(cancellationTokenSource.Token).SuppressCancellationThrow();</span><br><span class="line">        <span class="keyword">if</span> (isCanceled)</span><br><span class="line">        &#123;</span><br><span class="line">            Debug.Log(<span class="string">&quot;Training canceled.&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">async</span> UniTask <span class="title">TrainTroopAsync</span>(<span class="params">CancellationToken token</span>)</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">float</span> progress = <span class="number">0</span>;</span><br><span class="line">        Debug.Log(<span class="string">$&quot;Training progress: <span class="subst">&#123;progress&#125;</span>%&quot;</span>);</span><br><span class="line">        <span class="keyword">while</span> (progress &lt; <span class="number">100</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            progress += Time.deltaTime * <span class="number">15</span>;</span><br><span class="line">            <span class="keyword">await</span> UniTask.NextFrame(token);</span><br><span class="line">            Debug.Log(<span class="string">$&quot;Training progress: <span class="subst">&#123;progress&#125;</span>%&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        Debug.Log(<span class="string">&quot;Training completed.&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">Update</span>()</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span> (Input.GetKeyDown(KeyCode.Space))</span><br><span class="line">        &#123;</span><br><span class="line">            OnClickTrainTroop();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (Input.GetKeyDown(KeyCode.A))</span><br><span class="line">        &#123;</span><br><span class="line">            cancellationTokenSource.Cancel();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="连锁取消"><a class="markdownIt-Anchor" href="#连锁取消"></a> 连锁取消</h4>
+<p><code>CancellationTokenSource.CreateLinkedTokenSource(params System.Threading.CancellationToken[] tokens)</code> 该方法可以链接多个 <code>CancellationToken</code>，只要有一个被取消，其他 <code>CancellationToken</code> 都会被取消。</p>
+<h2 id="基础-level-1"><a class="markdownIt-Anchor" href="#基础-level-1"></a> 基础 Level 1</h2>
+<h3 id="类型转换"><a class="markdownIt-Anchor" href="#类型转换"></a> 类型转换</h3>
+<h3 id="委托和-lambda"><a class="markdownIt-Anchor" href="#委托和-lambda"></a> 委托和 Lambda</h3>
+<h3 id="unitaskcompletionsource"><a class="markdownIt-Anchor" href="#unitaskcompletionsource"></a> UniTaskCompletionSource</h3>
+<h3 id="thread-pool"><a class="markdownIt-Anchor" href="#thread-pool"></a> Thread Pool</h3>
+<h3 id="progress"><a class="markdownIt-Anchor" href="#progress"></a> Progress</h3>
+<h3 id="单元测试"><a class="markdownIt-Anchor" href="#单元测试"></a> 单元测试</h3>
+<h2 id="应用专题"><a class="markdownIt-Anchor" href="#应用专题"></a> 应用专题</h2>
+<h3 id="资源加载"><a class="markdownIt-Anchor" href="#资源加载"></a> 资源加载</h3>
+<h3 id="unitasktracker"><a class="markdownIt-Anchor" href="#unitasktracker"></a> UniTaskTracker</h3>
+<h3 id="unitasktextmeshpro"><a class="markdownIt-Anchor" href="#unitasktextmeshpro"></a> UniTask.TextMeshPro</h3>
+<h3 id="unitaskdotween"><a class="markdownIt-Anchor" href="#unitaskdotween"></a> UniTask.DOTween</h3>
+<h2 id="进阶篇"><a class="markdownIt-Anchor" href="#进阶篇"></a> 进阶篇</h2>
+<h3 id="asyncenumerable-和-async-linq"><a class="markdownIt-Anchor" href="#asyncenumerable-和-async-linq"></a> AsyncEnumerable 和 Async LINQ</h3>
+<h3 id="创建统一的事件异步流"><a class="markdownIt-Anchor" href="#创建统一的事件异步流"></a> 创建统一的事件异步流</h3>
+<h3 id="响应式组件"><a class="markdownIt-Anchor" href="#响应式组件"></a> 响应式组件</h3>
+<h3 id="channel"><a class="markdownIt-Anchor" href="#channel"></a> Channel</h3>
+<h2 id="原理篇"><a class="markdownIt-Anchor" href="#原理篇"></a> 原理篇</h2>
+<h2 id="官方文档"><a class="markdownIt-Anchor" href="#官方文档"></a> 官方文档</h2>
+<p><a target="_blank" rel="noopener" href="https://cysharp.github.io/UniTask/">首页 |UniTask 的 — Home | UniTask (cysharp.github.io)</a></p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>蛐蛐
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://rdququ.top/posts/a3c30c4/" title="UniTask 授课">https://rdququ.top/posts/a3c30c4/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+        
+
+  <div class="followme">
+    <p>欢迎关注我的其它发布渠道</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/atom.xml">
+            <span class="icon">
+              <i class="fa fa-rss"></i>
+            </span>
+
+            <span class="label">RSS</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/posts/b6352538/" rel="prev" title="rust_learning_note">
+      <i class="fa fa-chevron-left"></i> rust_learning_note
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%9D%E6%AD%A5%E8%AE%A4%E8%AF%86-unitask"><span class="nav-number">1.</span> <span class="nav-text"> 初步认识 UniTask</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%88%91%E4%BB%AC%E5%B7%B2%E7%BB%8F%E6%9C%89%E4%BA%86-c-task-%E4%B8%BA%E4%BB%80%E4%B9%88%E8%BF%98%E8%A6%81-unitask-%E5%91%A2"><span class="nav-number">1.1.</span> <span class="nav-text"> 我们已经有了 C# Task, 为什么还要 UniTask 呢？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E8%A3%85-unitask"><span class="nav-number">1.2.</span> <span class="nav-text"> 安装 UniTask</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E7%A1%80-level-0"><span class="nav-number">2.</span> <span class="nav-text"> 基础 Level 0</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BC%95%E5%85%A5%E5%BB%B6%E6%97%B6%E6%93%8D%E4%BD%9C"><span class="nav-number">2.1.</span> <span class="nav-text"> 引入——延时操作</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AE%A4%E8%AF%86%E5%BC%82%E6%AD%A5%E5%AF%B9%E8%B1%A1"><span class="nav-number">2.1.1.</span> <span class="nav-text"> 认识异步对象</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#async"><span class="nav-number">2.1.1.1.</span> <span class="nav-text"> async</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#await"><span class="nav-number">2.1.1.2.</span> <span class="nav-text"> await</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%96%B9%E6%B3%95%E8%BF%94%E5%9B%9E%E4%BA%86%E4%BB%80%E4%B9%88"><span class="nav-number">2.1.1.3.</span> <span class="nav-text"> 方法返回了什么？</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#forget"><span class="nav-number">2.1.1.4.</span> <span class="nav-text"> .Forget()</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BB%B6%E6%97%B6%E5%B8%B8%E7%94%A8%E7%9A%84-api"><span class="nav-number">2.1.2.</span> <span class="nav-text"> 延时常用的 API</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#wait-%E6%93%8D%E4%BD%9C"><span class="nav-number">2.2.</span> <span class="nav-text"> Wait 操作</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#waituntil"><span class="nav-number">2.2.1.</span> <span class="nav-text"> WaitUntil</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#waitwhile"><span class="nav-number">2.2.2.</span> <span class="nav-text"> WaitWhile</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#waituntilvaluechanged"><span class="nav-number">2.2.3.</span> <span class="nav-text"> WaitUntilValueChanged</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9D%A1%E4%BB%B6%E5%B9%B6%E5%8F%91"><span class="nav-number">2.3.</span> <span class="nav-text"> 条件并发</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#whenall"><span class="nav-number">2.3.1.</span> <span class="nav-text"> WhenAll</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#whenany"><span class="nav-number">2.3.2.</span> <span class="nav-text"> WhenAny</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%96%E6%B6%88%E5%92%8C%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86"><span class="nav-number">2.4.</span> <span class="nav-text"> 取消和异常处理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%B6%85%E6%97%B6%E5%A4%84%E7%90%86"><span class="nav-number">2.4.1.</span> <span class="nav-text"> 超时处理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%96%E6%B6%88"><span class="nav-number">2.4.2.</span> <span class="nav-text"> 取消</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BF%9E%E9%94%81%E5%8F%96%E6%B6%88"><span class="nav-number">2.4.3.</span> <span class="nav-text"> 连锁取消</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E7%A1%80-level-1"><span class="nav-number">3.</span> <span class="nav-text"> 基础 Level 1</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2"><span class="nav-number">3.1.</span> <span class="nav-text"> 类型转换</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A7%94%E6%89%98%E5%92%8C-lambda"><span class="nav-number">3.2.</span> <span class="nav-text"> 委托和 Lambda</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#unitaskcompletionsource"><span class="nav-number">3.3.</span> <span class="nav-text"> UniTaskCompletionSource</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#thread-pool"><span class="nav-number">3.4.</span> <span class="nav-text"> Thread Pool</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#progress"><span class="nav-number">3.5.</span> <span class="nav-text"> Progress</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95"><span class="nav-number">3.6.</span> <span class="nav-text"> 单元测试</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BA%94%E7%94%A8%E4%B8%93%E9%A2%98"><span class="nav-number">4.</span> <span class="nav-text"> 应用专题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B5%84%E6%BA%90%E5%8A%A0%E8%BD%BD"><span class="nav-number">4.1.</span> <span class="nav-text"> 资源加载</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#unitasktracker"><span class="nav-number">4.2.</span> <span class="nav-text"> UniTaskTracker</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#unitasktextmeshpro"><span class="nav-number">4.3.</span> <span class="nav-text"> UniTask.TextMeshPro</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#unitaskdotween"><span class="nav-number">4.4.</span> <span class="nav-text"> UniTask.DOTween</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%9B%E9%98%B6%E7%AF%87"><span class="nav-number">5.</span> <span class="nav-text"> 进阶篇</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#asyncenumerable-%E5%92%8C-async-linq"><span class="nav-number">5.1.</span> <span class="nav-text"> AsyncEnumerable 和 Async LINQ</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E7%BB%9F%E4%B8%80%E7%9A%84%E4%BA%8B%E4%BB%B6%E5%BC%82%E6%AD%A5%E6%B5%81"><span class="nav-number">5.2.</span> <span class="nav-text"> 创建统一的事件异步流</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%93%8D%E5%BA%94%E5%BC%8F%E7%BB%84%E4%BB%B6"><span class="nav-number">5.3.</span> <span class="nav-text"> 响应式组件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#channel"><span class="nav-number">5.4.</span> <span class="nav-text"> Channel</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8E%9F%E7%90%86%E7%AF%87"><span class="nav-number">6.</span> <span class="nav-text"> 原理篇</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3"><span class="nav-number">7.</span> <span class="nav-text"> 官方文档</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="蛐蛐"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">蛐蛐</p>
+  <div class="site-description" itemprop="description">正在学习unity中</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">41</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">41</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2023-08 – 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">蛐蛐</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">148k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">2:15</span>
+</div>
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共54k字</span>
+</div>
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+    <span id="busuanzi_container_site_pv">总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+    <span class="post-meta-divider">|</span>
+    <span id="busuanzi_container_site_uv">总访客数<span id="busuanzi_value_site_uv"></span>人</span>
+    <span class="post-meta-divider">|</span>
+<!-- 不蒜子计数初始值纠正 -->
+<script>
+$(document).ready(function() {
+
+    var int = setInterval(fixCount, 50);  // 50ms周期检测函数
+    var countOffset = 20000;  // 初始化首次数据
+
+    function fixCount() {            
+       if (document.getElementById("busuanzi_container_site_pv").style.display != "none")
+        {
+            $("#busuanzi_value_site_pv").html(parseInt($("#busuanzi_value_site_pv").html()) + countOffset); 
+            clearInterval(int);
+        }                  
+        if ($("#busuanzi_container_site_pv").css("display") != "none")
+        {
+            $("#busuanzi_value_site_uv").html(parseInt($("#busuanzi_value_site_uv").html()) + countOffset); // 加上初始数据 
+            clearInterval(int); // 停止检测
+        }  
+    }
+       	
+});
+</script> 
+
+
+<img src="">
+<a href="https://beian.miit.gov.cn/" target="_blank">
+苏ICP备2023032662号-1</a>
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/katex@0/dist/katex.min.css">
+
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '2b72d9fa7fcc851ff3a5',
+      clientSecret: '62e1dcf26b05a0e5bbb7318a5be41964412c7bc7',
+      repo        : 'BlogComments',
+      owner       : 'dlqw',
+      admin       : ['dlqw'],
+      id          : '760ebd49b04aac3a5f9d200696694135',
+        language: 'zh-CN',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+</body>
+</html>
