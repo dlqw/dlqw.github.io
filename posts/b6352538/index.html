@@ -283,41 +283,41 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h2 id="从-hello-world-开始"><a class="markdownIt-Anchor" href="#从-hello-world-开始"></a> 从 hello world 开始</h2>
+        <h2 id="从-hello-world-开始">从 hello world 开始</h2>
 <figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;Hello, world!&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <span id="more"></span>
 <ul>
 <li>rust 的缩进是 4 个空格，不是 tab</li>
 </ul>
-<h3 id="编译你的第一个-rust-程序"><a class="markdownIt-Anchor" href="#编译你的第一个-rust-程序"></a> 编译你的第一个 rust 程序</h3>
+<h3 id="编译你的第一个-rust-程序">编译你的第一个 rust 程序</h3>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rustc main.rs</span><br></pre></td></tr></table></figure>
 <p>编译成功后会生成一个二进制文件，在 windows 上还会生成一个 .pdb 文件以存贮调试信息。</p>
 <p>Rust 是 ahead-of-time (预编译)的，所以编译后的二进制文件可以在没有 rust 环境的机器上运行。</p>
 <p>rustc 命令可以用来编译一些简单的 rust 程序，但是对于大型项目，我们需要使用 cargo 来构建和管理项目。</p>
-<h2 id="hello-cargo"><a class="markdownIt-Anchor" href="#hello-cargo"></a> Hello, Cargo!</h2>
+<h2 id="hello-cargo">Hello, Cargo!</h2>
 <p>Cargo 是 rust 的构建系统和包管理器。</p>
 <p>用 cargo 创建一个新的项目：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cargo new hello_cargo</span><br></pre></td></tr></table></figure>
-<h3 id="项目结构"><a class="markdownIt-Anchor" href="#项目结构"></a> 项目结构</h3>
+<h3 id="项目结构">项目结构</h3>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">hello_cargo</span><br><span class="line">├── Cargo.toml</span><br><span class="line">└── src</span><br><span class="line">    └── main.rs</span><br></pre></td></tr></table></figure>
-<h3 id="cargotoml"><a class="markdownIt-Anchor" href="#cargotoml"></a> Cargo.toml</h3>
+<h3 id="cargo-toml">Cargo.toml</h3>
 <p>Cargo.toml 是一个配置文件，用来描述项目的元数据。</p>
 <figure class="highlight toml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">[package]</span></span><br><span class="line"><span class="attr">name</span> = <span class="string">&quot;hello_cargo&quot;</span></span><br><span class="line"><span class="attr">version</span> = <span class="string">&quot;0.1.0&quot;</span></span><br><span class="line"><span class="attr">edition</span> = <span class="string">&quot;2021&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html</span></span><br><span class="line"></span><br><span class="line"><span class="section">[dependencies]</span></span><br></pre></td></tr></table></figure>
 <p>[package] 部分描述了包的元数据 - name: 包的名字 - version: 包的版本 - authors: 包的作者 - edition: rust 的版本</p>
 <p>[dependencies] 部分描述了项目的依赖。</p>
 <p>在 Rust 里，代码的包称作 crate.</p>
-<h3 id="cargo-的编译和运行"><a class="markdownIt-Anchor" href="#cargo-的编译和运行"></a> cargo 的编译和运行</h3>
+<h3 id="cargo-的编译和运行">cargo 的编译和运行</h3>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> hello_cargo</span><br><span class="line">cargo build</span><br></pre></td></tr></table></figure>
 <p>编译成功后会生成一个 target 目录，里面包含了编译后的二进制文件。</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cargo run</span><br></pre></td></tr></table></figure>
 <p>cargo run 会自动编译并运行程序。如果原代码没有修改且已经编译过，cargo run 只会运行二进制文件。</p>
-<h3 id="cargo-的检查"><a class="markdownIt-Anchor" href="#cargo-的检查"></a> cargo 的检查</h3>
+<h3 id="cargo-的检查">cargo 的检查</h3>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cargo check</span><br></pre></td></tr></table></figure>
 <p>cargo check 只会检查代码是否能编译通过，但不会生成二进制文件。</p>
-<h3 id="cargo-的发布"><a class="markdownIt-Anchor" href="#cargo-的发布"></a> cargo 的发布</h3>
+<h3 id="cargo-的发布">cargo 的发布</h3>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cargo build --release</span><br></pre></td></tr></table></figure>
 <p>–release 参数会生成一个优化后的二进制文件，但编译时间会更长。</p>
-<h2 id="let-mut-和-use"><a class="markdownIt-Anchor" href="#let-mut-和-use"></a> let mut 和 use</h2>
+<h2 id="let-mut-和-use">let mut 和 use</h2>
 <p>prelude(预导入)模块会被自动引入到每个 rust 程序的作用域中。但如果你想使用的模块不在 prelude 中，你需要使用 use 关键字来引入。</p>
 <figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">use</span> std::io;</span><br></pre></td></tr></table></figure>
 <p>let 关键字可用于申明一个变量，变量默认是不可变的(imutable)。如果你想申明一个可变的变量，你需要额外使用 mut 关键字。</p>
@@ -439,7 +439,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%8E-hello-world-%E5%BC%80%E5%A7%8B"><span class="nav-number">1.</span> <span class="nav-text"> 从 hello world 开始</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BC%96%E8%AF%91%E4%BD%A0%E7%9A%84%E7%AC%AC%E4%B8%80%E4%B8%AA-rust-%E7%A8%8B%E5%BA%8F"><span class="nav-number">1.1.</span> <span class="nav-text"> 编译你的第一个 rust 程序</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#hello-cargo"><span class="nav-number">2.</span> <span class="nav-text"> Hello, Cargo!</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A1%B9%E7%9B%AE%E7%BB%93%E6%9E%84"><span class="nav-number">2.1.</span> <span class="nav-text"> 项目结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#cargotoml"><span class="nav-number">2.2.</span> <span class="nav-text"> Cargo.toml</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#cargo-%E7%9A%84%E7%BC%96%E8%AF%91%E5%92%8C%E8%BF%90%E8%A1%8C"><span class="nav-number">2.3.</span> <span class="nav-text"> cargo 的编译和运行</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#cargo-%E7%9A%84%E6%A3%80%E6%9F%A5"><span class="nav-number">2.4.</span> <span class="nav-text"> cargo 的检查</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#cargo-%E7%9A%84%E5%8F%91%E5%B8%83"><span class="nav-number">2.5.</span> <span class="nav-text"> cargo 的发布</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#let-mut-%E5%92%8C-use"><span class="nav-number">3.</span> <span class="nav-text"> let mut 和 use</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%8E-hello-world-%E5%BC%80%E5%A7%8B"><span class="nav-number">1.</span> <span class="nav-text">从 hello world 开始</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BC%96%E8%AF%91%E4%BD%A0%E7%9A%84%E7%AC%AC%E4%B8%80%E4%B8%AA-rust-%E7%A8%8B%E5%BA%8F"><span class="nav-number">1.1.</span> <span class="nav-text">编译你的第一个 rust 程序</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#hello-cargo"><span class="nav-number">2.</span> <span class="nav-text">Hello, Cargo!</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A1%B9%E7%9B%AE%E7%BB%93%E6%9E%84"><span class="nav-number">2.1.</span> <span class="nav-text">项目结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#cargo-toml"><span class="nav-number">2.2.</span> <span class="nav-text">Cargo.toml</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#cargo-%E7%9A%84%E7%BC%96%E8%AF%91%E5%92%8C%E8%BF%90%E8%A1%8C"><span class="nav-number">2.3.</span> <span class="nav-text">cargo 的编译和运行</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#cargo-%E7%9A%84%E6%A3%80%E6%9F%A5"><span class="nav-number">2.4.</span> <span class="nav-text">cargo 的检查</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#cargo-%E7%9A%84%E5%8F%91%E5%B8%83"><span class="nav-number">2.5.</span> <span class="nav-text">cargo 的发布</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#let-mut-%E5%92%8C-use"><span class="nav-number">3.</span> <span class="nav-text">let mut 和 use</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 

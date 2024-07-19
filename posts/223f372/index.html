@@ -286,24 +286,24 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h2 id="前置知识"><a class="markdownIt-Anchor" href="#前置知识"></a> 前置知识</h2>
+        <h2 id="前置知识">前置知识</h2>
 <span id="more"></span>
-<h3 id="归一化空间坐标-ndknormalized-device-coordinates"><a class="markdownIt-Anchor" href="#归一化空间坐标-ndknormalized-device-coordinates"></a> 归一化空间坐标 NDK(Normalized Device Coordinates)</h3>
+<h3 id="归一化空间坐标-ndk-normalized-device-coordinates">归一化空间坐标 NDK(Normalized Device Coordinates)</h3>
 <p>在齐次裁剪空间的基础上进行透视除法或称齐次除法, 得到的坐标叫做NDC空间坐标。</p>
 <p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/102758967">一篇文章彻底弄懂齐次裁剪 - 知乎 (zhihu.com)</a></p>
-<h4 id="透视除法-齐次除法perspective-division-homogeneous-division"><a class="markdownIt-Anchor" href="#透视除法-齐次除法perspective-division-homogeneous-division"></a> 透视除法-齐次除法(<strong>perspective division</strong>-<strong>homogeneous division)</strong></h4>
+<h4 id="透视除法-齐次除法-perspective-division-homogeneous-division">透视除法-齐次除法(<strong>perspective division</strong>-<strong>homogeneous division)</strong></h4>
 <p>就是将齐次裁剪空间坐标positionCS的X,Y,Z分量都除以W分量。</p>
 <p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/7e701d7bfd79">写给大家看的“透视除法” —— 齐次坐标和投影 - 简书 (jianshu.com)</a></p>
-<p><img src="https://pic4.zhimg.com/80/v2-4baca450c51c7f0eea873c42eeda0eef_720w.webp" alt="" /></p>
-<h2 id="算法原理"><a class="markdownIt-Anchor" href="#算法原理"></a> 算法原理</h2>
-<h2 id="unity-shader-graph-实现"><a class="markdownIt-Anchor" href="#unity-shader-graph-实现"></a> Unity Shader Graph 实现</h2>
-<h3 id="scenedepth"><a class="markdownIt-Anchor" href="#scenedepth"></a> SceneDepth</h3>
+<p><img src="https://pic4.zhimg.com/80/v2-4baca450c51c7f0eea873c42eeda0eef_720w.webp" alt=""></p>
+<h2 id="算法原理">算法原理</h2>
+<h2 id="unity-shader-graph-实现">Unity Shader Graph 实现</h2>
+<h3 id="scenedepth">SceneDepth</h3>
 <blockquote>
-<p>Provides access to the current  <strong>Camera</strong> 's depth buffer using input  <strong>UV</strong> , which is expected to be normalized screen coordinates.<br />
+<p>Provides access to the current  <strong>Camera</strong> 's depth buffer using input  <strong>UV</strong> , which is expected to be normalized screen coordinates.<br>
 Note: Depth buffer access requires depth buffer to be enabled on the active  <strong>Render Pipeline</strong> . This process is different per  <strong>Render Pipeline</strong> . It is recommended you read the documentation of your active <strong>Render Pipeline</strong> for information on enabling the depth buffer. If the depth buffer is unavailable this <a href="https://link.zhihu.com/?target=https%3A//docs.unity3d.com/Packages/com.unity.shadergraph%406.9/manual/Node.html">Node</a> will return mid grey.</p>
 </blockquote>
 <p>也就是说SceneDepth Node是对深度纹理进行获取的节点，只不过获取的方法不同，而深度纹理中存储的是NDC坐标的深度值。</p>
-<p><img src="https://pic4.zhimg.com/80/v2-199f0cb63bdba7f81de4c826056dcbff_720w.webp" alt="img" /></p>
+<p><img src="https://pic4.zhimg.com/80/v2-199f0cb63bdba7f81de4c826056dcbff_720w.webp" alt="img"></p>
 <ul>
 <li>Linear01获取的是线性的范围为[0,1]的深度值。
 <blockquote>
@@ -321,11 +321,11 @@ Note: Depth buffer access requires depth buffer to be enabled on the active  <st
 </blockquote>
 </li>
 </ul>
-<h3 id="screenposition"><a class="markdownIt-Anchor" href="#screenposition"></a> ScreenPosition</h3>
+<h3 id="screenposition">ScreenPosition</h3>
 <blockquote>
 <p>Provides access to the mesh vertex or fragment’s <strong>Screen Position</strong> .</p>
 </blockquote>
-<p><img src="https://pic3.zhimg.com/80/v2-439252aa4b98dac54ced99bf1460a58e_720w.webp" alt="img" /></p>
+<p><img src="https://pic3.zhimg.com/80/v2-439252aa4b98dac54ced99bf1460a58e_720w.webp" alt="img"></p>
 <ul>
 <li>ScreenPosition在Default选项下会进行齐次除法运算（即除以w分量），这里的w范围为[0,1],也就是NDC下的w分量。经过透视除法的，左下角是（0，0）右上角是（1，1）的屏幕空间</li>
 <li>在Raw选项下，不会进行齐次除法运算,这里的w范围是[Near, Far],是Clip Space中的w分量。未经过透视除法的，左下角是（0，0）右上角是（1，1）的屏幕空间</li>
@@ -333,25 +333,25 @@ Note: Depth buffer access requires depth buffer to be enabled on the active  <st
 <li>Tiled: 经过透视除法的，分成上下均等的四块组成，每块左下角是（0，0）右上角是（1，1）的屏幕空间</li>
 </ul>
 <p>在这里ScreenPosition的w分量的含义也就是ClipSpace下的w分量，范围是[Near, Far],而当xy除以w分量后，越远的顶点也就会除以越大的w分量，就会产生透视现象。</p>
-<h3 id="存疑之处与我的观点证明"><a class="markdownIt-Anchor" href="#存疑之处与我的观点证明"></a> 存疑之处与我的观点/证明</h3>
+<h3 id="存疑之处与我的观点-证明">存疑之处与我的观点/证明</h3>
 <p>博主<a target="_blank" rel="noopener" href="https://www.zhihu.com/people/lute-li">Lute Li </a>，认为</p>
 <blockquote>
 <p>（Scene Depth是除开透明模型之外的深度，Screen Position是所有模型的深度，相减就是边缘）</p>
 </blockquote>
 <p>出处<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/109547098">从头学ShaderGraph 5-护盾材质 - 知乎 (zhihu.com)</a></p>
-<p><img src="https://pic2.zhimg.com/80/v2-fea83d5ed062c6bfe5dc8221e2d5d999_720w.webp" alt="" /></p>
+<p><img src="https://pic2.zhimg.com/80/v2-fea83d5ed062c6bfe5dc8221e2d5d999_720w.webp" alt=""></p>
 <p><strong>(Vertex Shader) =&gt; Clip Space =&gt; (透视除法) =&gt; NDC =&gt; (视口变换) =&gt; Window Space =&gt; (Fragment Shader)</strong></p>
 <p>现象很好观察，但是不知道原理，翻遍了官方文档和网上的教程也没能得到一个足够有说服力的解释，现在可以知道 SceneDepth 的 Eye 获取的是视角空间下的线性深度值，范围为[near, far]，ScreenPosition 的 w 分量是是 Clip Space 中未经过透视除法的值，范围也是[near, far]。我们知道物体自Eye/View/Camera Space(这玩意名字真多)到Cliping Space 要经过一次透视变换，或者说透视除法，所以实际上，Screen Graph 的 w 分量也许就是 Eye Space 下到相机的距离(不是深度，所以也存储了透明物体的距离)</p>
-<p><img src="image/%E4%B8%8D%E9%80%8F%E6%98%8E%E7%89%A9%E4%BD%93%E4%B8%8E%E5%8D%8A%E9%80%8F%E6%98%8E%E7%89%A9%E4%BD%93%E8%BE%B9%E7%BC%98%E7%AE%97%E6%B3%95%E4%B8%8EUnity-Shader-Graph-%E5%AE%9E%E7%8E%B0/1702390346535.png" alt="1702390346535" /></p>
+<p><img src="image/%E4%B8%8D%E9%80%8F%E6%98%8E%E7%89%A9%E4%BD%93%E4%B8%8E%E5%8D%8A%E9%80%8F%E6%98%8E%E7%89%A9%E4%BD%93%E8%BE%B9%E7%BC%98%E7%AE%97%E6%B3%95%E4%B8%8EUnity-Shader-Graph-%E5%AE%9E%E7%8E%B0/1702390346535.png" alt="1702390346535"></p>
 <p>上图的实验一定程度上看可以证明上文的观点。</p>
 <p>有趣的是，当我们把 Surface Type 修改为Transparent, 场景中的透明与不透明物体的交界处出现了一道淡淡的白线</p>
-<p><img src="image/%E4%B8%8D%E9%80%8F%E6%98%8E%E7%89%A9%E4%BD%93%E4%B8%8E%E5%8D%8A%E9%80%8F%E6%98%8E%E7%89%A9%E4%BD%93%E8%BE%B9%E7%BC%98%E7%AE%97%E6%B3%95%E4%B8%8EUnity-Shader-Graph-%E5%AE%9E%E7%8E%B0/1702390608834.png" alt="1702390608834" /></p>
+<p><img src="image/%E4%B8%8D%E9%80%8F%E6%98%8E%E7%89%A9%E4%BD%93%E4%B8%8E%E5%8D%8A%E9%80%8F%E6%98%8E%E7%89%A9%E4%BD%93%E8%BE%B9%E7%BC%98%E7%AE%97%E6%B3%95%E4%B8%8EUnity-Shader-Graph-%E5%AE%9E%E7%8E%B0/1702390608834.png" alt="1702390608834"></p>
 <p>我们将 Comparison 节点的输入值 B 调大，交界处出现了明显的白线</p>
-<p><img src="image/%E4%B8%8D%E9%80%8F%E6%98%8E%E7%89%A9%E4%BD%93%E4%B8%8E%E5%8D%8A%E9%80%8F%E6%98%8E%E7%89%A9%E4%BD%93%E8%BE%B9%E7%BC%98%E7%AE%97%E6%B3%95%E4%B8%8EUnity-Shader-Graph-%E5%AE%9E%E7%8E%B0/1702390681409.png" alt="1702390681409" /></p>
-<p><img src="image/%E4%B8%8D%E9%80%8F%E6%98%8E%E7%89%A9%E4%BD%93%E4%B8%8E%E5%8D%8A%E9%80%8F%E6%98%8E%E7%89%A9%E4%BD%93%E8%BE%B9%E7%BC%98%E7%AE%97%E6%B3%95%E4%B8%8EUnity-Shader-Graph-%E5%AE%9E%E7%8E%B0/1702390730401.png" alt="1702390730401" /></p>
+<p><img src="image/%E4%B8%8D%E9%80%8F%E6%98%8E%E7%89%A9%E4%BD%93%E4%B8%8E%E5%8D%8A%E9%80%8F%E6%98%8E%E7%89%A9%E4%BD%93%E8%BE%B9%E7%BC%98%E7%AE%97%E6%B3%95%E4%B8%8EUnity-Shader-Graph-%E5%AE%9E%E7%8E%B0/1702390681409.png" alt="1702390681409"></p>
+<p><img src="image/%E4%B8%8D%E9%80%8F%E6%98%8E%E7%89%A9%E4%BD%93%E4%B8%8E%E5%8D%8A%E9%80%8F%E6%98%8E%E7%89%A9%E4%BD%93%E8%BE%B9%E7%BC%98%E7%AE%97%E6%B3%95%E4%B8%8EUnity-Shader-Graph-%E5%AE%9E%E7%8E%B0/1702390730401.png" alt="1702390730401"></p>
 <p>我们知道，初始输出的两个节点的取值范围都是[n,f]，所以当我们把对比节点的输入值B调到1的时候，边界就很明显了。</p>
 <p>现在，结果已经呼之欲出了，Scene Depth 节点的 Eye 输出的是深度值，我们知道，透明物体默认不会写入深度缓冲，Screen Position 输出的是简单的距离，故而相减可以得到边界。</p>
-<h2 id="参考资料与引用"><a class="markdownIt-Anchor" href="#参考资料与引用"></a> 参考资料与引用</h2>
+<h2 id="参考资料与引用">参考资料与引用</h2>
 <ol>
 <li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/535898515">unity urp 20 SceneDepth和ScreenPosition.w - 知乎 (zhihu.com)</a></li>
 <li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/347698766">Shader Graph中的Scene Depth和Screen Position - 知乎 (zhihu.com)</a></li>
@@ -479,7 +479,7 @@ Note: Depth buffer access requires depth buffer to be enabled on the active  <st
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86"><span class="nav-number">1.</span> <span class="nav-text"> 前置知识</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BD%92%E4%B8%80%E5%8C%96%E7%A9%BA%E9%97%B4%E5%9D%90%E6%A0%87-ndknormalized-device-coordinates"><span class="nav-number">1.1.</span> <span class="nav-text"> 归一化空间坐标 NDK(Normalized Device Coordinates)</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%80%8F%E8%A7%86%E9%99%A4%E6%B3%95-%E9%BD%90%E6%AC%A1%E9%99%A4%E6%B3%95perspective-division-homogeneous-division"><span class="nav-number">1.1.1.</span> <span class="nav-text"> 透视除法-齐次除法(perspective division-homogeneous division)</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AE%97%E6%B3%95%E5%8E%9F%E7%90%86"><span class="nav-number">2.</span> <span class="nav-text"> 算法原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#unity-shader-graph-%E5%AE%9E%E7%8E%B0"><span class="nav-number">3.</span> <span class="nav-text"> Unity Shader Graph 实现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#scenedepth"><span class="nav-number">3.1.</span> <span class="nav-text"> SceneDepth</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#screenposition"><span class="nav-number">3.2.</span> <span class="nav-text"> ScreenPosition</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AD%98%E7%96%91%E4%B9%8B%E5%A4%84%E4%B8%8E%E6%88%91%E7%9A%84%E8%A7%82%E7%82%B9%E8%AF%81%E6%98%8E"><span class="nav-number">3.3.</span> <span class="nav-text"> 存疑之处与我的观点&#x2F;证明</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99%E4%B8%8E%E5%BC%95%E7%94%A8"><span class="nav-number">4.</span> <span class="nav-text"> 参考资料与引用</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86"><span class="nav-number">1.</span> <span class="nav-text">前置知识</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BD%92%E4%B8%80%E5%8C%96%E7%A9%BA%E9%97%B4%E5%9D%90%E6%A0%87-ndk-normalized-device-coordinates"><span class="nav-number">1.1.</span> <span class="nav-text">归一化空间坐标 NDK(Normalized Device Coordinates)</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%80%8F%E8%A7%86%E9%99%A4%E6%B3%95-%E9%BD%90%E6%AC%A1%E9%99%A4%E6%B3%95-perspective-division-homogeneous-division"><span class="nav-number">1.1.1.</span> <span class="nav-text">透视除法-齐次除法(perspective division-homogeneous division)</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AE%97%E6%B3%95%E5%8E%9F%E7%90%86"><span class="nav-number">2.</span> <span class="nav-text">算法原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#unity-shader-graph-%E5%AE%9E%E7%8E%B0"><span class="nav-number">3.</span> <span class="nav-text">Unity Shader Graph 实现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#scenedepth"><span class="nav-number">3.1.</span> <span class="nav-text">SceneDepth</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#screenposition"><span class="nav-number">3.2.</span> <span class="nav-text">ScreenPosition</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AD%98%E7%96%91%E4%B9%8B%E5%A4%84%E4%B8%8E%E6%88%91%E7%9A%84%E8%A7%82%E7%82%B9-%E8%AF%81%E6%98%8E"><span class="nav-number">3.3.</span> <span class="nav-text">存疑之处与我的观点&#x2F;证明</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99%E4%B8%8E%E5%BC%95%E7%94%A8"><span class="nav-number">4.</span> <span class="nav-text">参考资料与引用</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 

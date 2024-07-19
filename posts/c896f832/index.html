@@ -283,32 +283,32 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h2 id="关键词"><a class="markdownIt-Anchor" href="#关键词"></a> 关键词</h2>
+        <h2 id="关键词">关键词</h2>
 <ul>
 <li>.NET mono 虚拟机</li>
 <li>IL2CPP</li>
 </ul>
 <span id="more"></span>
-<h3 id="为什么选择-mono"><a class="markdownIt-Anchor" href="#为什么选择-mono"></a> 为什么选择 mono</h3>
+<h3 id="为什么选择-mono">为什么选择 mono</h3>
 <p>Mono 是一个开源的 .NET 框架的实现，它可以在 Linux、Mac、Windows 等平台上运行，而且可以在这些平台上编译出可执行文件。</p>
 <p>开源、跨平台、Mono的开发工具( MonoDevelop 现在已被弃用)</p>
-<h3 id="为什么推出-il2cpp"><a class="markdownIt-Anchor" href="#为什么推出-il2cpp"></a> 为什么推出 IL2CPP</h3>
+<h3 id="为什么推出-il2cpp">为什么推出 IL2CPP</h3>
 <ul>
 <li>Mono 没有合法身份， 微软收购之后的版权问题</li>
 <li>Mono 虚拟机 解释执行 .NET 字节码，效率低</li>
 <li>有些平台不允许内置 .net 虚拟机 (eg. iOS)</li>
 <li>如果有新的平台出现，Mono 难以为其提供支持(跨不了平台咯)，移植很麻烦(eg. WebGL)</li>
 </ul>
-<p>IL: Intermediate Language .NET框架中间语言, .NET字节码<br />
+<p>IL: Intermediate Language .NET框架中间语言, .NET字节码<br>
 IL2CPP: IL to C++，将IL转换为C++代码 --&gt; 编译为可执行文件 --&gt; native platform</p>
 <p>Unity:</p>
 <ol>
 <li>Unity C/C++ 以及 native 的开发 --&gt; 跨平台的 runtime (xcode, android studio)</li>
 <li>Unity 开发者脚本语言(C#) --&gt; .NET字节码 --&gt; .dll --&gt; IL code --&gt; IL2CPP --&gt; C++</li>
-<li>C# GC --&gt; c++ 为其提供支持<br />
+<li>C# GC --&gt; c++ 为其提供支持<br>
 IL2CPP vm:支持 C# .NET 独有的特性，如反射，泛型，委托，lambda表达式等</li>
 </ol>
-<h3 id="il2cpp-做了什么有什么优势"><a class="markdownIt-Anchor" href="#il2cpp-做了什么有什么优势"></a> IL2CPP 做了什么？有什么优势？</h3>
+<h3 id="il2cpp-做了什么？有什么优势？">IL2CPP 做了什么？有什么优势？</h3>
 <ol>
 <li>跨平台可以执行问题 --&gt; Unity --&gt;&gt; 移植 IL2CPP --&gt; .NET 版本问题</li>
 <li>性能获得提升 --&gt; 基于 IL2CPP 发布(而不是 Mono)</li>
@@ -430,7 +430,7 @@ IL2CPP vm:支持 C# .NET 独有的特性，如反射，泛型，委托，lambda�
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B3%E9%94%AE%E8%AF%8D"><span class="nav-number">1.</span> <span class="nav-text"> 关键词</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%80%89%E6%8B%A9-mono"><span class="nav-number">1.1.</span> <span class="nav-text"> 为什么选择 mono</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E6%8E%A8%E5%87%BA-il2cpp"><span class="nav-number">1.2.</span> <span class="nav-text"> 为什么推出 IL2CPP</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#il2cpp-%E5%81%9A%E4%BA%86%E4%BB%80%E4%B9%88%E6%9C%89%E4%BB%80%E4%B9%88%E4%BC%98%E5%8A%BF"><span class="nav-number">1.3.</span> <span class="nav-text"> IL2CPP 做了什么？有什么优势？</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B3%E9%94%AE%E8%AF%8D"><span class="nav-number">1.</span> <span class="nav-text">关键词</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%80%89%E6%8B%A9-mono"><span class="nav-number">1.1.</span> <span class="nav-text">为什么选择 mono</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E6%8E%A8%E5%87%BA-il2cpp"><span class="nav-number">1.2.</span> <span class="nav-text">为什么推出 IL2CPP</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#il2cpp-%E5%81%9A%E4%BA%86%E4%BB%80%E4%B9%88%EF%BC%9F%E6%9C%89%E4%BB%80%E4%B9%88%E4%BC%98%E5%8A%BF%EF%BC%9F"><span class="nav-number">1.3.</span> <span class="nav-text">IL2CPP 做了什么？有什么优势？</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
