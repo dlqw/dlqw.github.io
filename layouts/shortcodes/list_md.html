@@ -1,0 +1,167 @@
+{{/* layouts/shortcodes/list_md.html */}}
+{{ $scPreview := .Get "preview" | default "false" | lower }}
+{{ $scPreviewChars := .Get "previewChars" | default "" }}
+{{ $scChars := cond (ne $scPreviewChars "") ($scPreviewChars | int) 0 }}
+{{ $scPath := .Get "path" | default "/docs/archive_posts" }}
+
+{{ $section := .Page.Site.GetPage $scPath }}
+
+<style>
+  :root {
+    --primary: #05b;
+    --text-strong: #111827;
+    --text-muted: #6b7280;
+    --border: #e5e7eb;
+    --light-blue: #05b;
+  }
+
+  .archive-list {
+    max-width: 900px;
+    margin: 0.5rem auto;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  }
+
+  .archive-item {
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .archive-item:last-child {
+    border-bottom: none;
+  }
+
+  .item-title {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--primary) !important;
+    text-decoration: none;
+    display: inline-block;
+    margin-bottom: 0.25rem;
+  }
+
+  .item-title:visited {
+    color: var(--primary) !important;
+  }
+
+  .item-title:hover {
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .item-meta {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    margin: 0.25rem 0 0.5rem;
+    font-weight: 600;
+  }
+
+  .meta-date {
+    color: #000000;
+  }
+
+  .item-tags {
+    display: flex;
+    gap: 0.25rem;
+    flex-wrap: wrap;
+    margin-top: 0.25rem;
+  }
+
+  .tag-link {
+    color: var(--light-blue);
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 700;
+    padding: 0 0px;
+    display: inline-flex;
+    align-items: center;
+    pointer-events: none;
+    cursor: default;
+  }
+
+  .tag-separator {
+    color: var(--light-blue);
+    font-size: 0.85rem;
+    font-weight: 700;
+    margin-left: -4px; 
+    margin-right: 2px;
+  }
+
+
+  .item-preview {
+    margin-top: 0.5rem;
+    color: #374151;
+    line-height: 1.6;
+    font-size: .95rem;
+  }
+
+  .item-preview code {
+    background: #f3f4f6;
+    padding: 0 4px;
+    border-radius: 4px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size: .9em;
+  }
+</style>
+
+<div class="archive-list">
+  {{ with $section }}
+  {{ range .Pages }}
+  {{ $pagePreviewRaw := .Params.preview }}
+  {{ $pagePreviewStr := printf "%v" $pagePreviewRaw | lower }}
+  {{ $pagePreviewTrue := eq $pagePreviewStr "true" }}
+
+  {{ $pageCharsRaw := cond (isset .Params "previewChars") .Params.previewChars 0 }}
+  {{ $pageCharsType := printf "%T" $pageCharsRaw }}
+  {{ $pageCharsIsNum := or (eq $pageCharsType "int") (eq $pageCharsType "int64") (eq $pageCharsType "float64") }}
+  {{ $pageChars := cond $pageCharsIsNum (int $pageCharsRaw) 0 }}
+
+  {{ $scEnabled := or (eq $scPreview "true") (or (gt $scChars 0) (eq $scChars -1)) }}
+  {{ $pageEnabled := or $pagePreviewTrue (or (gt $pageChars 0) (eq $pageChars -1)) }}
+  {{ $enabled := or $scEnabled $pageEnabled }}
+
+  {{ $n := cond (ne $pageChars 0) $pageChars (cond (ne $scChars 0) $scChars 120) }}
+
+  <article class="archive-item">
+    <a href="{{ .RelPermalink }}" class="item-title">{{ .Title }}</a>
+
+    <div class="item-meta">
+      {{- $raw := .Params.date -}}
+      {{- $s := trim (printf "%v" $raw) " \t\r\n" -}}
+      {{- $t := time.AsTime $s -}}
+      {{- if $t -}}
+      <time class="meta-date" datetime="{{ $t.Format " 2006-01-02" }}">{{ $t.Format "January 2, 2006" }}</time>
+      {{- else -}}
+      <span class="meta-date">{{ $s }}</span>
+      {{- end -}}
+    </div>
+
+{{ with .Params.tags }}
+<div class="item-tags">
+  {{ $tags := . }}
+  {{ $tagsLen := len $tags }}
+  {{ range $i, $tag := $tags }}
+  <span class="tag-link">{{ $tag }}</span>{{ if lt (add $i 1) $tagsLen }}<span class="tag-separator">,</span>{{ end }}
+  {{ end }}
+</div>
+{{ end }}
+
+    {{ if $enabled }}
+    {{ $text := .Content | plainify | replaceRE "\\s+" " " | trim " " }}
+    {{ $length := len $text }}
+    {{ if gt $length 0 }}
+    <div class="item-preview">
+      {{ if or (eq $n -1) (ge $n $length) }}
+      {{ $text }}
+      {{ else }}
+      {{ slicestr $text 0 $n }}…
+      {{ end }}
+    </div>
+    {{ end }}
+    {{ end }}
+  </article>
+  {{ end }}
+  {{ end }}
+</div>

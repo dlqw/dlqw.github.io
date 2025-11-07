@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Archive#Past bytes for curious minds.
+2D 渲染基础January 1, 2023game engine,render">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="http://localhost:1313/docs/archive/">
+  <meta property="og:site_name" content="rdququ&#39;s Blog">
+  <meta property="og:title" content="Archive">
+  <meta property="og:description" content="Archive#Past bytes for curious minds.
+2D 渲染基础January 1, 2023game engine,render">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="docs">
+    <meta property="article:published_time" content="2025-11-07T21:17:26+08:00">
+    <meta property="article:modified_time" content="2025-11-07T21:17:26+08:00">
+
+
+  <meta itemprop="name" content="Archive">
+  <meta itemprop="description" content="Archive#Past bytes for curious minds.
+2D 渲染基础January 1, 2023game engine,render">
+  <meta itemprop="datePublished" content="2025-11-07T21:17:26+08:00">
+  <meta itemprop="dateModified" content="2025-11-07T21:17:26+08:00">
+  <meta itemprop="wordCount" content="14">
+
+<title>Archive | rdququ&#39;s Blog</title>
+<link rel="icon" href="/favicon.png" >
+<link rel="manifest" href="/manifest.json">
+<link rel="canonical" href="http://localhost:1313/docs/archive/">
+<link rel="stylesheet" href="/book.min.cc2c524ed250aac81b23d1f4af87344917b325208841feca0968fe450f570575.css" integrity="sha256-zCxSTtJQqsgbI9H0r4c0SRezJSCIQf7KCWj&#43;RQ9XBXU=" crossorigin="anonymous">
+
+
+  <script defer src="/fuse.min.js"></script>
+  <script defer src="/en.search.min.a6b0c606c89b3f3205630fd0b3acc8ef8b71c90fc9e4225192a8be3bb34405e0.js" integrity="sha256-prDGBsibPzIFYw/Qs6zI74txyQ/J5CJRkqi&#43;O7NEBeA=" crossorigin="anonymous"></script>
+
+
+
+  
+</head>
+<body dir="ltr" class="book-kind-page book-type-docs">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    
+<aside class="book-menu">
+  <div class="book-menu-content">
+    
+  <nav>
+<h2 class="book-brand">
+  <a class="flex align-center" href="/"><span>rdququ&#39;s Blog</span>
+  </a>
+</h2>
+
+
+<div class="book-search hidden">
+  <input id="book-search-input" type="text" 
+    placeholder="Search"
+    aria-label="Search"
+    maxlength="64" data-hotkeys="s/" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+<script>document.querySelector(".book-search").classList.remove("hidden")</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/blog/" class="">
+      Blog</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/links/" class="">
+      Links</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/archive/" class="active">
+      Archive</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+
+  </div>
+</aside>
+ 
+
+    <div class="book-page">
+      <header class="book-header hidden">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/icons/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <h3>Archive</h3>
+
+  <label for="toc-control">
+    
+    <img src="/icons/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden">
+    
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#archive">Archive</a></li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      
+      
+  <article class="markdown book-article"><h2 id="archive">Archive<a class="anchor" href="#archive">#</a></h2>
+<p>Past bytes for curious minds.</p>
+
+
+
+
+
+
+
+
+<style>
+  :root {
+    --primary: #05b;
+    --text-strong: #111827;
+    --text-muted: #6b7280;
+    --border: #e5e7eb;
+    --light-blue: #05b;
+  }
+
+  .archive-list {
+    max-width: 900px;
+    margin: 0.5rem auto;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  }
+
+  .archive-item {
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .archive-item:last-child {
+    border-bottom: none;
+  }
+
+  .item-title {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--primary) !important;
+    text-decoration: none;
+    display: inline-block;
+    margin-bottom: 0.25rem;
+  }
+
+  .item-title:visited {
+    color: var(--primary) !important;
+  }
+
+  .item-title:hover {
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .item-meta {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    margin: 0.25rem 0 0.5rem;
+    font-weight: 600;
+  }
+
+  .meta-date {
+    color: #000000;
+  }
+
+  .item-tags {
+    display: flex;
+    gap: 0.25rem;
+    flex-wrap: wrap;
+    margin-top: 0.25rem;
+  }
+
+  .tag-link {
+    color: var(--light-blue);
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 700;
+    padding: 0 0px;
+    display: inline-flex;
+    align-items: center;
+    pointer-events: none;
+    cursor: default;
+  }
+
+  .tag-separator {
+    color: var(--light-blue);
+    font-size: 0.85rem;
+    font-weight: 700;
+    margin-left: -4px; 
+    margin-right: 2px;
+  }
+
+
+  .item-preview {
+    margin-top: 0.5rem;
+    color: #374151;
+    line-height: 1.6;
+    font-size: .95rem;
+  }
+
+  .item-preview code {
+    background: #f3f4f6;
+    padding: 0 4px;
+    border-radius: 4px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size: .9em;
+  }
+</style>
+
+<div class="archive-list">
+  
+  
+  
+  
+  
+
+  
+  
+  
+  
+
+  
+  
+  
+
+  
+
+  <article class="archive-item">
+    <a href="/docs/archive_posts/archive_blog_1/" class="item-title">2D 渲染基础</a>
+
+    <div class="item-meta"><time class="meta-date" datetime=" 2023-01-01">January 1, 2023</time></div>
+
+
+<div class="item-tags">
+  
+  
+  
+  <span class="tag-link">game engine</span><span class="tag-separator">,</span>
+  
+  <span class="tag-link">render</span>
+  
+</div>
+
+
+    
+    
+    
+    
+    
+  </article>
+  
+  
+</div>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+<div>
+
+</div>
+
+<div>
+
+</div>
+
+</div>
+
+
+
+
+
+  
+  
+  
+  <div class="flex flex-wrap justify-between">
+    <span>
+    
+      <a href="/docs/links/" class="flex align-center">
+        <img src="/icons/backward.svg" class="book-icon" alt="Backward" />
+        <span>Links</span>
+      </a>
+    
+    </span>
+    <span>
+    
+    </span>
+  </div>
+  
+
+
+ 
+        
+  
+  <div class="book-comments">
+<div id="disqus_thread"></div>
+<script>
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "rdququ's Blog" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+  
+ 
+        
+        
+  
+ 
+        
+  
+  
+    <script>(function(){document.querySelectorAll("pre:has(code)").forEach(e=>{e.addEventListener("click",e.focus),e.addEventListener("copy",function(t){if(t.preventDefault(),navigator.clipboard){const t=window.getSelection().toString()||e.textContent;navigator.clipboard.writeText(t)}})})})()</script>
+  
+
+      </footer>
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+  
+  <aside class="book-toc">
+    <div class="book-toc-content">
+      
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#archive">Archive</a></li>
+  </ul>
+</nav>
+
+
+
+    </div>
+  </aside>
+  
+ 
+  </main>
+
+  
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

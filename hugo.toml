@@ -1,7 +1,19 @@
-baseURL = 'https://example.org/'
+baseURL = 'https://rdququ.top/'
 languageCode = 'en-us'
-title = "rdququ's blog"
+title = "rdququ's Blog"
 theme = "hugo-book"
+
+disqusShortname = "rdququ's Blog"
+enableGitInfo = true
+
+[params]
+  BookComments = true
+  BookTheme = "light"
+  BookToC = true
+  BookSearch = true
+  BookPortableLinks = true
+
+
 [caches]
   [caches.images]
     dir = ':cacheDir/images'

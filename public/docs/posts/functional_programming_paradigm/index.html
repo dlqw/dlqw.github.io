@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="函数式编程风格#命令式和声明式（Imperative &amp; Declarative）#在谈论 FP 范式这个陌生词汇之前，我想先聊些我们熟悉的。
+1990年后，C 作为计算机教育的101课程，逐渐在中国高校中普及开来。这是一门典型的命令式语言，程序员使用运算，循环和跳转语句，作为汇编语言的抽象对硬件发出指令。这种范式还有一个名字更加广为人知“面向过程编程”。
+现今，几乎所有常见的编程语言都支持这一范式，包括 Java， Python 和 C&#43;&#43; 等常见的面向对象语言。面向对象要求将数据和操作数据的行为封装在对象中，通过这些对象来组织代码。逻辑的封装与数据的抽象并未改变人们依赖显式控制流去操控程序的状态以实现功能。
+不同于命令式的&#34;你该那么做&#34;，声明式语言更关注“你该做什么”。
+请允许我用 C# 举个例子：
+(string name, int age)[] people = new[] { (&#34;Alice&#34;, 12), (&#34;Bob&#34;, 5), (&#34;Charlie&#34;, 35), (&#34;David&#34;, 65), (&#34;Eve&#34;, 40), };我们需要在人群中筛选出成年者，并保存他们的姓名。
+这是一个常见的命令式实现
+string[] adults = new string[people.Length]; for(int i = 0; i &lt; people.Length; i&#43;&#43;) { if (people[i].age &gt;= 18) { adults[i] = people[i].name; } }而声明式则是这样的写法
+string[] adults = people .Where(p =&gt; p.age &gt;= 18) .Select(p =&gt; p.name) .ToArray();令人遗憾的是，虽然论述到本节时，一定会有读者疑惑于“命令式语言中的方法和声明式的‘做什么’有什么区别”，但鲜见讨论函数式编程的书对此做过解释。
+">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="http://localhost:1313/docs/posts/functional_programming_paradigm/">
+  <meta property="og:site_name" content="rdququ&#39;s Blog">
+  <meta property="og:title" content="Functional Programming Paradigm">
+  <meta property="og:description" content="函数式编程风格#命令式和声明式（Imperative &amp; Declarative）#在谈论 FP 范式这个陌生词汇之前，我想先聊些我们熟悉的。
+1990年后，C 作为计算机教育的101课程，逐渐在中国高校中普及开来。这是一门典型的命令式语言，程序员使用运算，循环和跳转语句，作为汇编语言的抽象对硬件发出指令。这种范式还有一个名字更加广为人知“面向过程编程”。
+现今，几乎所有常见的编程语言都支持这一范式，包括 Java， Python 和 C&#43;&#43; 等常见的面向对象语言。面向对象要求将数据和操作数据的行为封装在对象中，通过这些对象来组织代码。逻辑的封装与数据的抽象并未改变人们依赖显式控制流去操控程序的状态以实现功能。
+不同于命令式的&#34;你该那么做&#34;，声明式语言更关注“你该做什么”。
+请允许我用 C# 举个例子：
+(string name, int age)[] people = new[] { (&#34;Alice&#34;, 12), (&#34;Bob&#34;, 5), (&#34;Charlie&#34;, 35), (&#34;David&#34;, 65), (&#34;Eve&#34;, 40), };我们需要在人群中筛选出成年者，并保存他们的姓名。
+这是一个常见的命令式实现
+string[] adults = new string[people.Length]; for(int i = 0; i &lt; people.Length; i&#43;&#43;) { if (people[i].age &gt;= 18) { adults[i] = people[i].name; } }而声明式则是这样的写法
+string[] adults = people .Where(p =&gt; p.age &gt;= 18) .Select(p =&gt; p.name) .ToArray();令人遗憾的是，虽然论述到本节时，一定会有读者疑惑于“命令式语言中的方法和声明式的‘做什么’有什么区别”，但鲜见讨论函数式编程的书对此做过解释。">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="docs">
+    <meta property="article:published_time" content="2025-03-29T00:00:00+00:00">
+    <meta property="article:modified_time" content="2025-03-29T00:00:00+00:00">
+    <meta property="article:tag" content="FP">
+    <meta property="article:tag" content="C#">
+
+
+  <meta itemprop="name" content="Functional Programming Paradigm">
+  <meta itemprop="description" content="函数式编程风格#命令式和声明式（Imperative &amp; Declarative）#在谈论 FP 范式这个陌生词汇之前，我想先聊些我们熟悉的。
+1990年后，C 作为计算机教育的101课程，逐渐在中国高校中普及开来。这是一门典型的命令式语言，程序员使用运算，循环和跳转语句，作为汇编语言的抽象对硬件发出指令。这种范式还有一个名字更加广为人知“面向过程编程”。
+现今，几乎所有常见的编程语言都支持这一范式，包括 Java， Python 和 C&#43;&#43; 等常见的面向对象语言。面向对象要求将数据和操作数据的行为封装在对象中，通过这些对象来组织代码。逻辑的封装与数据的抽象并未改变人们依赖显式控制流去操控程序的状态以实现功能。
+不同于命令式的&#34;你该那么做&#34;，声明式语言更关注“你该做什么”。
+请允许我用 C# 举个例子：
+(string name, int age)[] people = new[] { (&#34;Alice&#34;, 12), (&#34;Bob&#34;, 5), (&#34;Charlie&#34;, 35), (&#34;David&#34;, 65), (&#34;Eve&#34;, 40), };我们需要在人群中筛选出成年者，并保存他们的姓名。
+这是一个常见的命令式实现
+string[] adults = new string[people.Length]; for(int i = 0; i &lt; people.Length; i&#43;&#43;) { if (people[i].age &gt;= 18) { adults[i] = people[i].name; } }而声明式则是这样的写法
+string[] adults = people .Where(p =&gt; p.age &gt;= 18) .Select(p =&gt; p.name) .ToArray();令人遗憾的是，虽然论述到本节时，一定会有读者疑惑于“命令式语言中的方法和声明式的‘做什么’有什么区别”，但鲜见讨论函数式编程的书对此做过解释。">
+  <meta itemprop="datePublished" content="2025-03-29T00:00:00+00:00">
+  <meta itemprop="dateModified" content="2025-03-29T00:00:00+00:00">
+  <meta itemprop="wordCount" content="109">
+  <meta itemprop="keywords" content="FP,C#">
+
+<title>Functional Programming Paradigm | rdququ&#39;s Blog</title>
+<link rel="icon" href="/favicon.png" >
+<link rel="manifest" href="/manifest.json">
+<link rel="canonical" href="http://localhost:1313/docs/posts/functional_programming_paradigm/">
+<link rel="stylesheet" href="/book.min.cc2c524ed250aac81b23d1f4af87344917b325208841feca0968fe450f570575.css" integrity="sha256-zCxSTtJQqsgbI9H0r4c0SRezJSCIQf7KCWj&#43;RQ9XBXU=" crossorigin="anonymous">
+
+
+  <script defer src="/fuse.min.js"></script>
+  <script defer src="/en.search.min.a6b0c606c89b3f3205630fd0b3acc8ef8b71c90fc9e4225192a8be3bb34405e0.js" integrity="sha256-prDGBsibPzIFYw/Qs6zI74txyQ/J5CJRkqi&#43;O7NEBeA=" crossorigin="anonymous"></script>
+
+
+
+  
+</head>
+<body dir="ltr" class="book-kind-page book-type-docs">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    
+<aside class="book-menu">
+  <div class="book-menu-content">
+    
+  <nav>
+<h2 class="book-brand">
+  <a class="flex align-center" href="/"><span>rdququ&#39;s Blog</span>
+  </a>
+</h2>
+
+
+<div class="book-search hidden">
+  <input id="book-search-input" type="text" 
+    placeholder="Search"
+    aria-label="Search"
+    maxlength="64" data-hotkeys="s/" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+<script>document.querySelector(".book-search").classList.remove("hidden")</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/blog/" class="">
+      Blog</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/links/" class="">
+      Links</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/archive/" class="">
+      Archive</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+
+  </div>
+</aside>
+ 
+
+    <div class="book-page">
+      <header class="book-header hidden">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/icons/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <h3>Functional Programming Paradigm</h3>
+
+  <label for="toc-control">
+    
+    <img src="/icons/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden">
+    
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#命令式和声明式imperative--declarative">命令式和声明式（Imperative &amp; Declarative）</a></li>
+    <li><a href="#相同的设计原则">相同的设计原则</a></li>
+    <li><a href="#什么是函数式编程">什么是函数式编程</a></li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      
+      
+  <article class="markdown book-article"><h1 id="函数式编程风格">函数式编程风格<a class="anchor" href="#%e5%87%bd%e6%95%b0%e5%bc%8f%e7%bc%96%e7%a8%8b%e9%a3%8e%e6%a0%bc">#</a></h1>
+<h2 id="命令式和声明式imperative--declarative">命令式和声明式（Imperative &amp; Declarative）<a class="anchor" href="#%e5%91%bd%e4%bb%a4%e5%bc%8f%e5%92%8c%e5%a3%b0%e6%98%8e%e5%bc%8fimperative--declarative">#</a></h2>
+<p>在谈论 FP 范式这个陌生词汇之前，我想先聊些我们熟悉的。</p>
+<p>1990年后，C 作为计算机教育的101课程，逐渐在中国高校中普及开来。这是一门典型的命令式语言，程序员使用运算，循环和跳转语句，作为汇编语言的抽象对硬件发出指令。这种范式还有一个名字更加广为人知“面向过程编程”。</p>
+<p>现今，几乎所有常见的编程语言都支持这一范式，包括 Java， Python 和 C++ 等常见的面向对象语言。面向对象要求将数据和操作数据的行为封装在对象中，通过这些对象来组织代码。逻辑的封装与数据的抽象并未改变人们依赖显式控制流去操控程序的状态以实现功能。</p>
+<p>不同于命令式的&quot;你该那么做&quot;，声明式语言更关注“你该做什么”。</p>
+<p>请允许我用 C# 举个例子：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span>(<span style="color:#66d9ef">string</span> name, <span style="color:#66d9ef">int</span> age)[] people = <span style="color:#66d9ef">new</span>[]
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    (<span style="color:#e6db74">&#34;Alice&#34;</span>, <span style="color:#ae81ff">12</span>),
+</span></span><span style="display:flex;"><span>    (<span style="color:#e6db74">&#34;Bob&#34;</span>, <span style="color:#ae81ff">5</span>),
+</span></span><span style="display:flex;"><span>    (<span style="color:#e6db74">&#34;Charlie&#34;</span>, <span style="color:#ae81ff">35</span>),
+</span></span><span style="display:flex;"><span>    (<span style="color:#e6db74">&#34;David&#34;</span>, <span style="color:#ae81ff">65</span>),
+</span></span><span style="display:flex;"><span>    (<span style="color:#e6db74">&#34;Eve&#34;</span>, <span style="color:#ae81ff">40</span>),
+</span></span><span style="display:flex;"><span>};</span></span></code></pre></div><p>我们需要在人群中筛选出成年者，并保存他们的姓名。</p>
+<p>这是一个常见的命令式实现</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">string</span>[] adults = <span style="color:#66d9ef">new</span> <span style="color:#66d9ef">string</span>[people.Length];
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span>(<span style="color:#66d9ef">int</span> i = <span style="color:#ae81ff">0</span>; i &lt; people.Length; i++)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (people[i].age &gt;= <span style="color:#ae81ff">18</span>)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        adults[i] = people[i].name;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}</span></span></code></pre></div><p>而声明式则是这样的写法</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">string</span>[] adults = people
+</span></span><span style="display:flex;"><span>    .Where(p =&gt; p.age &gt;= <span style="color:#ae81ff">18</span>)
+</span></span><span style="display:flex;"><span>    .Select(p =&gt; p.name)
+</span></span><span style="display:flex;"><span>    .ToArray();</span></span></code></pre></div><p>令人遗憾的是，虽然论述到本节时，一定会有读者疑惑于“命令式语言中的方法和声明式的‘做什么’有什么区别”，但鲜见讨论函数式编程的书对此做过解释。</p>
+<p>让我们再来回顾命令式和声明式所关注的点。</p>
+<ol>
+<li>命令式是基于计算机硬件接收并执行指令的层层抽象，关心的是如何逐步发送指令完成对程序的构造。</li>
+<li>声明式则最初被定义为<em>非命令式</em>，人们不关心功能如何实现，而是关心功能是什么。这种思潮衍生的极致便是 DSL（领域特定语言）。</li>
+</ol>
+<p>倘若存在一个神奇的编译器，可以编译人类日常交流的自然语言。那么，你对他说“嘿！哥们。请先把标准输入流中的第一个和第二个数存起来，然后把他们加起来并编辑成音频，最后向外播放这个音频”，何尝不也是一种命令式呢。</p>
+<p>如果你需要的是声明式语言，请这么说“我需要一个软件，它可以接收用户输入的前两个数，然后用音频输出他们的和，今天下午给我”。笑）</p>
+<p>现在，问题的答案已经呼之欲出了。命令式语言中的方法仍然是指令的体现，无论其是否由你实现。命令式关心的是实现的细节，而声明式关心的是需要实现什么。</p>
+<p>也正如此，两种范式并不于客观上泾渭分明，现在越来越多的编程语言都朝着混合范式的方向发展，我们所使用的 C# 正是其中的佼佼者。</p>
+<h2 id="相同的设计原则">相同的设计原则<a class="anchor" href="#%e7%9b%b8%e5%90%8c%e7%9a%84%e8%ae%be%e8%ae%a1%e5%8e%9f%e5%88%99">#</a></h2>
+<p>或许你已经为之发愁过了，命令式程序员并非未曾意识到状态突变带来的危险，他们会使用锁，或是控制尽可能少的状态更新入口来维持程序的稳定运行。同样的，他们也会使用事件和回调来优化流程控制。</p>
+<p>我说这些并非期望给读者带来“命令式没有函数式编程靠谱”的想法，恰恰相反，我想强调的是：<strong>无论哪种范式，在构建或大或小的精妙系统时，我们都遵循着同样的设计原则。</strong></p>
+<p>或许你听过诸如单一职责（single responsibility），高内聚低耦合（loose coupling high cohesion），DRY（don&rsquo;t repeat yourself）一类的词汇，我们不会在这里展开他们，只是希望至少这些词汇能给你带来些安心感。</p>
+<h2 id="什么是函数式编程">什么是函数式编程<a class="anchor" href="#%e4%bb%80%e4%b9%88%e6%98%af%e5%87%bd%e6%95%b0%e5%bc%8f%e7%bc%96%e7%a8%8b">#</a></h2>
+<p>函数式编程中，程序的构建基于 lambda 演算的组合，应用和归约。</p>
+<p>想象一个只有两侧开口的盒子，你向一侧放入些值，然后可以在另一侧取出一个新值，在此过程中，你并不知道这个盒子是如何运作的，好在你也并不需要知道。这指向了函数式编程中的一个特性：<a href="/fp004-%e4%b8%8d%e5%8f%af%e5%8f%98%e6%80%a7.md"><strong>不可变性</strong></a>。确切的说，lambda 演算中没有状态，每一次从盒子里取出的东西都是全新的。不过作为图灵完备者，FP 也可以利用 lambda 演算去模拟状态, 我们会在<a href="/fp027-%e6%9c%89%e7%8a%b6%e6%80%81%e8%ae%a1%e7%ae%97.md">有状态计算</a>一章中去详细介绍。</p>
+<p>还是那个盒子，这次你没有给它塞值，而是将另一个盒子塞了进去，令人惊奇的是，另一端出现了一个全新的盒子。我们通常管这种可以产生盒子的盒子叫做<a href="/fp003-%e9%ab%98%e9%98%b6%e5%87%bd%e6%95%b0.md"><strong>高阶函数</strong></a>。</p>
+<p>就这样，你可以把这些盒子和值层层嵌套，最后你会得到一个终极的盒子，他就是你所期望构造的程序。当然，因为他本质上仍然是个盒子——我们现在开始叫他<strong>函数</strong>吧，所以你可以把它当作一个即插即用的组件，插入到任何一个符合规范的另一个函数(程序)中。</p>
+<p>如果你这么做了，恭喜你，你已经开始实践函数式编程了。在使用函数设计精妙的应用程序之前，我们还需要掌握一些基础知识。</p>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+<div>
+
+</div>
+
+<div>
+
+</div>
+
+</div>
+
+
+
+
+
+  
+  
+  
+
+
+ 
+        
+  
+  <div class="book-comments">
+<div id="disqus_thread"></div>
+<script>
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "rdququ's Blog" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+  
+ 
+        
+        
+  
+ 
+        
+  
+  
+    <script>(function(){document.querySelectorAll("pre:has(code)").forEach(e=>{e.addEventListener("click",e.focus),e.addEventListener("copy",function(t){if(t.preventDefault(),navigator.clipboard){const t=window.getSelection().toString()||e.textContent;navigator.clipboard.writeText(t)}})})})()</script>
+  
+
+      </footer>
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+  
+  <aside class="book-toc">
+    <div class="book-toc-content">
+      
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#命令式和声明式imperative--declarative">命令式和声明式（Imperative &amp; Declarative）</a></li>
+    <li><a href="#相同的设计原则">相同的设计原则</a></li>
+    <li><a href="#什么是函数式编程">什么是函数式编程</a></li>
+  </ul>
+</nav>
+
+
+
+    </div>
+  </aside>
+  
+ 
+  </main>
+
+  
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

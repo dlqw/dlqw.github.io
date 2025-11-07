@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="http://localhost:1313/tags/game-engine/">
+  <meta property="og:site_name" content="rdququ&#39;s Blog">
+  <meta property="og:title" content="Game Engine">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="website">
+
+
+  <meta itemprop="name" content="Game Engine">
+  <meta itemprop="datePublished" content="2023-01-01T00:00:00+00:00">
+  <meta itemprop="dateModified" content="2023-01-01T00:00:00+00:00">
+
+<title>Game Engine | rdququ&#39;s Blog</title>
+<link rel="icon" href="/favicon.png" >
+<link rel="manifest" href="/manifest.json">
+<link rel="canonical" href="http://localhost:1313/tags/game-engine/">
+<link rel="stylesheet" href="/book.min.cc2c524ed250aac81b23d1f4af87344917b325208841feca0968fe450f570575.css" integrity="sha256-zCxSTtJQqsgbI9H0r4c0SRezJSCIQf7KCWj&#43;RQ9XBXU=" crossorigin="anonymous">
+
+
+  <script defer src="/fuse.min.js"></script>
+  <script defer src="/en.search.min.a6b0c606c89b3f3205630fd0b3acc8ef8b71c90fc9e4225192a8be3bb34405e0.js" integrity="sha256-prDGBsibPzIFYw/Qs6zI74txyQ/J5CJRkqi&#43;O7NEBeA=" crossorigin="anonymous"></script>
+
+
+<link rel="alternate" type="application/rss+xml" href="http://localhost:1313/tags/game-engine/index.xml" title="rdququ's Blog" />
+
+  
+</head>
+<body dir="ltr" class="book-kind-term book-type-tags">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    
+<aside class="book-menu">
+  <div class="book-menu-content">
+    
+  <nav>
+<h2 class="book-brand">
+  <a class="flex align-center" href="/"><span>rdququ&#39;s Blog</span>
+  </a>
+</h2>
+
+
+<div class="book-search hidden">
+  <input id="book-search-input" type="text" 
+    placeholder="Search"
+    aria-label="Search"
+    maxlength="64" data-hotkeys="s/" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+<script>document.querySelector(".book-search").classList.remove("hidden")</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/blog/" class="">
+      Blog</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/links/" class="">
+      Links</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/archive/" class="">
+      Archive</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+
+  </div>
+</aside>
+ 
+
+    <div class="book-page">
+      <header class="book-header hidden">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/icons/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <h3>Game Engine</h3>
+
+  <label for="toc-control">
+    
+  </label>
+</div>
+
+
+  
+ 
+      </header>
+
+      
+      
+  
+  <article class="markdown book-post">
+    <h2>
+      <a href="/docs/archive_posts/archive_blog_1/">2D 渲染基础</a>
+    </h2>
+    
+  <div class="flex align-center text-small book-post-date">
+    <img src="/icons/calendar.svg" class="book-icon" alt="Calendar" />
+    <span>January 1, 2023</span>
+  </div>
+
+
+
+  
+
+  
+  <div class="text-small">
+    
+      <a href="/tags/game-engine/">Game Engine</a>, 
+      <a href="/tags/render/">Render</a>
+  </div>
+  
+
+
+    <div class="book-post-content"><h2 id="像素缓冲区和垂直同步">像素缓冲区和垂直同步<a class="anchor" href="#%e5%83%8f%e7%b4%a0%e7%bc%93%e5%86%b2%e5%8c%ba%e5%92%8c%e5%9e%82%e7%9b%b4%e5%90%8c%e6%ad%a5">#</a></h2>
+<h3 id="crt-显示器基础">CRT 显示器基础<a class="anchor" href="#crt-%e6%98%be%e7%a4%ba%e5%99%a8%e5%9f%ba%e7%a1%80">#</a></h3>
+<p>现在大家用的比较多的是液晶显示器(LCD), 在早先年，大家用的 CRT 显示器比较多，也就是阴极管射线显示器。LCD 通过控制是否透光来控制亮和暗，当色彩不变时，液晶也保持不变，这样就无须考虑刷新率的问题。对于画面稳定、无闪烁感的液晶显示器，刷新率不高但图像也很稳定。不过对于我们今天要谈的游戏来说，缺点就很明显了，其相应速度不够，画面有时候会有重影。</p>
+<p>当然，我们这节课的主题是 2D 游戏渲染基础，和大家聊显示器主要也是让大家更好的了解我们渲染操作生成后呈现的载体。</p>
+<p>其实 LCD 和 CRT 显示器在刷新上的原理是差不多的，当然我们前面也说了，在早点年，CRT 显示器是当时的主流，综合考虑，也是为了让大家了解 2D 渲染这项技术在诞生之初的显示设备的环境，我打算从 CRT 显示器的角度带大家聊聊显示器的工作原理。</p>
+<p>大家高中信息课应该教过，在 CRT 显示器内部，绘制图形是通过电子枪发射电子流完成的。这样讲可能比较抽象。其实，在显示器内部有一层荧光板，荧光板上面有一些荧光粉末，红绿蓝三种颜色的荧光粉末，单色的荧光粉末会聚集起来形成一个小小的荧光单元。红绿蓝三种单元各出一个聚集在一起就是一个像素点，密密麻麻的像素点就充斥在荧光板上了。<br>
+电子枪则会一口气发射三注电子流，很好理解，这些电子流依次打在了 RGB 三色上，由于电子流的强度不一样，每个像素点的红绿蓝三色的光也不一样，通过空间混色法，每个像素点就会呈现出不同的颜色。</p>
+<p>当然，电子流的能量是有限的，这些荧光粉很快就会熄灭，所以电子枪需要不断的发射电子流，这样才能保证荧光粉不断的发光，显示器才能一直显示图像。这就是刷新了。</p>
+<p>不过要想让画面动起来，而不是显示器上某个像素点一直再发不同的光，然而其他地方却一片黑，我们的电子流就要去射击不同的像素点，让整个显示器都呈现出画面。我们管这叫扫描。当然这里也运用到了人眼的视觉残留效应，想必大家很清楚。</p>
+<p>当然扫描也不是乱扫的，是有章法有规则的，请看下图。</p>
+<p><img src="CRT%E6%98%BE%E7%A4%BA%E5%99%A8%E6%89%AB%E6%8F%8F.png" alt="旧博客归档,图片已失效" /></p>
+<p>这张图大家肯定超级熟悉吧。电子枪从左上角向右扫，然后再从右向左扫，直到扫完整个屏幕。欸，我估计聪明的小伙伴已经发现了，这个扫描线不是绝对水平的，而是略微带一点倾斜。这也是为了让扫描线能扫过整个屏幕而不是只在一条横线上来回扫。从左向右扫的每条扫描线都略微下坡，其实这个下坡的度数是可以算出来的，其斜率大约为 -1/水平分辨率, 非常好算，我就不带大家算一遍了。</p>
+<h4 id="消隐期-blank">消隐期 BLANK<a class="anchor" href="#%e6%b6%88%e9%9a%90%e6%9c%9f-blank">#</a></h4>
+<p>其实，在 CRT 显示器中，从右向左的这一条扫描线往往不会真实的扫描，而是消隐，大家可以理解为电子枪在这段时间不喷了，画面上一片漆黑。这个时间段我们称为<strong>行消隐期(HBLANK)</strong>，也可以叫做水平回扫。</p>
+<p>啥是行？电子束既要作水平方向的运动，又要作垂直方向的运动。前者形成一行的扫描，称为行扫描，后者形成一幅画面的扫描，称为场扫描。</p>
+<p>当电子流从左上角扫到右下角后，屏幕就完成了一帧的渲染，不过这时候电子枪指着右下角啊，难道说下一帧是从右下角原路返回右上角吗？听起来好像效率挺高的，不过我们实际上不会这么干。而是让电子枪直接从右下角跳到右上角，然后再从右上角开始扫描。电子枪从右下角移动到左上角的的过程，我们称作<strong>场消隐期(VBLANK)</strong>，也可以叫做垂直回扫。同样的，这段时间内，画面上也是一片漆黑的。</p>
+<h4 id="垂直同步">垂直同步<a class="anchor" href="#%e5%9e%82%e7%9b%b4%e5%90%8c%e6%ad%a5">#</a></h4>
+<p>前面我们已经谈过了画面撕裂的原理，是渲染帧数超过刷新率，在显示器才显示到一半时就粗暴的给他塞了新的画面进去。那后来人是怎么解决这个问题的呢？很简单，就是在显示器刷新的时候，我们不提交渲染，直到等显示器刷新完了。这样就不会出现画面撕裂的问题了。这个技术就是<strong>垂直同步(VSYNC)</strong>。</p>
+<p>简单来说就是渲染循环受到真实刷新率的支配嘛。让游戏渲染的输出频率对标设备的刷新率，游戏的主循环又会和渲染循环相互制约，游戏的帧率也就被限制在了设备的刷新率上。当然这也会造成输入延迟，这一点不理解的同学可以去听我上一节的课，讲的很清楚。</p>
+<p>下面来点<strong>套话</strong><br>
+为了同步显示屏的显示过程和控制器，控制器会产生一系列的定时信号。当电子枪换行进行扫描时，控制器会发出一个<strong>水平同步信号 HSync</strong>；而当一帧画面绘制完成后，电子枪回复到原位，准备画下一帧前，控制器会发出一个<strong>垂直同步信号 VSync</strong>。</p>
+<p>VSYNC信号有效时，表示一帧数据的开始。</p>
+<h3 id="像素缓冲区">像素缓冲区<a class="anchor" href="#%e5%83%8f%e7%b4%a0%e7%bc%93%e5%86%b2%e5%8c%ba">#</a></h3>
+<p>缓冲区是一个很好理解的概念，图像从我们的 GPU 到屏幕上并不是实时的一步到位的。在 GPU 内存上有一系列的缓冲区用来暂存渲染数据。</p>
+<p>我们在屏幕上展示出来的图像实际上是存储来 GPU 内存里面的。现代的硬件也足够支撑高分辨率的图像存在内存中，然而，这并不意味着我们就可以高枕无忧了。游戏循环仍然要像我们之前反复强调的那样考虑到 CRT(或者其他什么) 的电子枪。请试想，当 CRT 喷枪才在屏幕中喷到一半的时候，缓冲区就写入了新的数据，等这帧渲染完成后，显示器就会显示出一半新的画面，一半旧的画面，这就是我们前面说的画面撕裂。更糟糕的是，新数据提交的时候，上一帧还没开始绘制，那么就不是说屏幕中同时存在新的和旧的画面了，而是直接丢失了上一帧的画面。</p>
+<p>为了解决这个问题，早期的开发者想出了一种现在我们已经很难接受的办法，那就是等到场消隐期再开始渲染，但这样的做法带来的弊端也很明显，游戏循环被完全锁死在了显示器的刷新率上了。</p>
+<p>当然，还有另一种解决方案-多缓冲技术。我们可以在 GPU 内存中准备多个缓冲区，游戏循环可以将图像写入缓冲区A，这时屏幕正在绘制缓冲区B，等到下一帧，屏幕显示缓冲区A，游戏循环则将图像写入缓冲区B，由于屏幕和游戏循环的工作是交替进行的，所以我们可以保证屏幕显示的是完整的一帧画面。</p>
+<p>为了完全消灭画面撕裂，缓冲区的交换必须在场消隐期进行，这就是我们之前一直说的<strong>垂直同步</strong>。</p>
+<p>当然，这种技术的前提有两个，一个是交换缓冲区的速度足够快，在绝大多数场景下，这一点是不会变的，然而第二点则是等待 VBLANK。首先你得把游戏里面垂直同步的开关打开，缓冲区的交换才会等待垂直同步。有一些玩家为了追求极致的帧率和更低的输入延迟会关闭垂直同步，然而他们的屏幕刷新率又远低于游戏帧率，那么画面撕裂仍然会存在，缓冲区的存在只是一定程度的减缓了这种现象。</p></div>
+  </article>
+  
+
+  
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+<div>
+
+</div>
+
+<div>
+
+</div>
+
+</div>
+
+
+
+
+
+  
+  
+  
+
+
+ 
+        
+  
+ 
+        
+        
+  
+ 
+        
+  
+  
+    <script>(function(){document.querySelectorAll("pre:has(code)").forEach(e=>{e.addEventListener("click",e.focus),e.addEventListener("copy",function(t){if(t.preventDefault(),navigator.clipboard){const t=window.getSelection().toString()||e.textContent;navigator.clipboard.writeText(t)}})})})()</script>
+  
+
+      </footer>
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+<aside class="book-toc">
+  <div class="book-toc-content">
+    
+  <nav>
+  <ul>
+  
+    
+    <li class="book-section-flat">
+      <a>Categories</a>
+      <ul>
+      
+      </ul>
+    </li>
+    
+  
+    
+    <li class="book-section-flat">
+      <a>Tags</a>
+      <ul>
+      
+        <li class="flex align-center">
+          <a href="/tags/fp/">FP</a>
+          <span>1</span>
+        </li>
+      
+        <li class="flex align-center">
+          <a href="/tags/game-engine/">Game Engine</a>
+          <span>1</span>
+        </li>
+      
+        <li class="flex align-center">
+          <a href="/tags/render/">Render</a>
+          <span>1</span>
+        </li>
+      
+      </ul>
+    </li>
+    
+  
+  </ul>
+</nav>
+
+
+  </div>
+</aside>
+ 
+  </main>
+
+  
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

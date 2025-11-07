@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="http://localhost:1313/tags/fp/">
+  <meta property="og:site_name" content="rdququ&#39;s Blog">
+  <meta property="og:title" content="FP">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="website">
+
+
+  <meta itemprop="name" content="FP">
+  <meta itemprop="datePublished" content="2025-03-29T00:00:00+00:00">
+  <meta itemprop="dateModified" content="2025-03-29T00:00:00+00:00">
+
+<title>FP | rdququ&#39;s Blog</title>
+<link rel="icon" href="/favicon.png" >
+<link rel="manifest" href="/manifest.json">
+<link rel="canonical" href="http://localhost:1313/tags/fp/">
+<link rel="stylesheet" href="/book.min.cc2c524ed250aac81b23d1f4af87344917b325208841feca0968fe450f570575.css" integrity="sha256-zCxSTtJQqsgbI9H0r4c0SRezJSCIQf7KCWj&#43;RQ9XBXU=" crossorigin="anonymous">
+
+
+  <script defer src="/fuse.min.js"></script>
+  <script defer src="/en.search.min.a6b0c606c89b3f3205630fd0b3acc8ef8b71c90fc9e4225192a8be3bb34405e0.js" integrity="sha256-prDGBsibPzIFYw/Qs6zI74txyQ/J5CJRkqi&#43;O7NEBeA=" crossorigin="anonymous"></script>
+
+
+<link rel="alternate" type="application/rss+xml" href="http://localhost:1313/tags/fp/index.xml" title="rdququ's Blog" />
+
+  
+</head>
+<body dir="ltr" class="book-kind-term book-type-tags">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    
+<aside class="book-menu">
+  <div class="book-menu-content">
+    
+  <nav>
+<h2 class="book-brand">
+  <a class="flex align-center" href="/"><span>rdququ&#39;s Blog</span>
+  </a>
+</h2>
+
+
+<div class="book-search hidden">
+  <input id="book-search-input" type="text" 
+    placeholder="Search"
+    aria-label="Search"
+    maxlength="64" data-hotkeys="s/" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+<script>document.querySelector(".book-search").classList.remove("hidden")</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/blog/" class="">
+      Blog</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/links/" class="">
+      Links</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/archive/" class="">
+      Archive</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+
+  </div>
+</aside>
+ 
+
+    <div class="book-page">
+      <header class="book-header hidden">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/icons/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <h3>FP</h3>
+
+  <label for="toc-control">
+    
+  </label>
+</div>
+
+
+  
+ 
+      </header>
+
+      
+      
+  
+  <article class="markdown book-post">
+    <h2>
+      <a href="/docs/posts/functional_programming_paradigm/">Functional Programming Paradigm</a>
+    </h2>
+    
+  <div class="flex align-center text-small book-post-date">
+    <img src="/icons/calendar.svg" class="book-icon" alt="Calendar" />
+    <span>March 29, 2025</span>
+  </div>
+
+
+
+  
+
+  
+  <div class="text-small">
+    
+      <a href="/tags/fp/">FP</a>
+  </div>
+  
+
+
+    <div class="book-post-content"><h1 id="函数式编程风格">函数式编程风格<a class="anchor" href="#%e5%87%bd%e6%95%b0%e5%bc%8f%e7%bc%96%e7%a8%8b%e9%a3%8e%e6%a0%bc">#</a></h1>
+<h2 id="命令式和声明式imperative--declarative">命令式和声明式（Imperative &amp; Declarative）<a class="anchor" href="#%e5%91%bd%e4%bb%a4%e5%bc%8f%e5%92%8c%e5%a3%b0%e6%98%8e%e5%bc%8fimperative--declarative">#</a></h2>
+<p>在谈论 FP 范式这个陌生词汇之前，我想先聊些我们熟悉的。</p>
+<p>1990年后，C 作为计算机教育的101课程，逐渐在中国高校中普及开来。这是一门典型的命令式语言，程序员使用运算，循环和跳转语句，作为汇编语言的抽象对硬件发出指令。这种范式还有一个名字更加广为人知“面向过程编程”。</p>
+<p>现今，几乎所有常见的编程语言都支持这一范式，包括 Java， Python 和 C++ 等常见的面向对象语言。面向对象要求将数据和操作数据的行为封装在对象中，通过这些对象来组织代码。逻辑的封装与数据的抽象并未改变人们依赖显式控制流去操控程序的状态以实现功能。</p>
+<p>不同于命令式的&quot;你该那么做&quot;，声明式语言更关注“你该做什么”。</p>
+<p>请允许我用 C# 举个例子：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span>(<span style="color:#66d9ef">string</span> name, <span style="color:#66d9ef">int</span> age)[] people = <span style="color:#66d9ef">new</span>[]
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    (<span style="color:#e6db74">&#34;Alice&#34;</span>, <span style="color:#ae81ff">12</span>),
+</span></span><span style="display:flex;"><span>    (<span style="color:#e6db74">&#34;Bob&#34;</span>, <span style="color:#ae81ff">5</span>),
+</span></span><span style="display:flex;"><span>    (<span style="color:#e6db74">&#34;Charlie&#34;</span>, <span style="color:#ae81ff">35</span>),
+</span></span><span style="display:flex;"><span>    (<span style="color:#e6db74">&#34;David&#34;</span>, <span style="color:#ae81ff">65</span>),
+</span></span><span style="display:flex;"><span>    (<span style="color:#e6db74">&#34;Eve&#34;</span>, <span style="color:#ae81ff">40</span>),
+</span></span><span style="display:flex;"><span>};</span></span></code></pre></div><p>我们需要在人群中筛选出成年者，并保存他们的姓名。</p>
+<p>这是一个常见的命令式实现</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">string</span>[] adults = <span style="color:#66d9ef">new</span> <span style="color:#66d9ef">string</span>[people.Length];
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span>(<span style="color:#66d9ef">int</span> i = <span style="color:#ae81ff">0</span>; i &lt; people.Length; i++)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (people[i].age &gt;= <span style="color:#ae81ff">18</span>)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        adults[i] = people[i].name;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}</span></span></code></pre></div><p>而声明式则是这样的写法</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">string</span>[] adults = people
+</span></span><span style="display:flex;"><span>    .Where(p =&gt; p.age &gt;= <span style="color:#ae81ff">18</span>)
+</span></span><span style="display:flex;"><span>    .Select(p =&gt; p.name)
+</span></span><span style="display:flex;"><span>    .ToArray();</span></span></code></pre></div><p>令人遗憾的是，虽然论述到本节时，一定会有读者疑惑于“命令式语言中的方法和声明式的‘做什么’有什么区别”，但鲜见讨论函数式编程的书对此做过解释。</p></div>
+  </article>
+  
+
+  
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+<div>
+
+</div>
+
+<div>
+
+</div>
+
+</div>
+
+
+
+
+
+  
+  
+  
+
+
+ 
+        
+  
+ 
+        
+        
+  
+ 
+        
+  
+  
+    <script>(function(){document.querySelectorAll("pre:has(code)").forEach(e=>{e.addEventListener("click",e.focus),e.addEventListener("copy",function(t){if(t.preventDefault(),navigator.clipboard){const t=window.getSelection().toString()||e.textContent;navigator.clipboard.writeText(t)}})})})()</script>
+  
+
+      </footer>
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+<aside class="book-toc">
+  <div class="book-toc-content">
+    
+  <nav>
+  <ul>
+  
+    
+    <li class="book-section-flat">
+      <a>Categories</a>
+      <ul>
+      
+      </ul>
+    </li>
+    
+  
+    
+    <li class="book-section-flat">
+      <a>Tags</a>
+      <ul>
+      
+        <li class="flex align-center">
+          <a href="/tags/fp/">FP</a>
+          <span>1</span>
+        </li>
+      
+        <li class="flex align-center">
+          <a href="/tags/game-engine/">Game Engine</a>
+          <span>1</span>
+        </li>
+      
+        <li class="flex align-center">
+          <a href="/tags/render/">Render</a>
+          <span>1</span>
+        </li>
+      
+      </ul>
+    </li>
+    
+  
+  </ul>
+</nav>
+
+
+  </div>
+</aside>
+ 
+  </main>
+
+  
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

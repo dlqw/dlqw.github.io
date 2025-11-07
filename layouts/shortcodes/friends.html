@@ -1,0 +1,49 @@
+<!-- language: go-html-template -->
+{{/* friends.html (compact, no bottom border)
+Usage:
+{{< friends name="示例博客 A" url="https://example-a.com">}}
+    */}}
+
+    {{ $name := .Get "name" }}
+    {{ $url := .Get "url" }}
+
+    <style>
+        :root {
+            --primary: #05b;
+            --text-strong: #111827;
+            --text-muted: #6b7280;
+        }
+
+        .friend-item {
+            max-width: 900px;
+            margin: 0.1rem auto;
+            padding: 0.1rem 0;
+            border: none;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        .friend-link {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--primary) !important;
+            text-decoration: none;
+            line-height: 1.25;
+        }
+
+        .friend-link:visited {
+            color: var(--primary) !important;
+        }
+
+        .friend-link:hover {
+            text-decoration: underline;
+            text-underline-offset: 2px;
+        }
+    </style>
+
+    <div class="friend-item">
+        {{ if and $name $url }}
+        <a class="friend-link" href="{{ $url | safeURL }}" rel="noopener" target="_blank">{{ $name }}</a>
+        {{ else }}
+        <span style="color: var(--text-muted);">请同时提供 name 与 url</span>
+        {{ end }}
+    </div>
