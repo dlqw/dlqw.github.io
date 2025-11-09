@@ -6,13 +6,83 @@
     <description>Recent content in Tags on rdququ&#39;s Blog</description>
     <generator>Hugo</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 29 Mar 2025 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 08 Nov 2025 02:18:02 +0800</lastBuildDate>
     <atom:link href="http://localhost:1313/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>C#</title>
+      <link>http://localhost:1313/tags/c%23/</link>
+      <pubDate>Sat, 29 Mar 2025 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/tags/c%23/</guid>
+      <description></description>
+    </item>
     <item>
       <title>FP</title>
       <link>http://localhost:1313/tags/fp/</link>
       <pubDate>Sat, 29 Mar 2025 00:00:00 +0000</pubDate>
       <guid>http://localhost:1313/tags/fp/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>EventBus</title>
+      <link>http://localhost:1313/tags/eventbus/</link>
+      <pubDate>Fri, 19 Jul 2024 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/tags/eventbus/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Unity</title>
+      <link>http://localhost:1313/tags/unity/</link>
+      <pubDate>Fri, 19 Jul 2024 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/tags/unity/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>发布订阅</title>
+      <link>http://localhost:1313/tags/%E5%8F%91%E5%B8%83%E8%AE%A2%E9%98%85/</link>
+      <pubDate>Fri, 19 Jul 2024 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/tags/%E5%8F%91%E5%B8%83%E8%AE%A2%E9%98%85/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>设计模式</title>
+      <link>http://localhost:1313/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/</link>
+      <pubDate>Fri, 19 Jul 2024 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>OOP</title>
+      <link>http://localhost:1313/tags/oop/</link>
+      <pubDate>Tue, 23 Jan 2024 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/tags/oop/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>SOLID</title>
+      <link>http://localhost:1313/tags/solid/</link>
+      <pubDate>Tue, 23 Jan 2024 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/tags/solid/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>设计原则</title>
+      <link>http://localhost:1313/tags/%E8%AE%BE%E8%AE%A1%E5%8E%9F%E5%88%99/</link>
+      <pubDate>Tue, 23 Jan 2024 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/tags/%E8%AE%BE%E8%AE%A1%E5%8E%9F%E5%88%99/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>面向对象</title>
+      <link>http://localhost:1313/tags/%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1/</link>
+      <pubDate>Tue, 23 Jan 2024 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/tags/%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>数据结构</title>
+      <link>http://localhost:1313/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/</link>
+      <pubDate>Mon, 23 Oct 2023 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/</guid>
       <description></description>
     </item>
     <item>

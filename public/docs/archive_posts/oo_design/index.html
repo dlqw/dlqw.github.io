@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="本文为 2024 年寒假 SAST 游戏组 WOC 授课资料留档
+重温面向对象#封装：隐藏内部实现 继承：复用现有代码 多态：改写对象行为 面向对象的目的#现实问题（复杂度） → 类 → 实例 (?)
+Object myObj = new Object();封装#假设你是军队指挥官，你手下统帅了数十种上万人的军队。当你命令部下向地方发起进攻的时候——
+你是会：
+A 营的小陆向前走三步，向你的 11 点钟方向射击 B 连的小宋向左转 35 度，前进 5 步，3 分钟瞄准时间，炮口倾角 15 度，开火 3 分钟 …… 还是会说：
+A 营向甲点缓慢推进 B 连火力掩护 “给老子啃下***高地（乐）” 显然，身为一军之长的你（作为最高层调用者）对军队中每个单位进行原子级微操是不合适的。军中各单位构成的复杂网络应当被抽象成高级命令。
+int main() { move(&#34;小陆&#34;, 3); fire(&#34;小陆&#34;, -30); rotate(&#34;小宋&#34;, -35); move(&#34;小宋&#34;, 5); artillery_fire(3, 15, 3); }对象化后：
+public class Army { public enum AdvanceSpeed { Slow, Quick, Normal } public enum ArmyType { Infantry, Artillery } public void Advance(AdvanceSpeed speed, City targetPos) { ... } public void Shield(Army target) { ... } } int Main() { Army A = new Army(...); Army B = new Army(...); A.Advance(AdvanceSpeed.Normal, city_jia); B.Shield(A); }再上一个层级：
+">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="http://localhost:1313/docs/archive_posts/oo_design/">
+  <meta property="og:site_name" content="rdququ&#39;s Blog">
+  <meta property="og:title" content="聊聊面向对象和其设计原则">
+  <meta property="og:description" content="本文为 2024 年寒假 SAST 游戏组 WOC 授课资料留档
+重温面向对象#封装：隐藏内部实现 继承：复用现有代码 多态：改写对象行为 面向对象的目的#现实问题（复杂度） → 类 → 实例 (?)
+Object myObj = new Object();封装#假设你是军队指挥官，你手下统帅了数十种上万人的军队。当你命令部下向地方发起进攻的时候——
+你是会：
+A 营的小陆向前走三步，向你的 11 点钟方向射击 B 连的小宋向左转 35 度，前进 5 步，3 分钟瞄准时间，炮口倾角 15 度，开火 3 分钟 …… 还是会说：
+A 营向甲点缓慢推进 B 连火力掩护 “给老子啃下***高地（乐）” 显然，身为一军之长的你（作为最高层调用者）对军队中每个单位进行原子级微操是不合适的。军中各单位构成的复杂网络应当被抽象成高级命令。
+int main() { move(&#34;小陆&#34;, 3); fire(&#34;小陆&#34;, -30); rotate(&#34;小宋&#34;, -35); move(&#34;小宋&#34;, 5); artillery_fire(3, 15, 3); }对象化后：
+public class Army { public enum AdvanceSpeed { Slow, Quick, Normal } public enum ArmyType { Infantry, Artillery } public void Advance(AdvanceSpeed speed, City targetPos) { ... } public void Shield(Army target) { ... } } int Main() { Army A = new Army(...); Army B = new Army(...); A.Advance(AdvanceSpeed.Normal, city_jia); B.Shield(A); }再上一个层级：">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="docs">
+    <meta property="article:published_time" content="2024-01-23T00:00:00+00:00">
+    <meta property="article:modified_time" content="2024-01-23T00:00:00+00:00">
+    <meta property="article:tag" content="OOP">
+    <meta property="article:tag" content="设计原则">
+    <meta property="article:tag" content="SOLID">
+
+
+  <meta itemprop="name" content="聊聊面向对象和其设计原则">
+  <meta itemprop="description" content="本文为 2024 年寒假 SAST 游戏组 WOC 授课资料留档
+重温面向对象#封装：隐藏内部实现 继承：复用现有代码 多态：改写对象行为 面向对象的目的#现实问题（复杂度） → 类 → 实例 (?)
+Object myObj = new Object();封装#假设你是军队指挥官，你手下统帅了数十种上万人的军队。当你命令部下向地方发起进攻的时候——
+你是会：
+A 营的小陆向前走三步，向你的 11 点钟方向射击 B 连的小宋向左转 35 度，前进 5 步，3 分钟瞄准时间，炮口倾角 15 度，开火 3 分钟 …… 还是会说：
+A 营向甲点缓慢推进 B 连火力掩护 “给老子啃下***高地（乐）” 显然，身为一军之长的你（作为最高层调用者）对军队中每个单位进行原子级微操是不合适的。军中各单位构成的复杂网络应当被抽象成高级命令。
+int main() { move(&#34;小陆&#34;, 3); fire(&#34;小陆&#34;, -30); rotate(&#34;小宋&#34;, -35); move(&#34;小宋&#34;, 5); artillery_fire(3, 15, 3); }对象化后：
+public class Army { public enum AdvanceSpeed { Slow, Quick, Normal } public enum ArmyType { Infantry, Artillery } public void Advance(AdvanceSpeed speed, City targetPos) { ... } public void Shield(Army target) { ... } } int Main() { Army A = new Army(...); Army B = new Army(...); A.Advance(AdvanceSpeed.Normal, city_jia); B.Shield(A); }再上一个层级：">
+  <meta itemprop="datePublished" content="2024-01-23T00:00:00+00:00">
+  <meta itemprop="dateModified" content="2024-01-23T00:00:00+00:00">
+  <meta itemprop="wordCount" content="772">
+  <meta itemprop="keywords" content="OOP,设计原则,SOLID">
+
+<title>聊聊面向对象和其设计原则 | rdququ&#39;s Blog</title>
+<link rel="icon" href="/favicon.png" >
+<link rel="manifest" href="/manifest.json">
+<link rel="canonical" href="http://localhost:1313/docs/archive_posts/oo_design/">
+<link rel="stylesheet" href="/book.min.cc2c524ed250aac81b23d1f4af87344917b325208841feca0968fe450f570575.css" integrity="sha256-zCxSTtJQqsgbI9H0r4c0SRezJSCIQf7KCWj&#43;RQ9XBXU=" crossorigin="anonymous">
+
+
+  <script defer src="/fuse.min.js"></script>
+  <script defer src="/en.search.min.1cdae00495bbcc99219040905466ac17fee903495acba54776df72d26fbf3f62.js" integrity="sha256-HNrgBJW7zJkhkECQVGasF/7pA0lay6VHdt9y0m&#43;/P2I=" crossorigin="anonymous"></script>
+
+
+
+  
+</head>
+<body dir="ltr" class="book-kind-page book-type-docs">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    
+<aside class="book-menu">
+  <div class="book-menu-content">
+    
+  <nav>
+<h2 class="book-brand">
+  <a class="flex align-center" href="/"><span>rdququ&#39;s Blog</span>
+  </a>
+</h2>
+
+
+<div class="book-search hidden">
+  <input id="book-search-input" type="text" 
+    placeholder="Search"
+    aria-label="Search"
+    maxlength="64" data-hotkeys="s/" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+<script>document.querySelector(".book-search").classList.remove("hidden")</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/blog/" class="">
+      Blog</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/links/" class="">
+      Links</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/archive/" class="">
+      Archive</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+
+  </div>
+</aside>
+ 
+
+    <div class="book-page">
+      <header class="book-header hidden">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/icons/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <h3>聊聊面向对象和其设计原则</h3>
+
+  <label for="toc-control">
+    
+    <img src="/icons/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden">
+    
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#重温面向对象">重温面向对象</a></li>
+    <li><a href="#面向对象的目的">面向对象的目的</a>
+      <ul>
+        <li><a href="#封装">封装</a></li>
+      </ul>
+    </li>
+    <li><a href="#哪里能用到面向对象">哪里能用到面向对象</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#单一责任原则">单一责任原则</a>
+      <ul>
+        <li><a href="#不好的设计">不好的设计</a></li>
+        <li><a href="#更好的设计">更好的设计</a></li>
+      </ul>
+    </li>
+    <li><a href="#开闭原则">开闭原则</a>
+      <ul>
+        <li><a href="#不好的设计-1">不好的设计</a></li>
+        <li><a href="#更好的设计-1">更好的设计</a></li>
+      </ul>
+    </li>
+    <li><a href="#接口隔离原则">接口隔离原则</a>
+      <ul>
+        <li><a href="#不好的设计-2">不好的设计</a></li>
+        <li><a href="#更好的设计-2">更好的设计</a></li>
+      </ul>
+    </li>
+    <li><a href="#里氏替换原则-继承">里氏替换原则 (继承)</a>
+      <ul>
+        <li><a href="#不好的设计-3">不好的设计</a></li>
+        <li><a href="#更好的设计-3">更好的设计</a></li>
+      </ul>
+    </li>
+    <li><a href="#最少知识原则">最少知识原则</a>
+      <ul>
+        <li><a href="#不好的设计-4">不好的设计</a></li>
+        <li><a href="#更好的设计-4">更好的设计</a></li>
+      </ul>
+    </li>
+    <li><a href="#依赖倒置原则">依赖倒置原则</a>
+      <ul>
+        <li><a href="#不好的设计-5">不好的设计</a></li>
+        <li><a href="#更好的设计-5">更好的设计</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      
+      
+  <article class="markdown book-article"><blockquote class='book-hint '>
+<p>本文为 2024 年寒假 SAST 游戏组 WOC 授课资料留档</p>
+</blockquote><h2 id="重温面向对象">重温面向对象<a class="anchor" href="#%e9%87%8d%e6%b8%a9%e9%9d%a2%e5%90%91%e5%af%b9%e8%b1%a1">#</a></h2>
+<ul>
+<li>封装：隐藏内部实现</li>
+<li>继承：复用现有代码</li>
+<li>多态：改写对象行为</li>
+</ul>
+<h2 id="面向对象的目的">面向对象的目的<a class="anchor" href="#%e9%9d%a2%e5%90%91%e5%af%b9%e8%b1%a1%e7%9a%84%e7%9b%ae%e7%9a%84">#</a></h2>
+<p>现实问题（复杂度） → 类 → 实例 (?)</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span>Object myObj = <span style="color:#66d9ef">new</span> Object();</span></span></code></pre></div><h3 id="封装">封装<a class="anchor" href="#%e5%b0%81%e8%a3%85">#</a></h3>
+<p>假设你是军队指挥官，你手下统帅了数十种上万人的军队。当你命令部下向地方发起进攻的时候——</p>
+<p>你是会：</p>
+<ul>
+<li>A 营的小陆向前走三步，向你的 11 点钟方向射击</li>
+<li>B 连的小宋向左转 35 度，前进 5 步，3 分钟瞄准时间，炮口倾角 15 度，开火 3 分钟</li>
+<li>……</li>
+</ul>
+<p>还是会说：</p>
+<ul>
+<li>A 营向甲点缓慢推进</li>
+<li>B 连火力掩护</li>
+<li>“给老子啃下***高地（乐）”</li>
+</ul>
+<p>显然，身为一军之长的你（作为最高层调用者）对军队中每个单位进行原子级微操是不合适的。军中各单位构成的复杂网络应当被抽象成高级命令。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">int</span> main()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    move(<span style="color:#e6db74">&#34;小陆&#34;</span>, <span style="color:#ae81ff">3</span>);
+</span></span><span style="display:flex;"><span>    fire(<span style="color:#e6db74">&#34;小陆&#34;</span>, -<span style="color:#ae81ff">30</span>);
+</span></span><span style="display:flex;"><span>    rotate(<span style="color:#e6db74">&#34;小宋&#34;</span>, -<span style="color:#ae81ff">35</span>);
+</span></span><span style="display:flex;"><span>    move(<span style="color:#e6db74">&#34;小宋&#34;</span>, <span style="color:#ae81ff">5</span>);
+</span></span><span style="display:flex;"><span>    artillery_fire(<span style="color:#ae81ff">3</span>, <span style="color:#ae81ff">15</span>, <span style="color:#ae81ff">3</span>);
+</span></span><span style="display:flex;"><span>}</span></span></code></pre></div><p>对象化后：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Army</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">enum</span> AdvanceSpeed
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        Slow, Quick, Normal
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">enum</span> ArmyType
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        Infantry, Artillery
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> Advance(AdvanceSpeed speed, City targetPos) { ... }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> Shield(Army target) { ... }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">int</span> Main()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    Army A = <span style="color:#66d9ef">new</span> Army(...);
+</span></span><span style="display:flex;"><span>    Army B = <span style="color:#66d9ef">new</span> Army(...);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    A.Advance(AdvanceSpeed.Normal, city_jia);
+</span></span><span style="display:flex;"><span>    B.Shield(A);
+</span></span><span style="display:flex;"><span>}</span></span></code></pre></div><p>再上一个层级：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">CollectiveArmy</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    List&lt;Army&gt; Armys = <span style="color:#66d9ef">new</span> List&lt;Army&gt;();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> Attack(Area targetPos) { ... }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">int</span> Main()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    CollectiveArmy collectiveArmy = <span style="color:#66d9ef">new</span> CollectiveArmy(...);
+</span></span><span style="display:flex;"><span>    collectiveArmy.Attack(area);
+</span></span><span style="display:flex;"><span>}</span></span></code></pre></div><p>通过封装，我们并没有减少现实的复杂性，但让代码更<strong>易读、易扩展、易维护</strong>。</p>
+<blockquote class='book-hint '>
+<p>代码是写给人看的。</p>
+</blockquote><hr>
+<h2 id="哪里能用到面向对象">哪里能用到面向对象<a class="anchor" href="#%e5%93%aa%e9%87%8c%e8%83%bd%e7%94%a8%e5%88%b0%e9%9d%a2%e5%90%91%e5%af%b9%e8%b1%a1">#</a></h2>
+<p>面向对象真好使啊——那是不是<strong>啥都用 OOP</strong>呢？</p>
+<p>例如在“学生管理系统”这种简单逻辑的练习中，其实没必要搞太多类与接口。如果只是打印 <code>&quot;Hello World&quot;</code>，你不会先 <code>class Person</code> 然后 <code>me.Talk(&quot;Hello World&quot;)</code> 吧（笑）。</p>
+<p>面向对象适合复杂系统；面向过程适合时序逻辑。实际项目往往结合使用。</p>
+<blockquote class='book-hint '>
+<p>他在这里合适才用他。
+<strong>No Silver Bullet（没有银弹）</strong></p>
+</blockquote><hr>
+<h1 id="面向对象的设计原则">面向对象的设计原则<a class="anchor" href="#%e9%9d%a2%e5%90%91%e5%af%b9%e8%b1%a1%e7%9a%84%e8%ae%be%e8%ae%a1%e5%8e%9f%e5%88%99">#</a></h1>
+<h2 id="单一责任原则">单一责任原则<a class="anchor" href="#%e5%8d%95%e4%b8%80%e8%b4%a3%e4%bb%bb%e5%8e%9f%e5%88%99">#</a></h2>
+<p><strong>定义：</strong></p>
+<p>一个类只允许有一个职责，即只有一个导致该类变更的原因。</p>
+<p>不仅是类，函数也应如此。</p>
+<h3 id="不好的设计">不好的设计<a class="anchor" href="#%e4%b8%8d%e5%a5%bd%e7%9a%84%e8%ae%be%e8%ae%a1">#</a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">CardDisplay</span> : MonoBehaviour
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> Card card;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> TextMeshProUGUI nameText;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> TextMeshProUGUI descriptionText;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> TextMeshProUGUI attackText;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> TextMeshProUGUI healthText;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> Image artworkImage;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">void</span> Start() { Draw(); }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> Draw()
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        nameText.text = card.name;
+</span></span><span style="display:flex;"><span>        descriptionText.text = card.description;
+</span></span><span style="display:flex;"><span>        attackText.text = card.attack.ToString();
+</span></span><span style="display:flex;"><span>        healthText.text = card.health.ToString();
+</span></span><span style="display:flex;"><span>        artworkImage.sprite = card.artwork;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> ChangeCardHP(<span style="color:#66d9ef">int</span> hp)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        card.health = hp;
+</span></span><span style="display:flex;"><span>        healthText.text = card.health.ToString();
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}</span></span></code></pre></div><h3 id="更好的设计">更好的设计<a class="anchor" href="#%e6%9b%b4%e5%a5%bd%e7%9a%84%e8%ae%be%e8%ae%a1">#</a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">CardDisplay</span> : MonoBehaviour
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> TextMeshProUGUI nameText;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> TextMeshProUGUI descriptionText;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> TextMeshProUGUI attackText;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> TextMeshProUGUI healthText;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> Image artworkImage;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> Draw(Card card)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        nameText.text = card.name;
+</span></span><span style="display:flex;"><span>        descriptionText.text = card.description;
+</span></span><span style="display:flex;"><span>        attackText.text = card.attack.ToString();
+</span></span><span style="display:flex;"><span>        healthText.text = card.health.ToString();
+</span></span><span style="display:flex;"><span>        artworkImage.sprite = card.artwork;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> ChangeHealthText(<span style="color:#66d9ef">int</span> amount)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        healthText.text = amount.ToString();
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">CardController</span> : MonoBehaviour
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> Card card;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> CardDisplay cardDisplay;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">void</span> Start()
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        cardDisplay.Draw(card);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> ChangeHealth(<span style="color:#66d9ef">int</span> amount)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        card.health += amount;
+</span></span><span style="display:flex;"><span>        cardDisplay.ChangeHealthText(card.health);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}</span></span></code></pre></div><blockquote class='book-hint '>
+<p>✅ <strong>总结：</strong>
+Do one thing, and do it well.</p>
+</blockquote><hr>
+<h2 id="开闭原则">开闭原则<a class="anchor" href="#%e5%bc%80%e9%97%ad%e5%8e%9f%e5%88%99">#</a></h2>
+<p><strong>定义：</strong></p>
+<p>软件实体应对扩展开放，对修改关闭。</p>
+<h3 id="不好的设计-1">不好的设计<a class="anchor" href="#%e4%b8%8d%e5%a5%bd%e7%9a%84%e8%ae%be%e8%ae%a1-1">#</a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">HealthPotion</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> Use() =&gt; Debug.Log(<span style="color:#e6db74">&#34;生命值恢复了100点!&#34;</span>);
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ManaPotion</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> Use() =&gt; Debug.Log(<span style="color:#e6db74">&#34;魔法值恢复了100点!&#34;</span>);
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Player</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> UseHealthPotion()
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        HealthPotion healthPotion = <span style="color:#66d9ef">new</span> HealthPotion();
+</span></span><span style="display:flex;"><span>        healthPotion.Use();
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> UseManaPotion()
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        ManaPotion manaPotion = <span style="color:#66d9ef">new</span> ManaPotion();
+</span></span><span style="display:flex;"><span>        manaPotion.Use();
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}</span></span></code></pre></div><h3 id="更好的设计-1">更好的设计<a class="anchor" href="#%e6%9b%b4%e5%a5%bd%e7%9a%84%e8%ae%be%e8%ae%a1-1">#</a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">IPotion</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">void</span> Use();
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">HealthPotion</span> : IPotion
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> Use() =&gt; Debug.Log(<span style="color:#e6db74">&#34;生命值恢复了100点!&#34;</span>);
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ManaPotion</span> : IPotion
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> Use() =&gt; Debug.Log(<span style="color:#e6db74">&#34;魔法值恢复了100点!&#34;</span>);
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Player</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> IPotion potion;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> UsePotion()
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        potion.Use();
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}</span></span></code></pre></div><blockquote class='book-hint '>
+<p>✅ 使用抽象（接口 / 继承 / 组合）来扩展，不修改原有代码。</p>
+</blockquote><hr>
+<h2 id="接口隔离原则">接口隔离原则<a class="anchor" href="#%e6%8e%a5%e5%8f%a3%e9%9a%94%e7%a6%bb%e5%8e%9f%e5%88%99">#</a></h2>
+<p><strong>定义：</strong></p>
+<p>不应强迫客户端依赖它不使用的方法。</p>
+<h3 id="不好的设计-2">不好的设计<a class="anchor" href="#%e4%b8%8d%e5%a5%bd%e7%9a%84%e8%ae%be%e8%ae%a1-2">#</a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">IEquipment</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">void</span> Attack();
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">void</span> Defend();
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">void</span> Repair();
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">void</span> Upgrade();
+</span></span><span style="display:flex;"><span>}</span></span></code></pre></div><h3 id="更好的设计-2">更好的设计<a class="anchor" href="#%e6%9b%b4%e5%a5%bd%e7%9a%84%e8%ae%be%e8%ae%a1-2">#</a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">IAttackable</span> { <span style="color:#66d9ef">void</span> Attack(); }
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">IDefendable</span> { <span style="color:#66d9ef">void</span> Defend(); }
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">IRepairable</span> { <span style="color:#66d9ef">void</span> Repair(); }
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">IUpgradeable</span> { <span style="color:#66d9ef">void</span> Upgrade(); }</span></span></code></pre></div><hr>
+<h2 id="里氏替换原则-继承">里氏替换原则 (继承)<a class="anchor" href="#%e9%87%8c%e6%b0%8f%e6%9b%bf%e6%8d%a2%e5%8e%9f%e5%88%99-%e7%bb%a7%e6%89%bf">#</a></h2>
+<p><strong>定义：</strong></p>
+<p>子类实例必须能替换所有父类实例。</p>
+<h3 id="不好的设计-3">不好的设计<a class="anchor" href="#%e4%b8%8d%e5%a5%bd%e7%9a%84%e8%ae%be%e8%ae%a1-3">#</a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Rectangle</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">virtual</span> <span style="color:#66d9ef">int</span> Width { <span style="color:#66d9ef">get</span>; <span style="color:#66d9ef">set</span>; }
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">virtual</span> <span style="color:#66d9ef">int</span> Height { <span style="color:#66d9ef">get</span>; <span style="color:#66d9ef">set</span>; }
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">virtual</span> <span style="color:#66d9ef">int</span> Area() =&gt; Width * Height;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Square</span> : Rectangle
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">override</span> <span style="color:#66d9ef">int</span> Width { <span style="color:#66d9ef">get</span>; <span style="color:#66d9ef">set</span>; }
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">override</span> <span style="color:#66d9ef">int</span> Height
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">get</span> =&gt; Width;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">set</span> =&gt; Width = <span style="color:#66d9ef">value</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">override</span> <span style="color:#66d9ef">int</span> Area() =&gt; Width * Width;
+</span></span><span style="display:flex;"><span>}</span></span></code></pre></div><h3 id="更好的设计-3">更好的设计<a class="anchor" href="#%e6%9b%b4%e5%a5%bd%e7%9a%84%e8%ae%be%e8%ae%a1-3">#</a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">abstract</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Quadrangle</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">abstract</span> <span style="color:#66d9ef">int</span> Width { <span style="color:#66d9ef">get</span>; <span style="color:#66d9ef">set</span>; }
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">abstract</span> <span style="color:#66d9ef">int</span> Height { <span style="color:#66d9ef">get</span>; <span style="color:#66d9ef">set</span>; }
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">abstract</span> <span style="color:#66d9ef">int</span> Area();
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Rectangle</span> : Quadrangle
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">override</span> <span style="color:#66d9ef">int</span> Width { <span style="color:#66d9ef">get</span>; <span style="color:#66d9ef">set</span>; }
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">override</span> <span style="color:#66d9ef">int</span> Height { <span style="color:#66d9ef">get</span>; <span style="color:#66d9ef">set</span>; }
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">override</span> <span style="color:#66d9ef">int</span> Area() =&gt; Width * Height;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Square</span> : Quadrangle
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">override</span> <span style="color:#66d9ef">int</span> Width { <span style="color:#66d9ef">get</span>; <span style="color:#66d9ef">set</span>; }
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">override</span> <span style="color:#66d9ef">int</span> Height { <span style="color:#66d9ef">get</span> =&gt; Width; <span style="color:#66d9ef">set</span> =&gt; Width = <span style="color:#66d9ef">value</span>; }
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">override</span> <span style="color:#66d9ef">int</span> Area() =&gt; Width * Width;
+</span></span><span style="display:flex;"><span>}</span></span></code></pre></div><blockquote class='book-hint '>
+<p>✅ “正方形是一种长方形”，但行为上却不同。
+以行为为导向的抽象才能避免滥用继承。</p>
+</blockquote><hr>
+<h2 id="最少知识原则">最少知识原则<a class="anchor" href="#%e6%9c%80%e5%b0%91%e7%9f%a5%e8%af%86%e5%8e%9f%e5%88%99">#</a></h2>
+<p><strong>定义：</strong></p>
+<p>每个对象应只了解与其紧密相关的对象。</p>
+<h3 id="不好的设计-4">不好的设计<a class="anchor" href="#%e4%b8%8d%e5%a5%bd%e7%9a%84%e8%ae%be%e8%ae%a1-4">#</a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Player</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> JoinTeam(Guild guild)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        Team team = guild.FindTeam();
+</span></span><span style="display:flex;"><span>        team.AddPlayer(<span style="color:#66d9ef">this</span>);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}</span></span></code></pre></div><h3 id="更好的设计-4">更好的设计<a class="anchor" href="#%e6%9b%b4%e5%a5%bd%e7%9a%84%e8%ae%be%e8%ae%a1-4">#</a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Player</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> JoinTeam(Guild guild)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        guild.AddPlayer(<span style="color:#66d9ef">this</span>);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}</span></span></code></pre></div><blockquote class='book-hint '>
+<p>✅ 减少依赖链，只与直接相关对象交互。</p>
+</blockquote><hr>
+<h2 id="依赖倒置原则">依赖倒置原则<a class="anchor" href="#%e4%be%9d%e8%b5%96%e5%80%92%e7%bd%ae%e5%8e%9f%e5%88%99">#</a></h2>
+<p><strong>定义：</strong></p>
+<p>高层模块不应依赖于低层模块，二者都应依赖抽象。</p>
+<h3 id="不好的设计-5">不好的设计<a class="anchor" href="#%e4%b8%8d%e5%a5%bd%e7%9a%84%e8%ae%be%e8%ae%a1-5">#</a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Player</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> SpellFireBall() =&gt; Console.WriteLine(<span style="color:#e6db74">&#34;Fireball!&#34;</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> SpellFrostBall() =&gt; Console.WriteLine(<span style="color:#e6db74">&#34;Frostball!&#34;</span>);
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Game</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> Main()
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        Player player = <span style="color:#66d9ef">new</span> Player();
+</span></span><span style="display:flex;"><span>        player.SpellFireBall();
+</span></span><span style="display:flex;"><span>        player.SpellFrostBall();
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}</span></span></code></pre></div><h3 id="更好的设计-5">更好的设计<a class="anchor" href="#%e6%9b%b4%e5%a5%bd%e7%9a%84%e8%ae%be%e8%ae%a1-5">#</a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">ISpell</span> { <span style="color:#66d9ef">void</span> Cast(); }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">FireBall</span> : ISpell
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> Cast() =&gt; Console.WriteLine(<span style="color:#e6db74">&#34;Fireball!&#34;</span>);
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">FrostBall</span> : ISpell
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> Cast() =&gt; Console.WriteLine(<span style="color:#e6db74">&#34;Frostball!&#34;</span>);
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Player</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> Spell(ISpell spell)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        spell.Cast();
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Game</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> Main()
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        Player player = <span style="color:#66d9ef">new</span> Player();
+</span></span><span style="display:flex;"><span>        player.Spell(<span style="color:#66d9ef">new</span> FireBall());
+</span></span><span style="display:flex;"><span>        player.Spell(<span style="color:#66d9ef">new</span> FrostBall());
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}</span></span></code></pre></div><hr>
+<h1 id="雪中送炭与锦上添花设计模式">雪中送炭与锦上添花——设计模式<a class="anchor" href="#%e9%9b%aa%e4%b8%ad%e9%80%81%e7%82%ad%e4%b8%8e%e9%94%a6%e4%b8%8a%e6%b7%bb%e8%8a%b1%e8%ae%be%e8%ae%a1%e6%a8%a1%e5%bc%8f">#</a></h1>
+<p>参考资料：</p>
+<ol>
+<li>《设计模式：可复用面向对象软件的基础》</li>
+<li>《游戏设计模式》</li>
+<li>《设计模式与完美游戏开发》</li>
+</ol>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+<div>
+
+</div>
+
+<div>
+
+</div>
+
+</div>
+
+
+
+
+
+  
+  
+  
+
+
+ 
+        
+  
+  <div class="book-comments">
+<div id="disqus_thread"></div>
+<script>
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "rdququ's Blog" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+  
+ 
+        
+        
+  
+ 
+        
+  
+  
+    <script>(function(){document.querySelectorAll("pre:has(code)").forEach(e=>{e.addEventListener("click",e.focus),e.addEventListener("copy",function(t){if(t.preventDefault(),navigator.clipboard){const t=window.getSelection().toString()||e.textContent;navigator.clipboard.writeText(t)}})})})()</script>
+  
+
+      </footer>
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+  
+  <aside class="book-toc">
+    <div class="book-toc-content">
+      
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#重温面向对象">重温面向对象</a></li>
+    <li><a href="#面向对象的目的">面向对象的目的</a>
+      <ul>
+        <li><a href="#封装">封装</a></li>
+      </ul>
+    </li>
+    <li><a href="#哪里能用到面向对象">哪里能用到面向对象</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#单一责任原则">单一责任原则</a>
+      <ul>
+        <li><a href="#不好的设计">不好的设计</a></li>
+        <li><a href="#更好的设计">更好的设计</a></li>
+      </ul>
+    </li>
+    <li><a href="#开闭原则">开闭原则</a>
+      <ul>
+        <li><a href="#不好的设计-1">不好的设计</a></li>
+        <li><a href="#更好的设计-1">更好的设计</a></li>
+      </ul>
+    </li>
+    <li><a href="#接口隔离原则">接口隔离原则</a>
+      <ul>
+        <li><a href="#不好的设计-2">不好的设计</a></li>
+        <li><a href="#更好的设计-2">更好的设计</a></li>
+      </ul>
+    </li>
+    <li><a href="#里氏替换原则-继承">里氏替换原则 (继承)</a>
+      <ul>
+        <li><a href="#不好的设计-3">不好的设计</a></li>
+        <li><a href="#更好的设计-3">更好的设计</a></li>
+      </ul>
+    </li>
+    <li><a href="#最少知识原则">最少知识原则</a>
+      <ul>
+        <li><a href="#不好的设计-4">不好的设计</a></li>
+        <li><a href="#更好的设计-4">更好的设计</a></li>
+      </ul>
+    </li>
+    <li><a href="#依赖倒置原则">依赖倒置原则</a>
+      <ul>
+        <li><a href="#不好的设计-5">不好的设计</a></li>
+        <li><a href="#更好的设计-5">更好的设计</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+
+    </div>
+  </aside>
+  
+ 
+  </main>
+
+  
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

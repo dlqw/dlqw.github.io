@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="本文为 2024 年寒假 SAST 游戏组 WOC 授课资料留档
+抽象了实例化过程。
+接口，抽象类 new() 工厂方法 Factory Method#工厂方法的意图#定义一个用于创建对象的接口，让子类决定实例化哪一个类。工厂方法使一个类的实例化延迟到其子类。
+具体实现#如果不用工厂方法,我们如何实现?
+public class Wand//产品 { public string Name { get; set; } } public class FireWand : Wand { public FireWand() { Name = &#34;Fire Wand&#34;; } } public class IceWand : Wand { public IceWand() { Name = &#34;Ice Wand&#34;; } } int main()//实例化,客户端,调用者 { var fireWand = new FireWand(); var iceWand = new IceWand(); }如果我们需要一个新的魔杖,我们需要实现一个新的魔杖类,然后实现一个新的方法,这样就会导致类的爆炸。
+">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="http://localhost:1313/docs/archive_posts/creational_patterns/">
+  <meta property="og:site_name" content="rdququ&#39;s Blog">
+  <meta property="og:title" content="Creational Patterns">
+  <meta property="og:description" content="本文为 2024 年寒假 SAST 游戏组 WOC 授课资料留档
+抽象了实例化过程。
+接口，抽象类 new() 工厂方法 Factory Method#工厂方法的意图#定义一个用于创建对象的接口，让子类决定实例化哪一个类。工厂方法使一个类的实例化延迟到其子类。
+具体实现#如果不用工厂方法,我们如何实现?
+public class Wand//产品 { public string Name { get; set; } } public class FireWand : Wand { public FireWand() { Name = &#34;Fire Wand&#34;; } } public class IceWand : Wand { public IceWand() { Name = &#34;Ice Wand&#34;; } } int main()//实例化,客户端,调用者 { var fireWand = new FireWand(); var iceWand = new IceWand(); }如果我们需要一个新的魔杖,我们需要实现一个新的魔杖类,然后实现一个新的方法,这样就会导致类的爆炸。">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="docs">
+    <meta property="article:published_time" content="2024-01-23T00:00:00+00:00">
+    <meta property="article:modified_time" content="2024-01-23T00:00:00+00:00">
+    <meta property="article:tag" content="面向对象">
+    <meta property="article:tag" content="设计模式">
+
+
+  <meta itemprop="name" content="Creational Patterns">
+  <meta itemprop="description" content="本文为 2024 年寒假 SAST 游戏组 WOC 授课资料留档
+抽象了实例化过程。
+接口，抽象类 new() 工厂方法 Factory Method#工厂方法的意图#定义一个用于创建对象的接口，让子类决定实例化哪一个类。工厂方法使一个类的实例化延迟到其子类。
+具体实现#如果不用工厂方法,我们如何实现?
+public class Wand//产品 { public string Name { get; set; } } public class FireWand : Wand { public FireWand() { Name = &#34;Fire Wand&#34;; } } public class IceWand : Wand { public IceWand() { Name = &#34;Ice Wand&#34;; } } int main()//实例化,客户端,调用者 { var fireWand = new FireWand(); var iceWand = new IceWand(); }如果我们需要一个新的魔杖,我们需要实现一个新的魔杖类,然后实现一个新的方法,这样就会导致类的爆炸。">
+  <meta itemprop="datePublished" content="2024-01-23T00:00:00+00:00">
+  <meta itemprop="dateModified" content="2024-01-23T00:00:00+00:00">
+  <meta itemprop="wordCount" content="843">
+  <meta itemprop="keywords" content="面向对象,设计模式">
+
+<title>Creational Patterns | rdququ&#39;s Blog</title>
+<link rel="icon" href="/favicon.png" >
+<link rel="manifest" href="/manifest.json">
+<link rel="canonical" href="http://localhost:1313/docs/archive_posts/creational_patterns/">
+<link rel="stylesheet" href="/book.min.cc2c524ed250aac81b23d1f4af87344917b325208841feca0968fe450f570575.css" integrity="sha256-zCxSTtJQqsgbI9H0r4c0SRezJSCIQf7KCWj&#43;RQ9XBXU=" crossorigin="anonymous">
+
+
+  <script defer src="/fuse.min.js"></script>
+  <script defer src="/en.search.min.1cdae00495bbcc99219040905466ac17fee903495acba54776df72d26fbf3f62.js" integrity="sha256-HNrgBJW7zJkhkECQVGasF/7pA0lay6VHdt9y0m&#43;/P2I=" crossorigin="anonymous"></script>
+
+
+
+  
+</head>
+<body dir="ltr" class="book-kind-page book-type-docs">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    
+<aside class="book-menu">
+  <div class="book-menu-content">
+    
+  <nav>
+<h2 class="book-brand">
+  <a class="flex align-center" href="/"><span>rdququ&#39;s Blog</span>
+  </a>
+</h2>
+
+
+<div class="book-search hidden">
+  <input id="book-search-input" type="text" 
+    placeholder="Search"
+    aria-label="Search"
+    maxlength="64" data-hotkeys="s/" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+<script>document.querySelector(".book-search").classList.remove("hidden")</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/blog/" class="">
+      Blog</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/links/" class="">
+      Links</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/archive/" class="">
+      Archive</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+
+  </div>
+</aside>
+ 
+
+    <div class="book-page">
+      <header class="book-header hidden">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/icons/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <h3>Creational Patterns</h3>
+
+  <label for="toc-control">
+    
+    <img src="/icons/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden">
+    
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#工厂方法-factory-method">工厂方法 Factory Method</a>
+      <ul>
+        <li><a href="#工厂方法的意图">工厂方法的意图</a></li>
+        <li><a href="#具体实现">具体实现</a></li>
+      </ul>
+    </li>
+    <li><a href="#抽象工厂-abstract-factory">抽象工厂 Abstract Factory</a>
+      <ul>
+        <li><a href="#抽象工厂的意图">抽象工厂的意图</a></li>
+        <li><a href="#具体实现-1">具体实现</a></li>
+        <li><a href="#缺点">缺点</a></li>
+        <li><a href="#工厂方法的非单例实现">工厂方法的非单例实现</a></li>
+      </ul>
+    </li>
+    <li><a href="#生成器-builder">生成器 Builder</a>
+      <ul>
+        <li><a href="#生成器的意图">生成器的意图</a></li>
+        <li><a href="#生成器的具体实现">生成器的具体实现</a></li>
+      </ul>
+    </li>
+    <li><a href="#单例-singleton">单例 Singleton</a>
+      <ul>
+        <li><a href="#单例的意图">单例的意图</a></li>
+        <li><a href="#单例的具体实现">单例的具体实现</a></li>
+        <li><a href="#单例模板">单例模板</a></li>
+      </ul>
+    </li>
+    <li><a href="#参考">参考</a></li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      
+      
+  <article class="markdown book-article"><blockquote class='book-hint '>
+<p>本文为 2024 年寒假 SAST 游戏组 WOC 授课资料留档</p>
+</blockquote><p>抽象了实例化过程。</p>
+<ul>
+<li>接口，抽象类</li>
+<li>new()</li>
+</ul>
+<h2 id="工厂方法-factory-method">工厂方法 Factory Method<a class="anchor" href="#%e5%b7%a5%e5%8e%82%e6%96%b9%e6%b3%95-factory-method">#</a></h2>
+<h3 id="工厂方法的意图">工厂方法的意图<a class="anchor" href="#%e5%b7%a5%e5%8e%82%e6%96%b9%e6%b3%95%e7%9a%84%e6%84%8f%e5%9b%be">#</a></h3>
+<p>定义一个用于创建对象的接口，让子类决定实例化哪一个类。工厂方法使一个类的实例化延迟到其子类。</p>
+<h3 id="具体实现">具体实现<a class="anchor" href="#%e5%85%b7%e4%bd%93%e5%ae%9e%e7%8e%b0">#</a></h3>
+<p>如果不用工厂方法,我们如何实现?</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Wand</span><span style="color:#75715e">//产品</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">string</span> Name { <span style="color:#66d9ef">get</span>; <span style="color:#66d9ef">set</span>; }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">FireWand</span> : Wand
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> FireWand()
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        Name = <span style="color:#e6db74">&#34;Fire Wand&#34;</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">IceWand</span> : Wand
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> IceWand()
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        Name = <span style="color:#e6db74">&#34;Ice Wand&#34;</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">int</span> main()<span style="color:#75715e">//实例化,客户端,调用者</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> fireWand = <span style="color:#66d9ef">new</span> FireWand();
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> iceWand = <span style="color:#66d9ef">new</span> IceWand();
+</span></span><span style="display:flex;"><span>}</span></span></code></pre></div><p>如果我们需要一个新的魔杖,我们需要实现一个新的魔杖类,然后实现一个新的方法,这样就会导致类的爆炸。</p>
+<p>如果某一个魔杖需要求修改,那么需要全局搜索,修改所有的地方。</p>
+<p>如果我们使用工厂方法,我们可以这样实现:</p>
+<h4 id="swtich-case-简单工厂">swtich case (简单工厂)<a class="anchor" href="#swtich-case-%e7%ae%80%e5%8d%95%e5%b7%a5%e5%8e%82">#</a></h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">enum</span> WandType
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    Fire,
+</span></span><span style="display:flex;"><span>    Ice
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Wand</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">string</span> Name { <span style="color:#66d9ef">get</span>; <span style="color:#66d9ef">set</span>; }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">WandFactory</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> Wand CreateWand(WandType type)<span style="color:#75715e">//if else</span>
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">switch</span> (type)
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">case</span> WandType.Fire:
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">new</span> Wand { Name = <span style="color:#e6db74">&#34;Fire Wand&#34;</span> };
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">case</span> WandType.Ice:
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">new</span> Wand { Name = <span style="color:#e6db74">&#34;Ice Wand&#34;</span> };
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">default</span>:<span style="color:#75715e">//缺省:默认</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> ArgumentOutOfRangeException(nameof(type), type, <span style="color:#66d9ef">null</span>);
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">int</span> main()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> factory = <span style="color:#66d9ef">new</span> WandFactory();
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> fireWand = factory.CreateWand(WandType.Fire);
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> iceWand = factory.CreateWand(WandType.Ice);
+</span></span><span style="display:flex;"><span>}</span></span></code></pre></div><p>降低了客户端(调用者)和具体产品类的耦合度。然而违背了开闭原则,如果我们需要增加一个新的魔杖,我们需要修改工厂类。</p>
+<h4 id="泛型类">泛型类<a class="anchor" href="#%e6%b3%9b%e5%9e%8b%e7%b1%bb">#</a></h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">enum</span> WandType
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    Fire,
+</span></span><span style="display:flex;"><span>    Ice
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Wand</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">protected</span> <span style="color:#66d9ef">string</span> Name { <span style="color:#66d9ef">get</span>; <span style="color:#66d9ef">set</span>; } = <span style="color:#e6db74">&#34;Wand&#34;</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">FireWand</span> : Wand
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> FireWand()
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        Name = <span style="color:#e6db74">&#34;Fire Wand&#34;</span>;
+</span></span><span style="display:flex;"><span>        Console.WriteLine(<span style="color:#e6db74">&#34;生产了&#34;</span>+Name);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">IceWand</span> : Wand
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> IceWand()
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        Name = <span style="color:#e6db74">&#34;Ice Wand&#34;</span>;
+</span></span><span style="display:flex;"><span>        Console.WriteLine(<span style="color:#e6db74">&#34;生产了&#34;</span>+Name);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">WandFactory</span>&lt;T&gt; <span style="color:#66d9ef">where</span> T : Wand, <span style="color:#66d9ef">new</span>()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> T CreateWand()
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">new</span> T();
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Program</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> Main(<span style="color:#66d9ef">string</span>[] args)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">var</span> iceWandFactory = <span style="color:#66d9ef">new</span> WandFactory&lt;IceWand&gt;();
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">var</span> wand = iceWandFactory.CreateWand();
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">var</span> fireWandFactory = <span style="color:#66d9ef">new</span> WandFactory&lt;FireWand&gt;();
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">var</span> wand2 = fireWandFactory.CreateWand();
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}</span></span></code></pre></div><p>可以使用 <code>where : Wand, new()</code> 来限制泛型类型。</p>
+<p><strong>tips:</strong> <code>new()</code> 限制泛型类型必须有无参构造函数。</p>
+<h4 id="泛型方法">泛型方法<a class="anchor" href="#%e6%b3%9b%e5%9e%8b%e6%96%b9%e6%b3%95">#</a></h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">IWandFactoryMethod</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    Wand CreateWand&lt;T&gt;() <span style="color:#66d9ef">where</span> T : Wand, <span style="color:#66d9ef">new</span>();
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">WandFactory</span> : IWandFactoryMethod<span style="color:#75715e">//落实</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> Wand CreateWand&lt;T&gt;() <span style="color:#66d9ef">where</span> T : Wand, <span style="color:#66d9ef">new</span>()
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">new</span> T();
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Program</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> Main(<span style="color:#66d9ef">string</span>[] args)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">var</span> wandFactory = <span style="color:#66d9ef">new</span> WandFactory();
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">var</span> wand = wandFactory.CreateWand&lt;IceWand&gt;();
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">var</span> wand2 = wandFactory.CreateWand&lt;FireWand&gt;();
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}</span></span></code></pre></div><p>三点好处:</p>
+<ol>
+<li>拥有工厂接口</li>
+<li>可以限制传入产品,并且在编译期间就可以发现</li>
+<li>免去 switch case 的判断</li>
+</ol>
+<h2 id="抽象工厂-abstract-factory">抽象工厂 Abstract Factory<a class="anchor" href="#%e6%8a%bd%e8%b1%a1%e5%b7%a5%e5%8e%82-abstract-factory">#</a></h2>
+<h3 id="抽象工厂的意图">抽象工厂的意图<a class="anchor" href="#%e6%8a%bd%e8%b1%a1%e5%b7%a5%e5%8e%82%e7%9a%84%e6%84%8f%e5%9b%be">#</a></h3>
+<p>提供一个接口,用于创建相关或依赖对象的家族,而不需要明确指定具体类。</p>
+<h3 id="具体实现-1">具体实现<a class="anchor" href="#%e5%85%b7%e4%bd%93%e5%ae%9e%e7%8e%b0-1">#</a></h3>
+<ul>
+<li>抽象工厂</li>
+<li>具体工厂</li>
+<li>抽象产品</li>
+<li>具体产品</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">enum</span> magicType
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    Fire,
+</span></span><span style="display:flex;"><span>    Ice
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">abstract</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Wand</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">protected</span> <span style="color:#66d9ef">string</span> Name { <span style="color:#66d9ef">get</span>; <span style="color:#66d9ef">set</span>; } = <span style="color:#e6db74">&#34;Wand&#34;</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">abstract</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Sword</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">protected</span> <span style="color:#66d9ef">string</span> Name { <span style="color:#66d9ef">get</span>; <span style="color:#66d9ef">set</span>; } = <span style="color:#e6db74">&#34;Sword&#34;</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">FireSword</span> : Sword
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> FireSword()
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        Name = <span style="color:#e6db74">&#34;Fire Sword&#34;</span>;
+</span></span><span style="display:flex;"><span>        Console.WriteLine(<span style="color:#e6db74">&#34;生产了&#34;</span>+Name);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">IceSword</span> : Sword
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> IceSword()
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        Name = <span style="color:#e6db74">&#34;Ice Sword&#34;</span>;
+</span></span><span style="display:flex;"><span>        Console.WriteLine(<span style="color:#e6db74">&#34;生产了&#34;</span>+Name);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">FireWand</span> : Wand
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> FireWand()
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        Name = <span style="color:#e6db74">&#34;Fire Wand&#34;</span>;
+</span></span><span style="display:flex;"><span>        Console.WriteLine(<span style="color:#e6db74">&#34;生产了&#34;</span>+Name);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">IceWand</span> : Wand
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> IceWand()
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        Name = <span style="color:#e6db74">&#34;Ice Wand&#34;</span>;
+</span></span><span style="display:flex;"><span>        Console.WriteLine(<span style="color:#e6db74">&#34;生产了&#34;</span>+Name);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">abstract</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">AbstractFactory</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">abstract</span> Wand CreateWand();
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">abstract</span> Sword CreateSword();
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">FireFactory</span> : AbstractFactory
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">override</span> Wand CreateWand()
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">new</span> FireWand();
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">override</span> Sword CreateSword()
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">new</span> FireSword();
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">IceFactory</span> : AbstractFactory
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">override</span> Wand CreateWand()
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">new</span> IceWand();
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">override</span> Sword CreateSword()
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">new</span> IceSword();
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Program</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> Main(<span style="color:#66d9ef">string</span>[] args)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        AbstractFactory factory = <span style="color:#66d9ef">new</span> FireFactory();
+</span></span><span style="display:flex;"><span>        factory.CreateSword();
+</span></span><span style="display:flex;"><span>        factory.CreateWand();
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}</span></span></code></pre></div><h3 id="缺点">缺点<a class="anchor" href="#%e7%bc%ba%e7%82%b9">#</a></h3>
+<p>如果我们需要增加一个新的产品,比如 Shield,那么我们需要修改 AbstractFactory,这样就违背了开闭原则。</p>
+<h3 id="工厂方法的非单例实现">工厂方法的非单例实现<a class="anchor" href="#%e5%b7%a5%e5%8e%82%e6%96%b9%e6%b3%95%e7%9a%84%e9%9d%9e%e5%8d%95%e4%be%8b%e5%ae%9e%e7%8e%b0">#</a></h3>
+<p>静态类和静态方法</p>
+<p>参考是在设计模式与完美游戏开发的 201-202 页</p>
+<h2 id="生成器-builder">生成器 Builder<a class="anchor" href="#%e7%94%9f%e6%88%90%e5%99%a8-builder">#</a></h2>
+<h3 id="生成器的意图">生成器的意图<a class="anchor" href="#%e7%94%9f%e6%88%90%e5%99%a8%e7%9a%84%e6%84%8f%e5%9b%be">#</a></h3>
+<p>将一个复杂对象的构建与它的表示分离,使得同样的构建过程可以创建不同的表示。</p>
+<blockquote class='book-hint '>
+<p>当一个类的构造函数参数个数超过 4 个,而且这些参数有些是可选的参数,考虑使用构造者模式。</p>
+</blockquote><p><strong>流程分析安排 Director</strong><br>
+<strong>功能分开实现 Builder</strong></p>
+<p>流水线,流程分析<br>
+同样的流程,每一步做不一样的事情,结果也不同</p>
+<h3 id="生成器的具体实现">生成器的具体实现<a class="anchor" href="#%e7%94%9f%e6%88%90%e5%99%a8%e7%9a%84%e5%85%b7%e4%bd%93%e5%ae%9e%e7%8e%b0">#</a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Potion</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> List&lt;<span style="color:#66d9ef">string</span>&gt; parts = <span style="color:#66d9ef">new</span> List&lt;<span style="color:#66d9ef">string</span>&gt;();<span style="color:#75715e">//对接口</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> Potion(){}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> Add(<span style="color:#66d9ef">string</span> part)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        parts.Add(part);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> Show()
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        Console.WriteLine(<span style="color:#e6db74">&#34;\nPotion completed as below :&#34;</span>);
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">foreach</span> (<span style="color:#66d9ef">string</span> part <span style="color:#66d9ef">in</span> parts)
+</span></span><span style="display:flex;"><span>            Console.WriteLine(part);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Director</span><span style="color:#75715e">//流程分析安排</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> Potion potion;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> Director(){}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> Construct(Builder theBuilder)<span style="color:#75715e">///组装</span>
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        potion = <span style="color:#66d9ef">new</span> Potion();
+</span></span><span style="display:flex;"><span>        theBuilder.BuildPartA(potion);
+</span></span><span style="display:flex;"><span>        theBuilder.BuildPartB(potion);
+</span></span><span style="display:flex;"><span>        theBuilder.BuildPartC(potion);
+</span></span><span style="display:flex;"><span>        potion = GetProduct();
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> Potion GetProduct()
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> potion;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">abstract</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Builder</span><span style="color:#75715e">//实现功能</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">abstract</span> <span style="color:#66d9ef">void</span> BuildPartA(Object part);
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">abstract</span> <span style="color:#66d9ef">void</span> BuildPartB(Object part);
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">abstract</span> <span style="color:#66d9ef">void</span> BuildPartC(Object part);
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">PotionBuilder</span> : Builder
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">override</span> <span style="color:#66d9ef">void</span> BuildPartA(Object product)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        (product <span style="color:#66d9ef">as</span> Potion).Add(<span style="color:#e6db74">&#34;瓶子&#34;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">override</span> <span style="color:#66d9ef">void</span> BuildPartB(Object product)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        (product <span style="color:#66d9ef">as</span> Potion).Add(<span style="color:#e6db74">&#34;水&#34;</span>);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">override</span> <span style="color:#66d9ef">void</span> BuildPartC(Object product)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        (product <span style="color:#66d9ef">as</span> Potion).Add(<span style="color:#e6db74">&#34;药剂&#34;</span>);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Program</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> Main(<span style="color:#66d9ef">string</span>[] args)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        Director director = <span style="color:#66d9ef">new</span> Director();
+</span></span><span style="display:flex;"><span>        Potion product = <span style="color:#66d9ef">null</span>;
+</span></span><span style="display:flex;"><span>        Builder builder = <span style="color:#66d9ef">new</span> PotionBuilder();
+</span></span><span style="display:flex;"><span>        director.Construct(builder);
+</span></span><span style="display:flex;"><span>        product = director.GetProduct();
+</span></span><span style="display:flex;"><span>        product.Show();
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}</span></span></code></pre></div><h2 id="单例-singleton">单例 Singleton<a class="anchor" href="#%e5%8d%95%e4%be%8b-singleton">#</a></h2>
+<h3 id="单例的意图">单例的意图<a class="anchor" href="#%e5%8d%95%e4%be%8b%e7%9a%84%e6%84%8f%e5%9b%be">#</a></h3>
+<p>提供一个全局访问点来获取唯一的实例。</p>
+<p>也即其使用的范围 -&gt; 全局 + 唯一的</p>
+<h3 id="单例的具体实现">单例的具体实现<a class="anchor" href="#%e5%8d%95%e4%be%8b%e7%9a%84%e5%85%b7%e4%bd%93%e5%ae%9e%e7%8e%b0">#</a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Singleton</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">static</span> Singleton _instance;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> Singleton() { }
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> Singleton GetInstance()
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (_instance == <span style="color:#66d9ef">null</span>)
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            _instance = <span style="color:#66d9ef">new</span> Singleton();
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> _instance;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Foo</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> Foo instance { <span style="color:#66d9ef">get</span>; } = <span style="color:#66d9ef">new</span> Foo();
+</span></span><span style="display:flex;"><span>}</span></span></code></pre></div><h4 id="unity-中的单例值得注意的点--monobeheviour">Unity 中的单例值得注意的点 =&gt; monobeheviour<a class="anchor" href="#unity-%e4%b8%ad%e7%9a%84%e5%8d%95%e4%be%8b%e5%80%bc%e5%be%97%e6%b3%a8%e6%84%8f%e7%9a%84%e7%82%b9--monobeheviour">#</a></h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">GameManager</span> : MonoBehaviour
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> GameManager Instance;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">void</span> Awake()
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        Instance = <span style="color:#66d9ef">this</span>;<span style="color:#75715e">//不要 new 一个新的 否则 丢失引用</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}</span></span></code></pre></div><h3 id="单例模板">单例模板<a class="anchor" href="#%e5%8d%95%e4%be%8b%e6%a8%a1%e6%9d%bf">#</a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Singleton</span>&lt;T&gt; <span style="color:#66d9ef">where</span> T : <span style="color:#66d9ef">new</span>()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">static</span> T _instance;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">readonly</span> <span style="color:#66d9ef">object</span> _lock = <span style="color:#66d9ef">new</span> <span style="color:#66d9ef">object</span>();
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">protected</span> Singleton() { }
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> T GetInstance()
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (_instance == <span style="color:#66d9ef">null</span>)
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">lock</span> (_lock)
+</span></span><span style="display:flex;"><span>            {
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">if</span> (_instance == <span style="color:#66d9ef">null</span>)
+</span></span><span style="display:flex;"><span>                {
+</span></span><span style="display:flex;"><span>                    _instance = <span style="color:#66d9ef">new</span> T();
+</span></span><span style="display:flex;"><span>                }
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> _instance;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}</span></span></code></pre></div><h2 id="参考">参考<a class="anchor" href="#%e5%8f%82%e8%80%83">#</a></h2>
+<p><a href="https://www.bilibili.com/video/BV1dQ4y1b766">【Sast C# Class 4.1 泛型-类型系统的万金油</a></p>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+<div>
+
+</div>
+
+<div>
+
+</div>
+
+</div>
+
+
+
+
+
+  
+  
+  
+
+
+ 
+        
+  
+  <div class="book-comments">
+<div id="disqus_thread"></div>
+<script>
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "rdququ's Blog" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+  
+ 
+        
+        
+  
+ 
+        
+  
+  
+    <script>(function(){document.querySelectorAll("pre:has(code)").forEach(e=>{e.addEventListener("click",e.focus),e.addEventListener("copy",function(t){if(t.preventDefault(),navigator.clipboard){const t=window.getSelection().toString()||e.textContent;navigator.clipboard.writeText(t)}})})})()</script>
+  
+
+      </footer>
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+  
+  <aside class="book-toc">
+    <div class="book-toc-content">
+      
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#工厂方法-factory-method">工厂方法 Factory Method</a>
+      <ul>
+        <li><a href="#工厂方法的意图">工厂方法的意图</a></li>
+        <li><a href="#具体实现">具体实现</a></li>
+      </ul>
+    </li>
+    <li><a href="#抽象工厂-abstract-factory">抽象工厂 Abstract Factory</a>
+      <ul>
+        <li><a href="#抽象工厂的意图">抽象工厂的意图</a></li>
+        <li><a href="#具体实现-1">具体实现</a></li>
+        <li><a href="#缺点">缺点</a></li>
+        <li><a href="#工厂方法的非单例实现">工厂方法的非单例实现</a></li>
+      </ul>
+    </li>
+    <li><a href="#生成器-builder">生成器 Builder</a>
+      <ul>
+        <li><a href="#生成器的意图">生成器的意图</a></li>
+        <li><a href="#生成器的具体实现">生成器的具体实现</a></li>
+      </ul>
+    </li>
+    <li><a href="#单例-singleton">单例 Singleton</a>
+      <ul>
+        <li><a href="#单例的意图">单例的意图</a></li>
+        <li><a href="#单例的具体实现">单例的具体实现</a></li>
+        <li><a href="#单例模板">单例模板</a></li>
+      </ul>
+    </li>
+    <li><a href="#参考">参考</a></li>
+  </ul>
+</nav>
+
+
+
+    </div>
+  </aside>
+  
+ 
+  </main>
+
+  
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

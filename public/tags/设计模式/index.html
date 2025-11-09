@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="http://localhost:1313/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/">
+  <meta property="og:site_name" content="rdququ&#39;s Blog">
+  <meta property="og:title" content="设计模式">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="website">
+
+
+  <meta itemprop="name" content="设计模式">
+  <meta itemprop="datePublished" content="2024-07-19T00:00:00+00:00">
+  <meta itemprop="dateModified" content="2024-07-19T00:00:00+00:00">
+
+<title>设计模式 | rdququ&#39;s Blog</title>
+<link rel="icon" href="/favicon.png" >
+<link rel="manifest" href="/manifest.json">
+<link rel="canonical" href="http://localhost:1313/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/">
+<link rel="stylesheet" href="/book.min.cc2c524ed250aac81b23d1f4af87344917b325208841feca0968fe450f570575.css" integrity="sha256-zCxSTtJQqsgbI9H0r4c0SRezJSCIQf7KCWj&#43;RQ9XBXU=" crossorigin="anonymous">
+
+
+  <script defer src="/fuse.min.js"></script>
+  <script defer src="/en.search.min.1cdae00495bbcc99219040905466ac17fee903495acba54776df72d26fbf3f62.js" integrity="sha256-HNrgBJW7zJkhkECQVGasF/7pA0lay6VHdt9y0m&#43;/P2I=" crossorigin="anonymous"></script>
+
+
+<link rel="alternate" type="application/rss+xml" href="http://localhost:1313/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/index.xml" title="rdququ's Blog" />
+
+  
+</head>
+<body dir="ltr" class="book-kind-term book-type-tags">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    
+<aside class="book-menu">
+  <div class="book-menu-content">
+    
+  <nav>
+<h2 class="book-brand">
+  <a class="flex align-center" href="/"><span>rdququ&#39;s Blog</span>
+  </a>
+</h2>
+
+
+<div class="book-search hidden">
+  <input id="book-search-input" type="text" 
+    placeholder="Search"
+    aria-label="Search"
+    maxlength="64" data-hotkeys="s/" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+<script>document.querySelector(".book-search").classList.remove("hidden")</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/blog/" class="">
+      Blog</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/links/" class="">
+      Links</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/archive/" class="">
+      Archive</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+
+  </div>
+</aside>
+ 
+
+    <div class="book-page">
+      <header class="book-header hidden">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/icons/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <h3>设计模式</h3>
+
+  <label for="toc-control">
+    
+  </label>
+</div>
+
+
+  
+ 
+      </header>
+
+      
+      
+  
+  <article class="markdown book-post">
+    <h2>
+      <a href="/docs/archive_posts/eventbus/">Eventbus</a>
+    </h2>
+    
+  <div class="flex align-center text-small book-post-date">
+    <img src="/icons/calendar.svg" class="book-icon" alt="Calendar" />
+    <span>July 19, 2024</span>
+  </div>
+
+
+
+  
+
+  
+  <div class="text-small">
+    
+      <a href="/tags/eventbus/">EventBus</a>, 
+      <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/">设计模式</a>, 
+      <a href="/tags/%E5%8F%91%E5%B8%83%E8%AE%A2%E9%98%85/">发布订阅</a>, 
+      <a href="/tags/unity/">Unity</a>
+  </div>
+  
+
+
+    <div class="book-post-content"><h1 id="eventbus-设计分享">EventBus 设计分享<a class="anchor" href="#eventbus-%e8%ae%be%e8%ae%a1%e5%88%86%e4%ba%ab">#</a></h1>
+<h2 id="回顾原理">回顾原理<a class="anchor" href="#%e5%9b%9e%e9%a1%be%e5%8e%9f%e7%90%86">#</a></h2>
+<p>无论事件总线支持怎样的拓展功能，内部实现怎样优雅，其设计基本上还是基于发布-订阅模型。<br>
+该模型总是包含用于存贮消息映射到回调的数据集合，事件的分发方法，事件的订阅和取消订阅方法。（以下的事件总线，事件系统，事件中心皆指该模型的实际实现）</p>
+<p>发布订阅模型可以轻松支持事件广播，即单一的消息发布者可以把消息传递给多个关心其发送的消息的听众，这些听众会在监听到自己关心的消息时做出相对应的反应。</p>
+<p>在类的依赖关系中，听众和消息发布者都无需关心对方，他们共同依赖事件模块而不是相互耦合。优点是利于代码的维护，复用。这也遵循了迪米特法则。
+下面举一个例子来对比接入事件总线前后类的依赖关系</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">VTuber</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">readonly</span> List&lt;Fans&gt; fansList;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> VTuber(List&lt;Fans&gt; fansList)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">this</span>.fansList = fansList;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> Sing()
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        fansList.ForEach(fans =&gt; fans.OnVTuberSing());
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Fans</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">readonly</span> Action OnVTuberSing;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">protected</span> Fans(Action onVTuberSing)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        OnVTuberSing = onVTuberSing;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}</span></span></code></pre></div><p>上面的代码描述了在 VTuber 唱歌后 Fans 表态的场景。VTuber 不得不了解其所有的粉丝，并在唱歌后逐一通知他们。然而，VTuber 和 Fans 紧密耦合在了一起，只要有一个缺失或者发生更改，代码就无法通过编译或必须紧跟着更新另一个类。<br>
+当不止粉丝来关心 VTuber 的时候，事情就变得更加复杂了。VTuber 必须了解关注 ta 的所有人：粉丝、网警、平台、乐子人，以便在自己有所举动时他们能发出正常的反馈——这很可笑不是吗？哪怕以显示的眼光去看，依赖关系也完全倒置了。事实上是后者关心前者，前者往往完全不了解后者，甚至不清楚后者的存在。
+或许熟悉抽象的你已经有了相对应的优化思路，但不要着急，我们再来看看事件总线介入后的局面。</p></div>
+  </article>
+  
+  <article class="markdown book-post">
+    <h2>
+      <a href="/docs/archive_posts/creational_patterns/">Creational Patterns</a>
+    </h2>
+    
+  <div class="flex align-center text-small book-post-date">
+    <img src="/icons/calendar.svg" class="book-icon" alt="Calendar" />
+    <span>January 23, 2024</span>
+  </div>
+
+
+
+  
+
+  
+  <div class="text-small">
+    
+      <a href="/tags/%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1/">面向对象</a>, 
+      <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/">设计模式</a>
+  </div>
+  
+
+
+    <div class="book-post-content"><blockquote class='book-hint '>
+<p>本文为 2024 年寒假 SAST 游戏组 WOC 授课资料留档</p>
+</blockquote><p>抽象了实例化过程。</p>
+<ul>
+<li>接口，抽象类</li>
+<li>new()</li>
+</ul>
+<h2 id="工厂方法-factory-method">工厂方法 Factory Method<a class="anchor" href="#%e5%b7%a5%e5%8e%82%e6%96%b9%e6%b3%95-factory-method">#</a></h2>
+<h3 id="工厂方法的意图">工厂方法的意图<a class="anchor" href="#%e5%b7%a5%e5%8e%82%e6%96%b9%e6%b3%95%e7%9a%84%e6%84%8f%e5%9b%be">#</a></h3>
+<p>定义一个用于创建对象的接口，让子类决定实例化哪一个类。工厂方法使一个类的实例化延迟到其子类。</p>
+<h3 id="具体实现">具体实现<a class="anchor" href="#%e5%85%b7%e4%bd%93%e5%ae%9e%e7%8e%b0">#</a></h3>
+<p>如果不用工厂方法,我们如何实现?</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Wand</span><span style="color:#75715e">//产品</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">string</span> Name { <span style="color:#66d9ef">get</span>; <span style="color:#66d9ef">set</span>; }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">FireWand</span> : Wand
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> FireWand()
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        Name = <span style="color:#e6db74">&#34;Fire Wand&#34;</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">IceWand</span> : Wand
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> IceWand()
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        Name = <span style="color:#e6db74">&#34;Ice Wand&#34;</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">int</span> main()<span style="color:#75715e">//实例化,客户端,调用者</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> fireWand = <span style="color:#66d9ef">new</span> FireWand();
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> iceWand = <span style="color:#66d9ef">new</span> IceWand();
+</span></span><span style="display:flex;"><span>}</span></span></code></pre></div><p>如果我们需要一个新的魔杖,我们需要实现一个新的魔杖类,然后实现一个新的方法,这样就会导致类的爆炸。</p></div>
+  </article>
+  
+
+  
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+<div>
+
+</div>
+
+<div>
+
+</div>
+
+</div>
+
+
+
+
+
+  
+  
+  
+
+
+ 
+        
+  
+ 
+        
+        
+  
+ 
+        
+  
+  
+    <script>(function(){document.querySelectorAll("pre:has(code)").forEach(e=>{e.addEventListener("click",e.focus),e.addEventListener("copy",function(t){if(t.preventDefault(),navigator.clipboard){const t=window.getSelection().toString()||e.textContent;navigator.clipboard.writeText(t)}})})})()</script>
+  
+
+      </footer>
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+<aside class="book-toc">
+  <div class="book-toc-content">
+    
+  <nav>
+  <ul>
+  
+    
+    <li class="book-section-flat">
+      <a>Categories</a>
+      <ul>
+      
+      </ul>
+    </li>
+    
+  
+    
+    <li class="book-section-flat">
+      <a>Tags</a>
+      <ul>
+      
+        <li class="flex align-center">
+          <a href="/tags/c%23/">C#</a>
+          <span>1</span>
+        </li>
+      
+        <li class="flex align-center">
+          <a href="/tags/fp/">FP</a>
+          <span>1</span>
+        </li>
+      
+        <li class="flex align-center">
+          <a href="/tags/eventbus/">EventBus</a>
+          <span>1</span>
+        </li>
+      
+        <li class="flex align-center">
+          <a href="/tags/unity/">Unity</a>
+          <span>1</span>
+        </li>
+      
+        <li class="flex align-center">
+          <a href="/tags/%E5%8F%91%E5%B8%83%E8%AE%A2%E9%98%85/">发布订阅</a>
+          <span>1</span>
+        </li>
+      
+        <li class="flex align-center">
+          <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/">设计模式</a>
+          <span>2</span>
+        </li>
+      
+        <li class="flex align-center">
+          <a href="/tags/oop/">OOP</a>
+          <span>1</span>
+        </li>
+      
+        <li class="flex align-center">
+          <a href="/tags/solid/">SOLID</a>
+          <span>1</span>
+        </li>
+      
+        <li class="flex align-center">
+          <a href="/tags/%E8%AE%BE%E8%AE%A1%E5%8E%9F%E5%88%99/">设计原则</a>
+          <span>1</span>
+        </li>
+      
+        <li class="flex align-center">
+          <a href="/tags/%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1/">面向对象</a>
+          <span>1</span>
+        </li>
+      
+        <li class="flex align-center">
+          <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a>
+          <span>1</span>
+        </li>
+      
+        <li class="flex align-center">
+          <a href="/tags/game-engine/">Game Engine</a>
+          <span>1</span>
+        </li>
+      
+        <li class="flex align-center">
+          <a href="/tags/render/">Render</a>
+          <span>1</span>
+        </li>
+      
+      </ul>
+    </li>
+    
+  
+  </ul>
+</nav>
+
+
+  </div>
+</aside>
+ 
+  </main>
+
+  
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

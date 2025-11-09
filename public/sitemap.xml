@@ -3,41 +3,88 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>http://localhost:1313/docs/posts/functional_programming_paradigm/</loc>
-    <lastmod>2025-03-29T00:00:00+00:00</lastmod>
+    <lastmod>2025-11-08T02:18:02+08:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/docs/posts/</loc>
-    <lastmod>2025-03-29T00:00:00+00:00</lastmod>
+    <loc>http://localhost:1313/docs/archive_posts/eventbus/</loc>
+    <lastmod>2024-07-19T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/docs/archive_posts/creational_patterns/</loc>
+    <lastmod>2024-01-23T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/docs/archive_posts/oo_design/</loc>
+    <lastmod>2024-01-23T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/docs/archive_posts/aabb_plane_intersection/</loc>
+    <lastmod>2023-12-05T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/docs/archive_posts/prefix_infix_postfix_expr/</loc>
+    <lastmod>2023-10-23T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://localhost:1313/docs/archive_posts/archive_blog_1/</loc>
-    <lastmod>2023-01-01T00:00:00+00:00</lastmod>
+    <lastmod>2025-11-08T02:18:02+08:00</lastmod>
   </url><url>
     <loc>http://localhost:1313/docs/archive_posts/</loc>
-    <lastmod>2023-01-01T00:00:00+00:00</lastmod>
+    <lastmod>2025-11-08T02:18:02+08:00</lastmod>
   </url><url>
     <loc>http://localhost:1313/docs/blog/</loc>
+    <lastmod>2025-11-08T02:18:02+08:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/docs/posts/</loc>
+    <lastmod>2025-11-08T02:18:02+08:00</lastmod>
   </url><url>
     <loc>http://localhost:1313/docs/links/</loc>
+    <lastmod>2025-11-08T02:18:02+08:00</lastmod>
   </url><url>
     <loc>http://localhost:1313/docs/</loc>
-    <lastmod>2025-11-07T21:38:17+08:00</lastmod>
+    <lastmod>2025-11-08T02:18:02+08:00</lastmod>
   </url><url>
     <loc>http://localhost:1313/</loc>
-    <lastmod>2025-11-07T21:32:26+08:00</lastmod>
+    <lastmod>2025-11-08T02:18:02+08:00</lastmod>
   </url><url>
     <loc>http://localhost:1313/docs/archive/</loc>
-    <lastmod>2025-11-07T21:17:26+08:00</lastmod>
+    <lastmod>2025-11-08T02:18:02+08:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/tags/c%23/</loc>
+    <lastmod>2025-11-08T02:18:02+08:00</lastmod>
   </url><url>
     <loc>http://localhost:1313/tags/fp/</loc>
-    <lastmod>2025-03-29T00:00:00+00:00</lastmod>
+    <lastmod>2025-11-08T02:18:02+08:00</lastmod>
   </url><url>
     <loc>http://localhost:1313/tags/</loc>
-    <lastmod>2025-03-29T00:00:00+00:00</lastmod>
+    <lastmod>2025-11-08T02:18:02+08:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/tags/eventbus/</loc>
+    <lastmod>2024-07-19T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/tags/unity/</loc>
+    <lastmod>2024-07-19T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/tags/%E5%8F%91%E5%B8%83%E8%AE%A2%E9%98%85/</loc>
+    <lastmod>2024-07-19T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/</loc>
+    <lastmod>2024-07-19T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/tags/oop/</loc>
+    <lastmod>2024-01-23T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/tags/solid/</loc>
+    <lastmod>2024-01-23T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/tags/%E8%AE%BE%E8%AE%A1%E5%8E%9F%E5%88%99/</loc>
+    <lastmod>2024-01-23T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/tags/%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1/</loc>
+    <lastmod>2024-01-23T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/</loc>
+    <lastmod>2023-10-23T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://localhost:1313/tags/game-engine/</loc>
-    <lastmod>2023-01-01T00:00:00+00:00</lastmod>
+    <lastmod>2025-11-08T02:18:02+08:00</lastmod>
   </url><url>
     <loc>http://localhost:1313/tags/render/</loc>
-    <lastmod>2023-01-01T00:00:00+00:00</lastmod>
+    <lastmod>2025-11-08T02:18:02+08:00</lastmod>
   </url><url>
     <loc>http://localhost:1313/categories/</loc>
   </url>

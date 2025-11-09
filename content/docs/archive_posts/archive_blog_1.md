@@ -1,5 +1,5 @@
 ---
-title: "2D 渲染基础"
+title: "2D图形——渲染、精灵和简单应用"
 weight: 1
 # bookFlatSection: false
 # bookToc: false

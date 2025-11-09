@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="http://localhost:1313/tags/solid/">
+  <meta property="og:site_name" content="rdququ&#39;s Blog">
+  <meta property="og:title" content="SOLID">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="website">
+
+
+  <meta itemprop="name" content="SOLID">
+  <meta itemprop="datePublished" content="2024-01-23T00:00:00+00:00">
+  <meta itemprop="dateModified" content="2024-01-23T00:00:00+00:00">
+
+<title>SOLID | rdququ&#39;s Blog</title>
+<link rel="icon" href="/favicon.png" >
+<link rel="manifest" href="/manifest.json">
+<link rel="canonical" href="http://localhost:1313/tags/solid/">
+<link rel="stylesheet" href="/book.min.cc2c524ed250aac81b23d1f4af87344917b325208841feca0968fe450f570575.css" integrity="sha256-zCxSTtJQqsgbI9H0r4c0SRezJSCIQf7KCWj&#43;RQ9XBXU=" crossorigin="anonymous">
+
+
+  <script defer src="/fuse.min.js"></script>
+  <script defer src="/en.search.min.1cdae00495bbcc99219040905466ac17fee903495acba54776df72d26fbf3f62.js" integrity="sha256-HNrgBJW7zJkhkECQVGasF/7pA0lay6VHdt9y0m&#43;/P2I=" crossorigin="anonymous"></script>
+
+
+<link rel="alternate" type="application/rss+xml" href="http://localhost:1313/tags/solid/index.xml" title="rdququ's Blog" />
+
+  
+</head>
+<body dir="ltr" class="book-kind-term book-type-tags">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    
+<aside class="book-menu">
+  <div class="book-menu-content">
+    
+  <nav>
+<h2 class="book-brand">
+  <a class="flex align-center" href="/"><span>rdququ&#39;s Blog</span>
+  </a>
+</h2>
+
+
+<div class="book-search hidden">
+  <input id="book-search-input" type="text" 
+    placeholder="Search"
+    aria-label="Search"
+    maxlength="64" data-hotkeys="s/" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+<script>document.querySelector(".book-search").classList.remove("hidden")</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/blog/" class="">
+      Blog</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/links/" class="">
+      Links</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/archive/" class="">
+      Archive</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+
+  </div>
+</aside>
+ 
+
+    <div class="book-page">
+      <header class="book-header hidden">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/icons/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <h3>SOLID</h3>
+
+  <label for="toc-control">
+    
+  </label>
+</div>
+
+
+  
+ 
+      </header>
+
+      
+      
+  
+  <article class="markdown book-post">
+    <h2>
+      <a href="/docs/archive_posts/oo_design/">聊聊面向对象和其设计原则</a>
+    </h2>
+    
+  <div class="flex align-center text-small book-post-date">
+    <img src="/icons/calendar.svg" class="book-icon" alt="Calendar" />
+    <span>January 23, 2024</span>
+  </div>
+
+
+
+  
+
+  
+  <div class="text-small">
+    
+      <a href="/tags/oop/">OOP</a>, 
+      <a href="/tags/%E8%AE%BE%E8%AE%A1%E5%8E%9F%E5%88%99/">设计原则</a>, 
+      <a href="/tags/solid/">SOLID</a>
+  </div>
+  
+
+
+    <div class="book-post-content"><blockquote class='book-hint '>
+<p>本文为 2024 年寒假 SAST 游戏组 WOC 授课资料留档</p>
+</blockquote><h2 id="重温面向对象">重温面向对象<a class="anchor" href="#%e9%87%8d%e6%b8%a9%e9%9d%a2%e5%90%91%e5%af%b9%e8%b1%a1">#</a></h2>
+<ul>
+<li>封装：隐藏内部实现</li>
+<li>继承：复用现有代码</li>
+<li>多态：改写对象行为</li>
+</ul>
+<h2 id="面向对象的目的">面向对象的目的<a class="anchor" href="#%e9%9d%a2%e5%90%91%e5%af%b9%e8%b1%a1%e7%9a%84%e7%9b%ae%e7%9a%84">#</a></h2>
+<p>现实问题（复杂度） → 类 → 实例 (?)</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span>Object myObj = <span style="color:#66d9ef">new</span> Object();</span></span></code></pre></div><h3 id="封装">封装<a class="anchor" href="#%e5%b0%81%e8%a3%85">#</a></h3>
+<p>假设你是军队指挥官，你手下统帅了数十种上万人的军队。当你命令部下向地方发起进攻的时候——</p>
+<p>你是会：</p>
+<ul>
+<li>A 营的小陆向前走三步，向你的 11 点钟方向射击</li>
+<li>B 连的小宋向左转 35 度，前进 5 步，3 分钟瞄准时间，炮口倾角 15 度，开火 3 分钟</li>
+<li>……</li>
+</ul>
+<p>还是会说：</p>
+<ul>
+<li>A 营向甲点缓慢推进</li>
+<li>B 连火力掩护</li>
+<li>“给老子啃下***高地（乐）”</li>
+</ul>
+<p>显然，身为一军之长的你（作为最高层调用者）对军队中每个单位进行原子级微操是不合适的。军中各单位构成的复杂网络应当被抽象成高级命令。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">int</span> main()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    move(<span style="color:#e6db74">&#34;小陆&#34;</span>, <span style="color:#ae81ff">3</span>);
+</span></span><span style="display:flex;"><span>    fire(<span style="color:#e6db74">&#34;小陆&#34;</span>, -<span style="color:#ae81ff">30</span>);
+</span></span><span style="display:flex;"><span>    rotate(<span style="color:#e6db74">&#34;小宋&#34;</span>, -<span style="color:#ae81ff">35</span>);
+</span></span><span style="display:flex;"><span>    move(<span style="color:#e6db74">&#34;小宋&#34;</span>, <span style="color:#ae81ff">5</span>);
+</span></span><span style="display:flex;"><span>    artillery_fire(<span style="color:#ae81ff">3</span>, <span style="color:#ae81ff">15</span>, <span style="color:#ae81ff">3</span>);
+</span></span><span style="display:flex;"><span>}</span></span></code></pre></div><p>对象化后：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Army</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">enum</span> AdvanceSpeed
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        Slow, Quick, Normal
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">enum</span> ArmyType
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        Infantry, Artillery
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> Advance(AdvanceSpeed speed, City targetPos) { ... }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> Shield(Army target) { ... }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">int</span> Main()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    Army A = <span style="color:#66d9ef">new</span> Army(...);
+</span></span><span style="display:flex;"><span>    Army B = <span style="color:#66d9ef">new</span> Army(...);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    A.Advance(AdvanceSpeed.Normal, city_jia);
+</span></span><span style="display:flex;"><span>    B.Shield(A);
+</span></span><span style="display:flex;"><span>}</span></span></code></pre></div><p>再上一个层级：</p></div>
+  </article>
+  
+
+  
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+<div>
+
+</div>
+
+<div>
+
+</div>
+
+</div>
+
+
+
+
+
+  
+  
+  
+
+
+ 
+        
+  
+ 
+        
+        
+  
+ 
+        
+  
+  
+    <script>(function(){document.querySelectorAll("pre:has(code)").forEach(e=>{e.addEventListener("click",e.focus),e.addEventListener("copy",function(t){if(t.preventDefault(),navigator.clipboard){const t=window.getSelection().toString()||e.textContent;navigator.clipboard.writeText(t)}})})})()</script>
+  
+
+      </footer>
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+<aside class="book-toc">
+  <div class="book-toc-content">
+    
+  <nav>
+  <ul>
+  
+    
+    <li class="book-section-flat">
+      <a>Categories</a>
+      <ul>
+      
+      </ul>
+    </li>
+    
+  
+    
+    <li class="book-section-flat">
+      <a>Tags</a>
+      <ul>
+      
+        <li class="flex align-center">
+          <a href="/tags/c%23/">C#</a>
+          <span>1</span>
+        </li>
+      
+        <li class="flex align-center">
+          <a href="/tags/fp/">FP</a>
+          <span>1</span>
+        </li>
+      
+        <li class="flex align-center">
+          <a href="/tags/eventbus/">EventBus</a>
+          <span>1</span>
+        </li>
+      
+        <li class="flex align-center">
+          <a href="/tags/unity/">Unity</a>
+          <span>1</span>
+        </li>
+      
+        <li class="flex align-center">
+          <a href="/tags/%E5%8F%91%E5%B8%83%E8%AE%A2%E9%98%85/">发布订阅</a>
+          <span>1</span>
+        </li>
+      
+        <li class="flex align-center">
+          <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/">设计模式</a>
+          <span>2</span>
+        </li>
+      
+        <li class="flex align-center">
+          <a href="/tags/oop/">OOP</a>
+          <span>1</span>
+        </li>
+      
+        <li class="flex align-center">
+          <a href="/tags/solid/">SOLID</a>
+          <span>1</span>
+        </li>
+      
+        <li class="flex align-center">
+          <a href="/tags/%E8%AE%BE%E8%AE%A1%E5%8E%9F%E5%88%99/">设计原则</a>
+          <span>1</span>
+        </li>
+      
+        <li class="flex align-center">
+          <a href="/tags/%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1/">面向对象</a>
+          <span>1</span>
+        </li>
+      
+        <li class="flex align-center">
+          <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a>
+          <span>1</span>
+        </li>
+      
+        <li class="flex align-center">
+          <a href="/tags/game-engine/">Game Engine</a>
+          <span>1</span>
+        </li>
+      
+        <li class="flex align-center">
+          <a href="/tags/render/">Render</a>
+          <span>1</span>
+        </li>
+      
+      </ul>
+    </li>
+    
+  
+  </ul>
+</nav>
+
+
+  </div>
+</aside>
+ 
+  </main>
+
+  
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

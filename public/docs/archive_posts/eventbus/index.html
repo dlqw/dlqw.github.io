@@ -1,0 +1,1435 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="EventBus 设计分享#回顾原理#无论事件总线支持怎样的拓展功能，内部实现怎样优雅，其设计基本上还是基于发布-订阅模型。
+该模型总是包含用于存贮消息映射到回调的数据集合，事件的分发方法，事件的订阅和取消订阅方法。（以下的事件总线，事件系统，事件中心皆指该模型的实际实现）
+发布订阅模型可以轻松支持事件广播，即单一的消息发布者可以把消息传递给多个关心其发送的消息的听众，这些听众会在监听到自己关心的消息时做出相对应的反应。
+在类的依赖关系中，听众和消息发布者都无需关心对方，他们共同依赖事件模块而不是相互耦合。优点是利于代码的维护，复用。这也遵循了迪米特法则。 下面举一个例子来对比接入事件总线前后类的依赖关系
+public class VTuber { private readonly List&lt;Fans&gt; fansList; public VTuber(List&lt;Fans&gt; fansList) { this.fansList = fansList; } public void Sing() { fansList.ForEach(fans =&gt; fans.OnVTuberSing()); } } public class Fans { public readonly Action OnVTuberSing; protected Fans(Action onVTuberSing) { OnVTuberSing = onVTuberSing; } }上面的代码描述了在 VTuber 唱歌后 Fans 表态的场景。VTuber 不得不了解其所有的粉丝，并在唱歌后逐一通知他们。然而，VTuber 和 Fans 紧密耦合在了一起，只要有一个缺失或者发生更改，代码就无法通过编译或必须紧跟着更新另一个类。
+当不止粉丝来关心 VTuber 的时候，事情就变得更加复杂了。VTuber 必须了解关注 ta 的所有人：粉丝、网警、平台、乐子人，以便在自己有所举动时他们能发出正常的反馈——这很可笑不是吗？哪怕以显示的眼光去看，依赖关系也完全倒置了。事实上是后者关心前者，前者往往完全不了解后者，甚至不清楚后者的存在。 或许熟悉抽象的你已经有了相对应的优化思路，但不要着急，我们再来看看事件总线介入后的局面。
+">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="http://localhost:1313/docs/archive_posts/eventbus/">
+  <meta property="og:site_name" content="rdququ&#39;s Blog">
+  <meta property="og:title" content="Eventbus">
+  <meta property="og:description" content="EventBus 设计分享#回顾原理#无论事件总线支持怎样的拓展功能，内部实现怎样优雅，其设计基本上还是基于发布-订阅模型。
+该模型总是包含用于存贮消息映射到回调的数据集合，事件的分发方法，事件的订阅和取消订阅方法。（以下的事件总线，事件系统，事件中心皆指该模型的实际实现）
+发布订阅模型可以轻松支持事件广播，即单一的消息发布者可以把消息传递给多个关心其发送的消息的听众，这些听众会在监听到自己关心的消息时做出相对应的反应。
+在类的依赖关系中，听众和消息发布者都无需关心对方，他们共同依赖事件模块而不是相互耦合。优点是利于代码的维护，复用。这也遵循了迪米特法则。 下面举一个例子来对比接入事件总线前后类的依赖关系
+public class VTuber { private readonly List&lt;Fans&gt; fansList; public VTuber(List&lt;Fans&gt; fansList) { this.fansList = fansList; } public void Sing() { fansList.ForEach(fans =&gt; fans.OnVTuberSing()); } } public class Fans { public readonly Action OnVTuberSing; protected Fans(Action onVTuberSing) { OnVTuberSing = onVTuberSing; } }上面的代码描述了在 VTuber 唱歌后 Fans 表态的场景。VTuber 不得不了解其所有的粉丝，并在唱歌后逐一通知他们。然而，VTuber 和 Fans 紧密耦合在了一起，只要有一个缺失或者发生更改，代码就无法通过编译或必须紧跟着更新另一个类。
+当不止粉丝来关心 VTuber 的时候，事情就变得更加复杂了。VTuber 必须了解关注 ta 的所有人：粉丝、网警、平台、乐子人，以便在自己有所举动时他们能发出正常的反馈——这很可笑不是吗？哪怕以显示的眼光去看，依赖关系也完全倒置了。事实上是后者关心前者，前者往往完全不了解后者，甚至不清楚后者的存在。 或许熟悉抽象的你已经有了相对应的优化思路，但不要着急，我们再来看看事件总线介入后的局面。">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="docs">
+    <meta property="article:published_time" content="2024-07-19T00:00:00+00:00">
+    <meta property="article:modified_time" content="2024-07-19T00:00:00+00:00">
+    <meta property="article:tag" content="EventBus">
+    <meta property="article:tag" content="设计模式">
+    <meta property="article:tag" content="发布订阅">
+    <meta property="article:tag" content="Unity">
+
+
+  <meta itemprop="name" content="Eventbus">
+  <meta itemprop="description" content="EventBus 设计分享#回顾原理#无论事件总线支持怎样的拓展功能，内部实现怎样优雅，其设计基本上还是基于发布-订阅模型。
+该模型总是包含用于存贮消息映射到回调的数据集合，事件的分发方法，事件的订阅和取消订阅方法。（以下的事件总线，事件系统，事件中心皆指该模型的实际实现）
+发布订阅模型可以轻松支持事件广播，即单一的消息发布者可以把消息传递给多个关心其发送的消息的听众，这些听众会在监听到自己关心的消息时做出相对应的反应。
+在类的依赖关系中，听众和消息发布者都无需关心对方，他们共同依赖事件模块而不是相互耦合。优点是利于代码的维护，复用。这也遵循了迪米特法则。 下面举一个例子来对比接入事件总线前后类的依赖关系
+public class VTuber { private readonly List&lt;Fans&gt; fansList; public VTuber(List&lt;Fans&gt; fansList) { this.fansList = fansList; } public void Sing() { fansList.ForEach(fans =&gt; fans.OnVTuberSing()); } } public class Fans { public readonly Action OnVTuberSing; protected Fans(Action onVTuberSing) { OnVTuberSing = onVTuberSing; } }上面的代码描述了在 VTuber 唱歌后 Fans 表态的场景。VTuber 不得不了解其所有的粉丝，并在唱歌后逐一通知他们。然而，VTuber 和 Fans 紧密耦合在了一起，只要有一个缺失或者发生更改，代码就无法通过编译或必须紧跟着更新另一个类。
+当不止粉丝来关心 VTuber 的时候，事情就变得更加复杂了。VTuber 必须了解关注 ta 的所有人：粉丝、网警、平台、乐子人，以便在自己有所举动时他们能发出正常的反馈——这很可笑不是吗？哪怕以显示的眼光去看，依赖关系也完全倒置了。事实上是后者关心前者，前者往往完全不了解后者，甚至不清楚后者的存在。 或许熟悉抽象的你已经有了相对应的优化思路，但不要着急，我们再来看看事件总线介入后的局面。">
+  <meta itemprop="datePublished" content="2024-07-19T00:00:00+00:00">
+  <meta itemprop="dateModified" content="2024-07-19T00:00:00+00:00">
+  <meta itemprop="wordCount" content="2202">
+  <meta itemprop="keywords" content="EventBus,设计模式,发布订阅,Unity">
+
+<title>Eventbus | rdququ&#39;s Blog</title>
+<link rel="icon" href="/favicon.png" >
+<link rel="manifest" href="/manifest.json">
+<link rel="canonical" href="http://localhost:1313/docs/archive_posts/eventbus/">
+<link rel="stylesheet" href="/book.min.cc2c524ed250aac81b23d1f4af87344917b325208841feca0968fe450f570575.css" integrity="sha256-zCxSTtJQqsgbI9H0r4c0SRezJSCIQf7KCWj&#43;RQ9XBXU=" crossorigin="anonymous">
+
+
+  <script defer src="/fuse.min.js"></script>
+  <script defer src="/en.search.min.1cdae00495bbcc99219040905466ac17fee903495acba54776df72d26fbf3f62.js" integrity="sha256-HNrgBJW7zJkhkECQVGasF/7pA0lay6VHdt9y0m&#43;/P2I=" crossorigin="anonymous"></script>
+
+
+
+  
+</head>
+<body dir="ltr" class="book-kind-page book-type-docs">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    
+<aside class="book-menu">
+  <div class="book-menu-content">
+    
+  <nav>
+<h2 class="book-brand">
+  <a class="flex align-center" href="/"><span>rdququ&#39;s Blog</span>
+  </a>
+</h2>
+
+
+<div class="book-search hidden">
+  <input id="book-search-input" type="text" 
+    placeholder="Search"
+    aria-label="Search"
+    maxlength="64" data-hotkeys="s/" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+<script>document.querySelector(".book-search").classList.remove("hidden")</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/blog/" class="">
+      Blog</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/links/" class="">
+      Links</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/docs/archive/" class="">
+      Archive</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+
+  </div>
+</aside>
+ 
+
+    <div class="book-page">
+      <header class="book-header hidden">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/icons/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <h3>Eventbus</h3>
+
+  <label for="toc-control">
+    
+    <img src="/icons/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden">
+    
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#回顾原理">回顾原理</a></li>
+    <li><a href="#codelist">CodeList</a>
+      <ul>
+        <li><a href="#eventcenter">EventCenter</a></li>
+        <li><a href="#ieventregister">IEventRegister</a></li>
+        <li><a href="#annotatedeventregistrar">AnnotatedEventRegistrar</a></li>
+        <li><a href="#unityannotatedeventregistrar">UnityAnnotatedEventRegistrar</a></li>
+        <li><a href="#eventattribute">EventAttribute</a></li>
+        <li><a href="#eventmanager">EventManager</a></li>
+        <li><a href="#hookattribute">HookAttribute</a></li>
+        <li><a href="#hookmanager">HookManager</a></li>
+      </ul>
+    </li>
+    <li><a href="#含参广播">含参广播</a></li>
+    <li><a href="#延迟分发">延迟分发</a></li>
+    <li><a href="#使用-attribute-快捷订阅消息">使用 Attribute 快捷订阅消息</a>
+      <ul>
+        <li><a href="#实现原理">实现原理</a></li>
+      </ul>
+    </li>
+    <li><a href="#基于-eventbus--实现的类-hook-方法">基于 EventBus  实现的类 Hook 方法</a>
+      <ul>
+        <li><a href="#实现原理-1">实现原理</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      
+      
+  <article class="markdown book-article"><h1 id="eventbus-设计分享">EventBus 设计分享<a class="anchor" href="#eventbus-%e8%ae%be%e8%ae%a1%e5%88%86%e4%ba%ab">#</a></h1>
+<h2 id="回顾原理">回顾原理<a class="anchor" href="#%e5%9b%9e%e9%a1%be%e5%8e%9f%e7%90%86">#</a></h2>
+<p>无论事件总线支持怎样的拓展功能，内部实现怎样优雅，其设计基本上还是基于发布-订阅模型。</p>
+<p>该模型总是包含用于存贮消息映射到回调的数据集合，事件的分发方法，事件的订阅和取消订阅方法。（以下的事件总线，事件系统，事件中心皆指该模型的实际实现）</p>
+<p>发布订阅模型可以轻松支持事件广播，即单一的消息发布者可以把消息传递给多个关心其发送的消息的听众，这些听众会在监听到自己关心的消息时做出相对应的反应。</p>
+<p>在类的依赖关系中，听众和消息发布者都无需关心对方，他们共同依赖事件模块而不是相互耦合。优点是利于代码的维护，复用。这也遵循了迪米特法则。
+下面举一个例子来对比接入事件总线前后类的依赖关系</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">VTuber</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">readonly</span> List&lt;Fans&gt; fansList;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> VTuber(List&lt;Fans&gt; fansList)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">this</span>.fansList = fansList;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> Sing()
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        fansList.ForEach(fans =&gt; fans.OnVTuberSing());
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Fans</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">readonly</span> Action OnVTuberSing;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">protected</span> Fans(Action onVTuberSing)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        OnVTuberSing = onVTuberSing;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}</span></span></code></pre></div><p>上面的代码描述了在 VTuber 唱歌后 Fans 表态的场景。VTuber 不得不了解其所有的粉丝，并在唱歌后逐一通知他们。然而，VTuber 和 Fans 紧密耦合在了一起，只要有一个缺失或者发生更改，代码就无法通过编译或必须紧跟着更新另一个类。</p>
+<p>当不止粉丝来关心 VTuber 的时候，事情就变得更加复杂了。VTuber 必须了解关注 ta 的所有人：粉丝、网警、平台、乐子人，以便在自己有所举动时他们能发出正常的反馈——这很可笑不是吗？哪怕以显示的眼光去看，依赖关系也完全倒置了。事实上是后者关心前者，前者往往完全不了解后者，甚至不清楚后者的存在。
+或许熟悉抽象的你已经有了相对应的优化思路，但不要着急，我们再来看看事件总线介入后的局面。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">VTuber</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> Sing()
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        EventCenter.Instance.PublishEvent(<span style="color:#e6db74">&#34;Sing&#34;</span>);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Fans</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">readonly</span> Action onVTuberSing;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">protected</span> Fans(Action onVTuberSing)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">this</span>.onVTuberSing = onVTuberSing;
+</span></span><span style="display:flex;"><span>        EventCenter.Instance.RegisterEvent(<span style="color:#e6db74">&#34;Sing&#34;</span>, onVTuberSing);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    ~Fans()
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        EventCenter.Instance.UnregisterEvent(<span style="color:#e6db74">&#34;Sing&#34;</span>, onVTuberSing);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}</span></span></code></pre></div><p>现在 VTuber 完全不再关心关心 ta 的人，仅在 Sing 对外传递了消息，ta 并不关心这条消息会传递给谁。</p>
+<p>Fans 仍然关注于 Sing 消息本身。实际上，原本 Fans 就不是关注 VTuber，而是关心 Sing 消息。对于 Sing 这条消息，有些人会商检，有些人会置之不理，有些人会关心其歌词是否涉政涉黄。</p>
+<p>从整体来看，VTuber 和 Fans 再也不是不可分割的。虽然代码中引入了新的模块，并且让原本的两者都依赖于这个模块，但从代码的可维护性和可复用性上来看，仍然是一个进步。再者，实际开发中的业务模型不会像示例中的这么简单，消息的发布者和订阅者都不止一个，其关心的消息和二者本身也都被要求是可轻松拓展的。</p>
+<p>在引入消息模块之前，或许会有人想到可以利用接口抽象消息的发布者（VTuber 一类）和消息的订阅者（Fans 一类）。从而可以消弭业务对象过多导致消息的发布者成员数量爆炸。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">IDispatcher</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> List&lt;ISubscriber&gt; Subscribers { <span style="color:#66d9ef">get</span>; }
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">void</span> DoSth();
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">VTuber</span> : IDispatcher
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> VTuber(List&lt;ISubscriber&gt; subscribers)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        Subscribers = subscribers;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> List&lt;ISubscriber&gt; Subscribers { <span style="color:#66d9ef">get</span>; }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> DoSth()
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        Subscribers.ForEach(suber =&gt; suber.OnDoSth());
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">ISubscriber</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> Action OnDoSth { <span style="color:#66d9ef">get</span>; }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Fans</span> : ISubscriber
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> Fans(Action onDoSth)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        OnDoSth = onDoSth;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> Action OnDoSth { <span style="color:#66d9ef">get</span>; }
+</span></span><span style="display:flex;"><span>}</span></span></code></pre></div><p>在这个实现中，我们让事件的发布者去关心订阅者的抽象集合。我们无需担心关注者过多的问题了，但是仍然存在问题，我们默认事件的发布者都只去做一件事，VTuber 只去唱歌，游戏博主只发教程视频，广播只会播放眼保健操。显然，在这种实现下，当我们想让发布者去做更多事情的时候，我们就只能增加 DoSth 的数量，相对的每一个关注者都要添加一个 OnDoSthN。相信没有人愿意去堆砌这样的矢山。</p>
+<p>前面我们说过，订阅者关注的是消息本身，而消息的数量和传递的信息都是未知的。显然，面对这样的情况，我们更需要一个方法接收消息并注入面对该消息的回调，而不是为每一个潜在的消息编写 Action。我们可以使用一个<code>&lt;String，Action&gt;</code>的字典来存贮注入的消息和处理方法。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">IDispatcher</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> List&lt;ISubscriber&gt; Subscribers { <span style="color:#66d9ef">get</span>; }
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">void</span> Dispatch(<span style="color:#66d9ef">string</span> eventName);
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">VTuber</span> : IDispatcher
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> VTuber(List&lt;ISubscriber&gt; subscribers)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        Subscribers = subscribers;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> List&lt;ISubscriber&gt; Subscribers { <span style="color:#66d9ef">get</span>; }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> Dispatch(<span style="color:#66d9ef">string</span> eventName)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">foreach</span> (<span style="color:#66d9ef">var</span> subscriber <span style="color:#66d9ef">in</span> Subscribers)
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            subscriber.EventDict[eventName].Invoke();
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">ISubscriber</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    Dictionary&lt;<span style="color:#66d9ef">string</span>, Action&gt; EventDict { <span style="color:#66d9ef">get</span>; }
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">void</span> Subscribe(<span style="color:#66d9ef">string</span> eventName, Action action);
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">void</span> Unsubscribe(<span style="color:#66d9ef">string</span> eventName, Action action);
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Fans</span> : ISubscriber
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> Fans(Dictionary&lt;<span style="color:#66d9ef">string</span>, Action&gt; eventDict)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        EventDict = eventDict;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> Dictionary&lt;<span style="color:#66d9ef">string</span>, Action&gt; EventDict { <span style="color:#66d9ef">get</span>; }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> Subscribe(<span style="color:#66d9ef">string</span> eventName, Action action)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        EventDict[eventName] += action;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> Unsubscribe(<span style="color:#66d9ef">string</span> eventName, Action action)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        EventDict[eventName] -= action;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}</span></span></code></pre></div><p>在这个模型下，消息的两端都依赖于抽象，订阅者从构造函数或订阅方法中注入了其关心的事件和处理方法的集合，而发布者关心订阅者的抽象，并在消息发布时遍历他们的事件集合。一切看似很美好，问题在于，就像上面说过的，消息的发布者往往不清楚，甚至完全不了解消息的订阅者。然而要是在消息的订阅者处向消息的发布者注入自己的话，又违背了关心消息本身而不关心消息的发布者的原则。</p>
+<p>一个简单的处理办法是建立一个中介（第三者），来存放消息到处理方法的映射表的合集。所有订阅者都把自己的 eventDict 存在那里。消息的发布者在发布时去访问这个统一的字典，这样就避免了“关心关心 ta 的人”的麻烦。
+好的，到这里，恭喜你重新回到了发布订阅模型。</p>
+<p>事实上，你只要把消息发布者遍历统一字典的这一步封装起来放到中介类里（为了维护 DoSth 的单一职责），你就立刻拥有了一个通用且简单的发布订阅模型。</p>
+<h2 id="codelist">CodeList<a class="anchor" href="#codelist">#</a></h2>
+<p>可以先跳过这一节，往下看。</p>
+<h3 id="eventcenter">EventCenter<a class="anchor" href="#eventcenter">#</a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">using</span> System;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">using</span> System.Collections.Generic;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">using</span> Framework.Utility.ClassTemplate.Singleton;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">using</span> Sirenix.OdinInspector;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">namespace</span> Framework.EventSystem
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">EventCenter</span> : EagerSingleton&lt;EventCenter&gt;
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">        [ShowInInspector]</span> <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">readonly</span> Dictionary&lt;<span style="color:#66d9ef">string</span>, List&lt;Action&gt;&gt; eventDict = <span style="color:#66d9ef">new</span>(<span style="color:#ae81ff">32</span>);
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">readonly</span> List&lt;<span style="color:#66d9ef">string</span>&gt; eventCacheDict = <span style="color:#66d9ef">new</span>(<span style="color:#ae81ff">16</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">readonly</span> Dictionary&lt;<span style="color:#66d9ef">string</span>, Action&lt;<span style="color:#66d9ef">object</span>[]&gt;[]&gt; parametricEventDict = <span style="color:#66d9ef">new</span>(<span style="color:#ae81ff">32</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">#region</span> <span style="color:#960050;background-color:#1e0010">注册事件</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> RegisterEvent(<span style="color:#66d9ef">string</span> eventName, Action action)
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> (!eventDict.ContainsKey(eventName))
+</span></span><span style="display:flex;"><span>            {
+</span></span><span style="display:flex;"><span>                eventDict[eventName] = <span style="color:#66d9ef">new</span> List&lt;Action&gt;();
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            eventDict[eventName].Add(action);
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> RegisterEvent(<span style="color:#66d9ef">string</span> eventName, Action&lt;<span style="color:#66d9ef">object</span>[]&gt; action)
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> (!parametricEventDict.ContainsKey(eventName))
+</span></span><span style="display:flex;"><span>            {
+</span></span><span style="display:flex;"><span>                parametricEventDict[eventName] = <span style="color:#66d9ef">new</span> Action&lt;<span style="color:#66d9ef">object</span>[]&gt;[<span style="color:#ae81ff">32</span>];
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">var</span> <span style="color:#66d9ef">value</span> = parametricEventDict[eventName];
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">var</span> i = <span style="color:#ae81ff">0</span>; i &lt; <span style="color:#66d9ef">value</span>.Length; i++)
+</span></span><span style="display:flex;"><span>            {
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">if</span> (<span style="color:#66d9ef">value</span>[i] == <span style="color:#66d9ef">null</span>)
+</span></span><span style="display:flex;"><span>                {
+</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">value</span>[i] = action;
+</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">break</span>;
+</span></span><span style="display:flex;"><span>                }
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">#endregion</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">#region</span> <span style="color:#960050;background-color:#1e0010">取消注册事件</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> UnregisterEvent(<span style="color:#66d9ef">string</span> eventName, Action action)
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> (!eventDict.TryGetValue(eventName, <span style="color:#66d9ef">out</span> <span style="color:#66d9ef">var</span> <span style="color:#66d9ef">value</span>))
+</span></span><span style="display:flex;"><span>            {
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">return</span>;
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">value</span>.Remove(action);
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> UnregisterEvent(<span style="color:#66d9ef">string</span> eventName, Action&lt;<span style="color:#66d9ef">object</span>[]&gt; action)
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> (!parametricEventDict.TryGetValue(eventName, <span style="color:#66d9ef">out</span> <span style="color:#66d9ef">var</span> <span style="color:#66d9ef">value</span>))
+</span></span><span style="display:flex;"><span>            {
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">return</span>;
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">var</span> i = <span style="color:#ae81ff">0</span>; i &lt; <span style="color:#66d9ef">value</span>.Length; i++)
+</span></span><span style="display:flex;"><span>            {
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">if</span> (<span style="color:#66d9ef">value</span>[i] == action)
+</span></span><span style="display:flex;"><span>                {
+</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">value</span>[i] = <span style="color:#66d9ef">null</span>;
+</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">break</span>;
+</span></span><span style="display:flex;"><span>                }
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> UnregisterEvent(<span style="color:#66d9ef">string</span> eventName)
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> (!eventDict.TryGetValue(eventName, <span style="color:#66d9ef">out</span> <span style="color:#66d9ef">var</span> <span style="color:#66d9ef">value</span>))
+</span></span><span style="display:flex;"><span>            {
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">return</span>;
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">value</span>.Clear();
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> UnregisterAllEvent()
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            eventDict.Clear();
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">#endregion</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">#region</span> <span style="color:#960050;background-color:#1e0010">分发事件</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> PublishEvent(<span style="color:#66d9ef">string</span> eventName, <span style="color:#66d9ef">bool</span> addToCache = <span style="color:#66d9ef">false</span>)
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> (addToCache)
+</span></span><span style="display:flex;"><span>            {
+</span></span><span style="display:flex;"><span>                eventCacheDict.Add(eventName);
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">return</span>;
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> (!eventDict.TryGetValue(eventName, <span style="color:#66d9ef">out</span> <span style="color:#66d9ef">var</span> <span style="color:#66d9ef">value</span>))
+</span></span><span style="display:flex;"><span>            {
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">return</span>;
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">foreach</span> (<span style="color:#66d9ef">var</span> action <span style="color:#66d9ef">in</span> <span style="color:#66d9ef">value</span>)
+</span></span><span style="display:flex;"><span>            {
+</span></span><span style="display:flex;"><span>                action();
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> PublishEvent(<span style="color:#66d9ef">string</span> eventName, <span style="color:#66d9ef">object</span>[] args, <span style="color:#66d9ef">bool</span> addToCache = <span style="color:#66d9ef">false</span>)
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> (addToCache)
+</span></span><span style="display:flex;"><span>            {
+</span></span><span style="display:flex;"><span>                eventCacheDict.Add(eventName);
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">return</span>;
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> (!parametricEventDict.TryGetValue(eventName, <span style="color:#66d9ef">out</span> <span style="color:#66d9ef">var</span> <span style="color:#66d9ef">value</span>))
+</span></span><span style="display:flex;"><span>            {
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">return</span>;
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">foreach</span> (<span style="color:#66d9ef">var</span> action <span style="color:#66d9ef">in</span> <span style="color:#66d9ef">value</span>)
+</span></span><span style="display:flex;"><span>            {
+</span></span><span style="display:flex;"><span>                action?.Invoke(args);
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">#endregion</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">#region</span> <span style="color:#960050;background-color:#1e0010">延迟分发事件</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> PublishCache(<span style="color:#66d9ef">string</span> eventName)
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> (!eventCacheDict.Contains(eventName))
+</span></span><span style="display:flex;"><span>            {
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">return</span>;
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            PublishEvent(eventName);
+</span></span><span style="display:flex;"><span>            eventCacheDict.Remove(eventName);
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">#endregion</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}</span></span></code></pre></div><h3 id="ieventregister">IEventRegister<a class="anchor" href="#ieventregister">#</a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">namespace</span> Framework.EventSystem
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">IEventRegister</span>
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> Register(<span style="color:#66d9ef">object</span> obj);
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> Unregister(<span style="color:#66d9ef">object</span> obj);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}</span></span></code></pre></div><h3 id="annotatedeventregistrar">AnnotatedEventRegistrar<a class="anchor" href="#annotatedeventregistrar">#</a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">using</span> Framework.EventSystem.Attr;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">namespace</span> Framework.EventSystem
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">AnnotatedEventRegistrar</span> : IEventRegister
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">protected</span> AnnotatedEventRegistrar()
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            Register(<span style="color:#66d9ef">this</span>);
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        ~AnnotatedEventRegistrar()
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            Unregister(<span style="color:#66d9ef">this</span>);
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> Register(<span style="color:#66d9ef">object</span> obj)
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            EventManager.Instance.RegisterEventHandler(obj);
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> Unregister(<span style="color:#66d9ef">object</span> obj)
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            EventManager.Instance.UnregisterEventHandler(obj);
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}</span></span></code></pre></div><h3 id="unityannotatedeventregistrar">UnityAnnotatedEventRegistrar<a class="anchor" href="#unityannotatedeventregistrar">#</a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">using</span> Framework.EventSystem.Attr;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">using</span> UnityEngine;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">namespace</span> Framework.EventSystem
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">UnityAnnotatedEventRegistrar</span> : MonoBehaviour, IEventRegister
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> Register(<span style="color:#66d9ef">object</span> obj)
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            EventManager.Instance.RegisterEventHandler(obj);
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> Unregister(<span style="color:#66d9ef">object</span> obj)
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            EventManager.Instance.UnregisterEventHandler(obj);
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">virtual</span> <span style="color:#66d9ef">void</span> Start()
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            Register(<span style="color:#66d9ef">this</span>);
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">virtual</span> <span style="color:#66d9ef">void</span> OnDestroy()
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            Unregister(<span style="color:#66d9ef">this</span>);
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}</span></span></code></pre></div><h3 id="eventattribute">EventAttribute<a class="anchor" href="#eventattribute">#</a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">using</span> System;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">namespace</span> Framework.EventSystem.Attr
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/// &lt;summary&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/// 标记事件的提供者</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/// &lt;/summary&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">    [AttributeUsage(AttributeTargets.Method)]</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">EventAttribute</span> : Attribute
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">string</span> EventName { <span style="color:#66d9ef">get</span>; }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">public</span> EventAttribute(<span style="color:#66d9ef">string</span> eventName)
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            EventName = eventName;
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}</span></span></code></pre></div><h3 id="eventmanager">EventManager<a class="anchor" href="#eventmanager">#</a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">using</span> System;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">using</span> System.Collections.Generic;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">using</span> System.Reflection;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">using</span> Framework.LambdaExt;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">using</span> Framework.Utility.ClassTemplate.Singleton;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">using</span> UnityEngine;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">namespace</span> Framework.EventSystem.Attr
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">EventManager</span> : EagerSingleton&lt;EventManager&gt;
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">readonly</span> Dictionary&lt;<span style="color:#66d9ef">string</span>, List&lt;Action&gt;&gt; actionDict = <span style="color:#66d9ef">new</span> Dictionary&lt;<span style="color:#66d9ef">string</span>, List&lt;Action&gt;&gt;();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">readonly</span> Dictionary&lt;<span style="color:#66d9ef">string</span>, List&lt;Action&lt;<span style="color:#66d9ef">object</span>[]&gt;&gt;&gt; parametricActionDict =
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">new</span> Dictionary&lt;<span style="color:#66d9ef">string</span>, List&lt;Action&lt;<span style="color:#66d9ef">object</span>[]&gt;&gt;&gt;();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">void</span> HandleEventOnRegister(<span style="color:#66d9ef">object</span> obj)
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">var</span> classType = obj.GetType();
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">var</span> methods = classType.GetMethods();
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">foreach</span> (<span style="color:#66d9ef">var</span> method <span style="color:#66d9ef">in</span> methods)
+</span></span><span style="display:flex;"><span>            {
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">var</span> eventAttributes = method.GetCustomAttribute(<span style="color:#66d9ef">typeof</span>(EventAttribute), <span style="color:#66d9ef">false</span>);
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">if</span> (eventAttributes == <span style="color:#66d9ef">null</span>)
+</span></span><span style="display:flex;"><span>                {
+</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">continue</span>;
+</span></span><span style="display:flex;"><span>                }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">var</span> eventAttribute = (EventAttribute)eventAttributes;
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">var</span> parms = method.GetParameters();
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">foreach</span> (<span style="color:#66d9ef">var</span> info <span style="color:#66d9ef">in</span> parms)
+</span></span><span style="display:flex;"><span>                {
+</span></span><span style="display:flex;"><span>                    Debug.Log(<span style="color:#e6db74">$&#34;存在参数{info.Name}，类型为{info.ParameterType}&#34;</span>);
+</span></span><span style="display:flex;"><span>                }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">if</span> (parms.Length == <span style="color:#ae81ff">0</span>)
+</span></span><span style="display:flex;"><span>                {
+</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">var</span> action = method.CreateDelegate(<span style="color:#66d9ef">typeof</span>(Action), obj) <span style="color:#66d9ef">as</span> Action;
+</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">if</span> (!actionDict.TryGetValue(eventAttribute.EventName, <span style="color:#66d9ef">out</span> <span style="color:#66d9ef">var</span> <span style="color:#66d9ef">value</span>))
+</span></span><span style="display:flex;"><span>                    {
+</span></span><span style="display:flex;"><span>                        actionDict[eventAttribute.EventName] = <span style="color:#66d9ef">new</span> List&lt;Action&gt;();
+</span></span><span style="display:flex;"><span>                    }
+</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">else</span>
+</span></span><span style="display:flex;"><span>                    {
+</span></span><span style="display:flex;"><span>                        <span style="color:#66d9ef">value</span>.Add(action);
+</span></span><span style="display:flex;"><span>                    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">var</span> eventName = eventAttribute.EventName;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>                    EventCenter.Instance.RegisterEvent(eventName, action);
+</span></span><span style="display:flex;"><span>                }
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">else</span>
+</span></span><span style="display:flex;"><span>                {
+</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">var</span> action = method.ToAction(obj);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">if</span> (parametricActionDict.TryGetValue(eventAttribute.EventName, <span style="color:#66d9ef">out</span> <span style="color:#66d9ef">var</span> <span style="color:#66d9ef">value</span>))
+</span></span><span style="display:flex;"><span>                    {
+</span></span><span style="display:flex;"><span>                        <span style="color:#66d9ef">value</span>.Add(action);
+</span></span><span style="display:flex;"><span>                    }
+</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">else</span>
+</span></span><span style="display:flex;"><span>                    {
+</span></span><span style="display:flex;"><span>                        parametricActionDict[eventAttribute.EventName] = <span style="color:#66d9ef">new</span> List&lt;Action&lt;<span style="color:#66d9ef">object</span>[]&gt;&gt; { action };
+</span></span><span style="display:flex;"><span>                    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>                    EventCenter.Instance.RegisterEvent(eventAttribute.EventName, action);
+</span></span><span style="display:flex;"><span>                }
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">void</span> HandleEventOnUnregister(<span style="color:#66d9ef">object</span> obj)
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">var</span> classType = obj.GetType();
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">var</span> methods = classType.GetMethods();
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">foreach</span> (<span style="color:#66d9ef">var</span> method <span style="color:#66d9ef">in</span> methods)
+</span></span><span style="display:flex;"><span>            {
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">var</span> eventAttributes = method.GetCustomAttribute(<span style="color:#66d9ef">typeof</span>(EventAttribute), <span style="color:#66d9ef">false</span>);
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">if</span> (eventAttributes == <span style="color:#66d9ef">null</span>)
+</span></span><span style="display:flex;"><span>                {
+</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">continue</span>;
+</span></span><span style="display:flex;"><span>                }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">var</span> eventAttribute = (EventAttribute)eventAttributes;
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">var</span> parms = method.GetParameters();
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">if</span> (parms.Length == <span style="color:#ae81ff">0</span>)
+</span></span><span style="display:flex;"><span>                {
+</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">var</span> action = method.CreateDelegate(<span style="color:#66d9ef">typeof</span>(Action), obj) <span style="color:#66d9ef">as</span> Action;
+</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">if</span> (actionDict.TryGetValue(eventAttribute.EventName, <span style="color:#66d9ef">out</span> <span style="color:#66d9ef">var</span> <span style="color:#66d9ef">value</span>))
+</span></span><span style="display:flex;"><span>                    {
+</span></span><span style="display:flex;"><span>                        <span style="color:#66d9ef">value</span>.Remove(action);
+</span></span><span style="display:flex;"><span>                    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">var</span> eventName = eventAttribute.EventName;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>                    EventCenter.Instance.UnregisterEvent(eventName, action);
+</span></span><span style="display:flex;"><span>                }
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">else</span>
+</span></span><span style="display:flex;"><span>                {
+</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">var</span> action = method.ToAction(obj);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">if</span> (parametricActionDict.TryGetValue(eventAttribute.EventName, <span style="color:#66d9ef">out</span> <span style="color:#66d9ef">var</span> <span style="color:#66d9ef">value</span>))
+</span></span><span style="display:flex;"><span>                    {
+</span></span><span style="display:flex;"><span>                        <span style="color:#66d9ef">value</span>.Remove(action);
+</span></span><span style="display:flex;"><span>                    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>                    EventCenter.Instance.UnregisterEvent(eventAttribute.EventName, action);
+</span></span><span style="display:flex;"><span>                }
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">#region</span> <span style="color:#960050;background-color:#1e0010">处理签入的事件类</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> RegisterEventHandler(<span style="color:#66d9ef">object</span> obj)
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            HandleEventOnRegister(obj);
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">#endregion</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">#region</span> <span style="color:#960050;background-color:#1e0010">处理签出的事件类</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> UnregisterEventHandler(<span style="color:#66d9ef">object</span> obj)
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            HandleEventOnUnregister(obj);
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">#endregion</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">#region</span> <span style="color:#960050;background-color:#1e0010">声明周期</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        ~EventManager()
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            EventCenter.Instance.UnregisterAllEvent();
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">#endregion</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}</span></span></code></pre></div><h3 id="hookattribute">HookAttribute<a class="anchor" href="#hookattribute">#</a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">using</span> System;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">namespace</span> Framework.Hook
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">HookAttribute</span> : Attribute
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">readonly</span> <span style="color:#66d9ef">string</span> MethodName;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">public</span> HookAttribute(<span style="color:#66d9ef">string</span> methodName)
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            MethodName = methodName;
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}</span></span></code></pre></div><h3 id="hookmanager">HookManager<a class="anchor" href="#hookmanager">#</a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">using</span> System;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">using</span> System.Collections.Generic;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">using</span> System.Linq;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">using</span> System.Reflection;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">using</span> Framework.EventSystem;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">using</span> Framework.LambdaExt;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">using</span> Framework.Utility;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">using</span> Framework.Utility.ClassTemplate.Singleton;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">using</span> Sirenix.OdinInspector;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">using</span> UnityEngine;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">using</span> Object = UnityEngine.Object;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">namespace</span> Framework.Hook
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">enum</span> HookType
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        Field,
+</span></span><span style="display:flex;"><span>        Property
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">HookInfo</span>
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">string</span> ChangeEventName;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">public</span> FieldInfo FieldInfo;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">public</span> PropertyInfo PropertyInfo;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">object</span> LastValue;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">public</span> HookType HookType;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">bool</span> IsValueType;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">HookManager</span> : UnitySingleton&lt;HookManager&gt;
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">const</span> BindingFlags k_BindingFlags = BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public;
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">
+</span></span></span><span style="display:flex;"><span><span style="color:#a6e22e">        [ShowInInspector]</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">readonly</span> Dictionary&lt;<span style="color:#66d9ef">object</span>, List&lt;HookInfo&gt;&gt; registry = <span style="color:#66d9ef">new</span> Dictionary&lt;<span style="color:#66d9ef">object</span>, List&lt;HookInfo&gt;&gt;();
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">
+</span></span></span><span style="display:flex;"><span><span style="color:#a6e22e">        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// ReSharper disable once Unity.IncorrectMethodSignature</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">protected</span> <span style="color:#66d9ef">override</span> <span style="color:#66d9ef">void</span> Awake()
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">base</span>.Awake();
+</span></span><span style="display:flex;"><span>            DontDestroyOnLoad(gameObject);
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">var</span> hookables = FindObjectsByType&lt;Object&gt;(FindObjectsSortMode.InstanceID).Where(IsHookable);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">foreach</span> (<span style="color:#66d9ef">var</span> hookable <span style="color:#66d9ef">in</span> hookables)
+</span></span><span style="display:flex;"><span>            {
+</span></span><span style="display:flex;"><span>                Register(hookable);
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">void</span> Register(Object obj)
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">var</span> fields = obj.GetType().GetFields(k_BindingFlags)
+</span></span><span style="display:flex;"><span>                .Where(field =&gt; Attribute.IsDefined(field, <span style="color:#66d9ef">typeof</span>(HookAttribute)));
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">foreach</span> (<span style="color:#66d9ef">var</span> field <span style="color:#66d9ef">in</span> fields)
+</span></span><span style="display:flex;"><span>            {
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">var</span> hook = field.GetCustomAttribute&lt;HookAttribute&gt;();
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">var</span> hookMethodName = hook.MethodName;
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">var</span> hookMethod = obj.GetType().GetMethod(hookMethodName, k_BindingFlags);
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">if</span> (hookMethod == <span style="color:#66d9ef">null</span>)
+</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> Exception(<span style="color:#e6db74">$&#34;找不到{obj.GetType().Name}的方法{hookMethodName}&#34;</span>);
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">if</span> (hookMethod.GetParameters().Length == <span style="color:#ae81ff">0</span>)
+</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> Exception(<span style="color:#e6db74">$&#34;方法{hookMethodName}必须有参数&#34;</span>);
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">if</span> (hookMethod.GetParameters()[<span style="color:#ae81ff">0</span>].ParameterType != field.FieldType)
+</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> Exception(<span style="color:#e6db74">$&#34;方法{hookMethodName}的参数类型必须与字段{field.Name}的类型一致&#34;</span>);
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">var</span> hookAction      = hookMethod.ToAction(obj);
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">var</span> changeEventName = <span style="color:#e6db74">$&#34;hook: {obj.GetType().Name}.{field.Name} change - {obj.GetInstanceID()}&#34;</span>;
+</span></span><span style="display:flex;"><span>                EventCenter.Instance.RegisterEvent(changeEventName, hookAction);
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">var</span> lastValue = ObjectTool.CraeteDeepCopyByJson(field.GetValue(obj));
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">var</span> newHookInfo = <span style="color:#66d9ef">new</span> HookInfo
+</span></span><span style="display:flex;"><span>                {
+</span></span><span style="display:flex;"><span>                    ChangeEventName = changeEventName,
+</span></span><span style="display:flex;"><span>                    FieldInfo = field,
+</span></span><span style="display:flex;"><span>                    LastValue = lastValue,
+</span></span><span style="display:flex;"><span>                    HookType = HookType.Field,
+</span></span><span style="display:flex;"><span>                    IsValueType = field.FieldType.IsValueType
+</span></span><span style="display:flex;"><span>                };
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">if</span> (registry.ContainsKey(obj))
+</span></span><span style="display:flex;"><span>                {
+</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">if</span> (registry[obj].Any(info =&gt; info.FieldInfo == field))
+</span></span><span style="display:flex;"><span>                        <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> Exception(<span style="color:#e6db74">$&#34;已经存在{obj.GetType().Name}的字段{field.Name}的钩子&#34;</span>);
+</span></span><span style="display:flex;"><span>                    registry[obj].Add(newHookInfo);
+</span></span><span style="display:flex;"><span>                }
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">else</span>
+</span></span><span style="display:flex;"><span>                {
+</span></span><span style="display:flex;"><span>                    registry.Add(obj, <span style="color:#66d9ef">new</span> List&lt;HookInfo&gt; { newHookInfo });
+</span></span><span style="display:flex;"><span>                }
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">var</span> properties = obj.GetType().GetProperties(k_BindingFlags)
+</span></span><span style="display:flex;"><span>                .Where(property =&gt; Attribute.IsDefined(property, <span style="color:#66d9ef">typeof</span>(HookAttribute)));
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">foreach</span> (<span style="color:#66d9ef">var</span> property <span style="color:#66d9ef">in</span> properties)
+</span></span><span style="display:flex;"><span>            {
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">var</span> hook = property.GetCustomAttribute&lt;HookAttribute&gt;();
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">var</span> hookMethodName = hook.MethodName;
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">var</span> hookMethod = obj.GetType().GetMethod(hookMethodName, k_BindingFlags);
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">if</span> (hookMethod == <span style="color:#66d9ef">null</span>)
+</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> Exception(<span style="color:#e6db74">$&#34;找不到{obj.GetType().Name}的方法{hookMethodName}&#34;</span>);
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">if</span> (hookMethod.GetParameters().Length == <span style="color:#ae81ff">0</span>)
+</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> Exception(<span style="color:#e6db74">$&#34;方法{hookMethodName}必须有参数&#34;</span>);
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">if</span> (hookMethod.GetParameters()[<span style="color:#ae81ff">0</span>].ParameterType != property.PropertyType)
+</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> Exception(<span style="color:#e6db74">$&#34;方法{hookMethodName}的参数类型必须与属性{property.Name}的类型一致&#34;</span>);
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">var</span> hookAction      = hookMethod.ToAction(obj);
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">var</span> changeEventName = <span style="color:#e6db74">$&#34;hook: {obj.GetType().Name}.{property.Name} change - {obj.GetInstanceID()}&#34;</span>;
+</span></span><span style="display:flex;"><span>                EventCenter.Instance.RegisterEvent(changeEventName, hookAction);
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">var</span> lastValue = ObjectTool.CraeteDeepCopyByJson(property.GetValue(obj));
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">var</span> newHookInfo = <span style="color:#66d9ef">new</span> HookInfo
+</span></span><span style="display:flex;"><span>                {
+</span></span><span style="display:flex;"><span>                    ChangeEventName = changeEventName,
+</span></span><span style="display:flex;"><span>                    PropertyInfo = property,
+</span></span><span style="display:flex;"><span>                    LastValue = lastValue,
+</span></span><span style="display:flex;"><span>                    HookType = HookType.Property,
+</span></span><span style="display:flex;"><span>                    IsValueType = property.PropertyType.IsValueType
+</span></span><span style="display:flex;"><span>                };
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">if</span> (registry.ContainsKey(obj))
+</span></span><span style="display:flex;"><span>                {
+</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">if</span> (registry[obj].Any(info =&gt; info.PropertyInfo == property))
+</span></span><span style="display:flex;"><span>                        <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> Exception(<span style="color:#e6db74">$&#34;已经存在{obj.GetType().Name}的属性{property.Name}的钩子&#34;</span>);
+</span></span><span style="display:flex;"><span>                    registry[obj].Add(newHookInfo);
+</span></span><span style="display:flex;"><span>                }
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">else</span>
+</span></span><span style="display:flex;"><span>                {
+</span></span><span style="display:flex;"><span>                    registry.Add(obj, <span style="color:#66d9ef">new</span> List&lt;HookInfo&gt; { newHookInfo });
+</span></span><span style="display:flex;"><span>                }
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">bool</span> IsHookable(<span style="color:#66d9ef">object</span> obj)
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> obj.GetType().GetMembers(k_BindingFlags)
+</span></span><span style="display:flex;"><span>                .Any(member =&gt; Attribute.IsDefined(member, <span style="color:#66d9ef">typeof</span>(HookAttribute)));
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">void</span> Update()
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">foreach</span> (<span style="color:#66d9ef">var</span> (obj, hookInfos) <span style="color:#66d9ef">in</span> registry)
+</span></span><span style="display:flex;"><span>            {
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> i = <span style="color:#ae81ff">0</span>; i &lt; hookInfos.Count; i++)
+</span></span><span style="display:flex;"><span>                {
+</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">var</span> info = hookInfos[i];
+</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">var</span> newValue = info.HookType == HookType.Field
+</span></span><span style="display:flex;"><span>                        ? info.FieldInfo.GetValue(obj)
+</span></span><span style="display:flex;"><span>                        : info.PropertyInfo.GetValue(obj);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">if</span> (info.LastValue == <span style="color:#66d9ef">null</span> &amp;&amp; newValue == <span style="color:#66d9ef">null</span>) <span style="color:#66d9ef">continue</span>;
+</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">if</span> (newValue == <span style="color:#66d9ef">null</span>) <span style="color:#66d9ef">continue</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>                    info.LastValue ??= info.IsValueType ? newValue : ObjectTool.CraeteDeepCopyByJson(newValue);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">if</span> (!info.LastValue.Equals(newValue))
+</span></span><span style="display:flex;"><span>                    {
+</span></span><span style="display:flex;"><span>                        EventCenter.Instance.PublishEvent(info.ChangeEventName, <span style="color:#66d9ef">new</span>[] { newValue });
+</span></span><span style="display:flex;"><span>                        info.LastValue = info.IsValueType ? newValue : ObjectTool.CraeteDeepCopyByJson(newValue);
+</span></span><span style="display:flex;"><span>                    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>                    hookInfos[i] = info;
+</span></span><span style="display:flex;"><span>                }
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}</span></span></code></pre></div><h2 id="含参广播">含参广播<a class="anchor" href="#%e5%90%ab%e5%8f%82%e5%b9%bf%e6%92%ad">#</a></h2>
+<p>原理到此为止，我们已经从依赖倒置的思路推演出了发布订阅模型。不过我们实现的只是一个“不含参的广播”，换言之在 C#的实现层面上，我们只能向订阅者传递一个 String 类型的消息。（实现来看，是订阅者向中介注入了自己关心的消息和处理方法的集合，在发布者发布事件时，中介会检索消息并调用其映射的所有回调方法。这个回调方法目前是无参的。含义上来看，可以认为消息是从发布者流向订阅者的，但要明确的是，无论是发布者还是订阅者，都只关心消息而非对方）</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">using</span> System;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">using</span> System.Collections.Generic;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">using</span> Framework.Utility.ClassTemplate.Singleton;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">using</span> Sirenix.OdinInspector;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">namespace</span> Framework.EventSystem
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">EventCenter</span> : EagerSingleton&lt;EventCenter&gt;
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">readonly</span> Dictionary&lt;<span style="color:#66d9ef">string</span>, List&lt;Action&gt;&gt; eventDict = <span style="color:#66d9ef">new</span>(<span style="color:#ae81ff">32</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">#region</span> <span style="color:#960050;background-color:#1e0010">注册事件</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> RegisterEvent(<span style="color:#66d9ef">string</span> eventName, Action action)
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> (!eventDict.ContainsKey(eventName))
+</span></span><span style="display:flex;"><span>            {
+</span></span><span style="display:flex;"><span>                eventDict[eventName] = <span style="color:#66d9ef">new</span> List&lt;Action&gt;();
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            eventDict[eventName].Add(action);
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">#endregion</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">#region</span> <span style="color:#960050;background-color:#1e0010">取消注册事件</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> UnregisterEvent(<span style="color:#66d9ef">string</span> eventName, Action action)
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> (!eventDict.TryGetValue(eventName, <span style="color:#66d9ef">out</span> <span style="color:#66d9ef">var</span> <span style="color:#66d9ef">value</span>))
+</span></span><span style="display:flex;"><span>            {
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">return</span>;
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">value</span>.Remove(action);
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> UnregisterEvent(<span style="color:#66d9ef">string</span> eventName)
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> (!eventDict.TryGetValue(eventName, <span style="color:#66d9ef">out</span> <span style="color:#66d9ef">var</span> <span style="color:#66d9ef">value</span>))
+</span></span><span style="display:flex;"><span>            {
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">return</span>;
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">value</span>.Clear();
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> UnregisterAllEvent()
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            eventDict.Clear();
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">#endregion</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">#region</span> <span style="color:#960050;background-color:#1e0010">分发事件</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> PublishEvent(<span style="color:#66d9ef">string</span> eventName)
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> (!eventDict.TryGetValue(eventName, <span style="color:#66d9ef">out</span> <span style="color:#66d9ef">var</span> <span style="color:#66d9ef">value</span>))
+</span></span><span style="display:flex;"><span>            {
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">return</span>;
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">foreach</span> (<span style="color:#66d9ef">var</span> action <span style="color:#66d9ef">in</span> <span style="color:#66d9ef">value</span>)
+</span></span><span style="display:flex;"><span>            {
+</span></span><span style="display:flex;"><span>                action();
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">#endregion</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}</span></span></code></pre></div><p>当理解了消息映射的回调方法的调用原理后，我们很自然可以想到 <code>Action</code> 的调用是可以传参的。我们可以额外建立一个 String 映射到 <code>Action&lt;object[]&gt;</code> 的合集，在 C# 中可以表现为一个字典。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">private</span> <span style="color:#66d9ef">readonly</span> Dictionary&lt;<span style="color:#66d9ef">string</span>, Action&lt;<span style="color:#66d9ef">object</span>[]&gt;[]&gt; parametricEventDict = <span style="color:#66d9ef">new</span>(<span style="color:#ae81ff">32</span>);</span></span></code></pre></div><p>通过重载 RegisterEvent，我们可以期待一个 <code>Action&lt;object[]&gt;</code>，同时在分发事件时注入其所需的参数（需要重载 <code>PublishEvent</code>）
+在此过程，不可避免的会引发因为类型转换导致的装箱。如何优化这一点留给读者和笔者思考和探索。
+最后实现如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">namespace</span> Framework.EventSystem
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">EventCenter</span> : EagerSingleton&lt;EventCenter&gt;
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        ...
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">readonly</span> Dictionary&lt;<span style="color:#66d9ef">string</span>, Action&lt;<span style="color:#66d9ef">object</span>[]&gt;[]&gt; parametricEventDict = <span style="color:#66d9ef">new</span>(<span style="color:#ae81ff">32</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">#region</span> <span style="color:#960050;background-color:#1e0010">注册事件</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>       ...
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> RegisterEvent(<span style="color:#66d9ef">string</span> eventName, Action&lt;<span style="color:#66d9ef">object</span>[]&gt; action)
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> (!parametricEventDict.ContainsKey(eventName))
+</span></span><span style="display:flex;"><span>            {
+</span></span><span style="display:flex;"><span>                parametricEventDict[eventName] = <span style="color:#66d9ef">new</span> Action&lt;<span style="color:#66d9ef">object</span>[]&gt;[<span style="color:#ae81ff">32</span>];
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">var</span> <span style="color:#66d9ef">value</span> = parametricEventDict[eventName];
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">var</span> i = <span style="color:#ae81ff">0</span>; i &lt; <span style="color:#66d9ef">value</span>.Length; i++)
+</span></span><span style="display:flex;"><span>            {
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">if</span> (<span style="color:#66d9ef">value</span>[i] == <span style="color:#66d9ef">null</span>)
+</span></span><span style="display:flex;"><span>                {
+</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">value</span>[i] = action;
+</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">break</span>;
+</span></span><span style="display:flex;"><span>                }
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">#endregion</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">#region</span> <span style="color:#960050;background-color:#1e0010">取消注册事件</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        ...
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> UnregisterEvent(<span style="color:#66d9ef">string</span> eventName, Action&lt;<span style="color:#66d9ef">object</span>[]&gt; action)
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> (!parametricEventDict.TryGetValue(eventName, <span style="color:#66d9ef">out</span> <span style="color:#66d9ef">var</span> <span style="color:#66d9ef">value</span>))
+</span></span><span style="display:flex;"><span>            {
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">return</span>;
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">var</span> i = <span style="color:#ae81ff">0</span>; i &lt; <span style="color:#66d9ef">value</span>.Length; i++)
+</span></span><span style="display:flex;"><span>            {
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">if</span> (<span style="color:#66d9ef">value</span>[i] == action)
+</span></span><span style="display:flex;"><span>                {
+</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">value</span>[i] = <span style="color:#66d9ef">null</span>;
+</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">break</span>;
+</span></span><span style="display:flex;"><span>                }
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        ...
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">#endregion</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">#region</span> <span style="color:#960050;background-color:#1e0010">分发事件</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        ...
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> PublishEvent(<span style="color:#66d9ef">string</span> eventName, <span style="color:#66d9ef">object</span>[] args)
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> (!parametricEventDict.TryGetValue(eventName, <span style="color:#66d9ef">out</span> <span style="color:#66d9ef">var</span> <span style="color:#66d9ef">value</span>))
+</span></span><span style="display:flex;"><span>            {
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">return</span>;
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">foreach</span> (<span style="color:#66d9ef">var</span> action <span style="color:#66d9ef">in</span> <span style="color:#66d9ef">value</span>)
+</span></span><span style="display:flex;"><span>            {
+</span></span><span style="display:flex;"><span>                action?.Invoke(args);
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">#endregion</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}</span></span></code></pre></div><h2 id="延迟分发">延迟分发<a class="anchor" href="#%e5%bb%b6%e8%bf%9f%e5%88%86%e5%8f%91">#</a></h2>
+<p>考虑一个业务场景，你制作了一个任务面板，当玩家完成某项任务时，该面板上对应的任务条目会闪光。很幸运，应用了事件系统后，你能很轻松的让任务系统传递一个某任务完成的信号，监听他的 UI 面板在收到消息的同时忠诚的执行了闪光任务。问题在于，这一切都发生在一瞬间，如果你不想让任务面板探到玩家脸上的话，就要考虑闪光任务是否应该在任务完成的一瞬间就被执行。</p>
+<p>延迟分发给出了一种解决思路。</p>
+<p>任务系统会照常分发消息，只不过对于某些不需要立刻分发的任务，他会打上一个延迟分发的 Tag，这些被打上延迟分发 Tag 的消息不会进入常规的事件集合，而是会被投入一个缓存集合。当玩家主动打开任务面板时，一个期待消息参数的缓存清理方法将会被调用，指向性的释放与当前传入详细匹配的键值对，并调用其回调方法。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">namespace</span> Framework.EventSystem
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">EventCenter</span> : EagerSingleton&lt;EventCenter&gt;
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        ...
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">readonly</span> List&lt;<span style="color:#66d9ef">string</span>&gt; eventCacheDict = <span style="color:#66d9ef">new</span>(<span style="color:#ae81ff">16</span>);
+</span></span><span style="display:flex;"><span>        ...
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">#region</span> <span style="color:#960050;background-color:#1e0010">分发事件</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> PublishEvent(<span style="color:#66d9ef">string</span> eventName, <span style="color:#66d9ef">bool</span> addToCache = <span style="color:#66d9ef">false</span>)
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> (addToCache)
+</span></span><span style="display:flex;"><span>            {
+</span></span><span style="display:flex;"><span>                eventCacheDict.Add(eventName);
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">return</span>;
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> (!eventDict.TryGetValue(eventName, <span style="color:#66d9ef">out</span> <span style="color:#66d9ef">var</span> <span style="color:#66d9ef">value</span>))
+</span></span><span style="display:flex;"><span>            {
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">return</span>;
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">foreach</span> (<span style="color:#66d9ef">var</span> action <span style="color:#66d9ef">in</span> <span style="color:#66d9ef">value</span>)
+</span></span><span style="display:flex;"><span>            {
+</span></span><span style="display:flex;"><span>                action();
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> PublishEvent(<span style="color:#66d9ef">string</span> eventName, <span style="color:#66d9ef">object</span>[] args, <span style="color:#66d9ef">bool</span> addToCache = <span style="color:#66d9ef">false</span>)
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> (addToCache)
+</span></span><span style="display:flex;"><span>            {
+</span></span><span style="display:flex;"><span>                eventCacheDict.Add(eventName);
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">return</span>;
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> (!parametricEventDict.TryGetValue(eventName, <span style="color:#66d9ef">out</span> <span style="color:#66d9ef">var</span> <span style="color:#66d9ef">value</span>))
+</span></span><span style="display:flex;"><span>            {
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">return</span>;
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">foreach</span> (<span style="color:#66d9ef">var</span> action <span style="color:#66d9ef">in</span> <span style="color:#66d9ef">value</span>)
+</span></span><span style="display:flex;"><span>            {
+</span></span><span style="display:flex;"><span>                action?.Invoke(args);
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">#endregion</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">#region</span> <span style="color:#960050;background-color:#1e0010">延迟分发事件</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> PublishCache(<span style="color:#66d9ef">string</span> eventName)
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> (!eventCacheDict.Contains(eventName))
+</span></span><span style="display:flex;"><span>            {
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">return</span>;
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            PublishEvent(eventName);
+</span></span><span style="display:flex;"><span>            eventCacheDict.Remove(eventName);
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">#endregion</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}</span></span></code></pre></div><h2 id="使用-attribute-快捷订阅消息">使用 Attribute 快捷订阅消息<a class="anchor" href="#%e4%bd%bf%e7%94%a8-attribute-%e5%bf%ab%e6%8d%b7%e8%ae%a2%e9%98%85%e6%b6%88%e6%81%af">#</a></h2>
+<p>在确定一个实例需要在完整的生命周期保持对某个消息的订阅时，使用 C# 的 Attribute 是个看起来快捷且酷的选择。<br>
+在我的实现中，原本这样的代码</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">using</span> Framework.EventSystem;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Enemy</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">void</span> Die()
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> Enemy()
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        EventCenter.Instance.RegisterEvent(<span style="color:#e6db74">&#34;GameEnd&#34;</span>, Die);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    ~Enemy()
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        EventCenter.Instance.UnregisterEvent(<span style="color:#e6db74">&#34;GameEnd&#34;</span>, Die);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}</span></span></code></pre></div><p>可以简化为</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">using</span> Framework.EventSystem;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">using</span> Framework.EventSystem.Attr;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Enemy</span> : AnnotatedEventRegistrar
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">    [Event(&#34;GameEnd&#34;)]</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> Die()
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}</span></span></code></pre></div><p>甚至其还支持参数传递</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Enemy</span> : AnnotatedEventRegistrar
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">    [Event(&#34;GameEnd&#34;)]</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> Die()
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">
+</span></span></span><span style="display:flex;"><span><span style="color:#a6e22e">    [Event(&#34;GameStart&#34;)]</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> Born(Vector2 pos)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}</span></span></code></pre></div><p>对一个继承自 <code>AnnotatedEventRegistrar</code> 或 <code>UnityAnnotatedEventRegistrar</code> 的类，其公开的非静态方法可以被 <code>Event</code> 修饰。</p>
+<h3 id="实现原理">实现原理<a class="anchor" href="#%e5%ae%9e%e7%8e%b0%e5%8e%9f%e7%90%86">#</a></h3>
+<p><code>EventAttribut</code>e 帮助了我们实现了在构造函数/析构函数（Start/OnDestory）中自动注册/取消注册目标方法的功能，方便提高开发效率，也显著提高了代码的可读性（哪些方法会响应分发的消息一目了然）。</p>
+<p>父类 <code>AnnotatedEventRegistrar</code> 会在构造函数中将自身的引用传递给 <code>EventManager</code>，<code>EventManager</code> 会通过反射遍历传入引用类型的所有公开非静态方法，并找出其中所有被 <code>EventAttribute</code> 修饰的方法。这些方法会和传入的实例的引用构造成 <code>Action</code> 或 <code>Action&lt;object[]&gt;</code>。如果方法存在传入参数，就会构造后者。</p>
+<p>下面给出一种构造 <code>Action&lt;object[]&gt;</code> 的方法的实现</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> Action&lt;<span style="color:#66d9ef">object</span>[]&gt; ToAction(<span style="color:#66d9ef">this</span> MethodInfo methodInfo, <span style="color:#66d9ef">object</span> target)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 参数: object[]</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> parameter = Expression.Parameter(<span style="color:#66d9ef">typeof</span>(<span style="color:#66d9ef">object</span>[]), <span style="color:#e6db74">&#34;args&#34;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 创建方法参数表达式</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> methodParameters = methodInfo.GetParameters();
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> arguments = <span style="color:#66d9ef">new</span> Expression[methodParameters.Length];
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> i = <span style="color:#ae81ff">0</span>; i &lt; methodParameters.Length; i++)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">var</span> index = Expression.Constant(i);
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">var</span> parameterType = methodParameters[i].ParameterType;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">var</span> parameterAccessor = Expression.ArrayIndex(parameter, index);
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">var</span> parameterCast = Expression.Convert(parameterAccessor, parameterType);
+</span></span><span style="display:flex;"><span>        arguments[i] = parameterCast;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 创建实例表达式</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> instance = Expression.Constant(target);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 创建方法调用表达式</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> methodCall = Expression.Call(instance, methodInfo, arguments);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 创建并编译 lambda 表达式</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> lambda = Expression.Lambda&lt;Action&lt;<span style="color:#66d9ef">object</span>[]&gt;&gt;(methodCall, parameter);
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> lambda.Compile();
+</span></span><span style="display:flex;"><span>}</span></span></code></pre></div><p>构造出的委托会和方法名一起注册进事件系统，并存入 EventManager 自己管理的事件字典中。当需要签出事件时，会将字典中的委托和新构造委托进行比对，相同的委托将会被撤销在事件系统中的注册，并被移出事件字典。</p>
+<p>对于需要在 Unity 运行的部分，基于已经完成的实现，可以将原本处于 Start 和 OnDestory 的自动订阅机制拓展到所有 MonoBehavior 生命周期函数上。
+一个简单的实现是</p>
+<ol>
+<li>为 <code>EventAttribute</code> 加入记录调用时期的字段，可以是枚举类型的。</li>
+<li>把 <code>UnityAnnotatedEventRegistrar</code> 上的自动注册撤销方法拓展到所有目标回调上。</li>
+<li>重载 <code>EventManager</code> 的签入签出方法或重构加入一个输入参数做回调时机的验证（匹配当前传入的回调类型和  <code>EventAttribute</code> 记录的回调类型）</li>
+<li></li>
+</ol>
+<h2 id="基于-eventbus--实现的类-hook-方法">基于 EventBus  实现的类 Hook 方法<a class="anchor" href="#%e5%9f%ba%e4%ba%8e-eventbus--%e5%ae%9e%e7%8e%b0%e7%9a%84%e7%b1%bb-hook-%e6%96%b9%e6%b3%95">#</a></h2>
+<p>可以使用 HookAttribute 快速实现单向数据绑定，对于继承自 UnityEngine.Object 且非动态生成的实例中标记了 <code>[Hook]</code> 的字段或属性，其变化将会引起同类中参数列表仅为与其类型相同的一个参数的且方法名与注入其的字符串相匹配的非静态方法被调用，可以使用 <code>nameof</code> 优化字符串表现。</p>
+<p>下面是一个用例</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">CardState</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">int</span> Health;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> CardState() { Health = <span style="color:#ae81ff">0</span>; }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">CardDisplay</span> : MonoBehaviour
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> CardState State;
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">
+</span></span></span><span style="display:flex;"><span><span style="color:#a6e22e">    [Hook(nameof(RenderHealth))]</span> <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">int</span> Health =&gt; State?.Health ?? <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">
+</span></span></span><span style="display:flex;"><span><span style="color:#a6e22e">    [SerializeField]</span> <span style="color:#66d9ef">private</span> TextMeshProUGUI healthText;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">void</span> Start() { State = <span style="color:#66d9ef">new</span> CardState(); }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">void</span> Update() <span style="color:#75715e">// 模拟数据更新</span>
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (Input.GetKeyDown(KeyCode.A)) State.Health++;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> RenderHealth(<span style="color:#66d9ef">int</span> newInput)
+</span></span><span style="display:flex;"><span>        =&gt; healthText.text = newInput.ToString();
+</span></span><span style="display:flex;"><span>}</span></span></code></pre></div><p>当 Health 发生变化时，<code>RenderHealth()</code> 将会被调用。
+<code>HookAttribute</code> 可修饰的字段或属性的类型包括基本类型， class， struct。</p>
+<h3 id="实现原理-1">实现原理<a class="anchor" href="#%e5%ae%9e%e7%8e%b0%e5%8e%9f%e7%90%86-1">#</a></h3>
+<p><code>HookManager</code> 需要挂载在场景中，其入口函数 <code>Awake</code> 由于 <code>[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)] </code>的修饰能够确保在场景加载前调用。</p>
+<p>程序会检索所有存在成员被 <code>HookAttribute</code> 修饰的 Unity 实例，并将其注册进一个字典。改字典存贮了实例到其被 <code>HookAttribute</code> 修饰成员与其对应的方法构造的 <code>HookInfo</code>。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">HookInfo</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">string</span> ChangeEventName;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> FieldInfo FieldInfo;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> PropertyInfo PropertyInfo;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">object</span> LastValue;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> HookType HookType;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">bool</span> IsValueType;
+</span></span><span style="display:flex;"><span>}</span></span></code></pre></div><p>其中被引用的方法会和被修饰的成员和实例的一同构造事件名和事件回调，他们会被注册进事件中心。</p>
+<p><code>HookInfo</code> 记录了字段/属性的信息，结合作为键的实例对象，我们就可以获得目标成员的最新值。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">var</span> newValue = info.HookType == HookType.Field
+</span></span><span style="display:flex;"><span>    ? info.FieldInfo.GetValue(obj)
+</span></span><span style="display:flex;"><span>    : info.PropertyInfo.GetValue(obj);</span></span></code></pre></div><p>对于值类型，我们会和 <code>HookInfo</code> 中存贮的旧值进行比对，如果不同，<code>HookInfo</code> 中的旧值将会被更新，注册的事件也会被发布。<br>
+对于引用类型，我们会创建目标成员的深拷贝与旧值进行比对，后续流程与对值类型进行的操作类似。</p>
+<p>在这里，我采用了 Unity 的 Json 序列化器辅助创建了对象的深拷贝。当然，我们也可以使用反射完成这件事情。</p>
+<p>下面给出深拷贝的创建代码</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">object</span> CraeteDeepCopyByJson(<span style="color:#66d9ef">object</span> input)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (input == <span style="color:#66d9ef">null</span>)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">null</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> json = JsonUtility.ToJson(input);
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> JsonUtility.FromJson(json, input.GetType());
+</span></span><span style="display:flex;"><span>}</span></span></code></pre></div><p>Hook 的事件仅作思路验证，可以在此基础上拓展对 <code>System.Object</code> 的支持和在 <code>HookManager</code> 入口方法之后生成的实例的支持。同时，被销毁的对象也需要被 <code>HookManager</code> 从 registry 中移除。</p>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+<div>
+
+</div>
+
+<div>
+
+</div>
+
+</div>
+
+
+
+
+
+  
+  
+  
+
+
+ 
+        
+  
+  <div class="book-comments">
+<div id="disqus_thread"></div>
+<script>
+    window.disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "rdququ's Blog" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+  
+ 
+        
+        
+  
+ 
+        
+  
+  
+    <script>(function(){document.querySelectorAll("pre:has(code)").forEach(e=>{e.addEventListener("click",e.focus),e.addEventListener("copy",function(t){if(t.preventDefault(),navigator.clipboard){const t=window.getSelection().toString()||e.textContent;navigator.clipboard.writeText(t)}})})})()</script>
+  
+
+      </footer>
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+  
+  <aside class="book-toc">
+    <div class="book-toc-content">
+      
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#回顾原理">回顾原理</a></li>
+    <li><a href="#codelist">CodeList</a>
+      <ul>
+        <li><a href="#eventcenter">EventCenter</a></li>
+        <li><a href="#ieventregister">IEventRegister</a></li>
+        <li><a href="#annotatedeventregistrar">AnnotatedEventRegistrar</a></li>
+        <li><a href="#unityannotatedeventregistrar">UnityAnnotatedEventRegistrar</a></li>
+        <li><a href="#eventattribute">EventAttribute</a></li>
+        <li><a href="#eventmanager">EventManager</a></li>
+        <li><a href="#hookattribute">HookAttribute</a></li>
+        <li><a href="#hookmanager">HookManager</a></li>
+      </ul>
+    </li>
+    <li><a href="#含参广播">含参广播</a></li>
+    <li><a href="#延迟分发">延迟分发</a></li>
+    <li><a href="#使用-attribute-快捷订阅消息">使用 Attribute 快捷订阅消息</a>
+      <ul>
+        <li><a href="#实现原理">实现原理</a></li>
+      </ul>
+    </li>
+    <li><a href="#基于-eventbus--实现的类-hook-方法">基于 EventBus  实现的类 Hook 方法</a>
+      <ul>
+        <li><a href="#实现原理-1">实现原理</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+
+    </div>
+  </aside>
+  
+ 
+  </main>
+
+  
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
