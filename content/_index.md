@@ -3,7 +3,7 @@ date: 2025-11-07T21:32:26+08:00
 comments: false
 ---
 
-## 关于我
+## About Me
 
 Software developer specializing in game development and game development tools.  
 I’m from [NJUPT](https://www.njupt.edu.cn/) and a core member of [SAST](https://sast.fun) and [HYS](https://github.com/HuaYe-Studio).  
